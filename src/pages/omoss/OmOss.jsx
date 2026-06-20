@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
+import BottomSheet from '../../components/BottomSheet.jsx'
+import SheetContent from '../../components/SheetContent.jsx'
+
+const BASE = import.meta.env.BASE_URL
 
 // ─── Verbatim from 02-restored-static/omoss.html ─────────────────────────────
 const PEOPLE = [
@@ -85,7 +89,7 @@ const PEOPLE = [
     bio: [
       'Turglad herremann som liker meg like godt til lands som til vanns. Har alltid vært en aktiv fyr, stått mye på ski, kjørt brett og vært mye på turer. Tar gjerne rollen som kokk og kaffimeister, men er dugendes til å fikse det aller meste!',
       'Har jobbet, bygget hus og studert med Marius.',
-      'Liker | Dingser, mac\'en, bandana, alle slags prosjekt, en god bok, brettspill og god kaffe, og ei viss frøken fra Sunnmøre...',
+      "Liker | Dingser, mac'en, bandana, alle slags prosjekt, en god bok, brettspill og god kaffe, og ei viss frøken fra Sunnmøre...",
     ],
   },
   {
@@ -117,23 +121,28 @@ const PEOPLE = [
   },
 ]
 
-function PersonCard({ person, base, isActive, onSelect }) {
+function PersonCard({ person, onSelect }) {
   return (
     <article
-      className={`bg-slate-900 rounded-lg p-6 cursor-pointer transition-colors ${
-        isActive ? 'ring-2 ring-orange-400/40' : 'hover:bg-slate-800/70'
-      }`}
+      className="bg-slate-900 rounded-lg p-5 md:p-6 cursor-pointer hover:bg-slate-800/70 transition-colors group"
       onClick={onSelect}
     >
       <div className="flex items-start gap-4">
-        <img
-          src={`${base}images/profiles/${person.id}.jpg`}
-          alt={person.name}
-          className="w-14 h-14 rounded-full object-cover flex-shrink-0 grayscale"
-          style={isActive ? { filter: 'none' } : undefined}
-        />
+        {/* Circular thumbnail — wrapper clips overflow so the scaled img hides the
+            3–4px white border baked into the source JPGs (70×70px source). scale-[1.15]
+            baseline pushes the white edge outside the 56px clip circle; group-hover
+            adds the hover zoom on top. */}
+        <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0">
+          <img
+            src={`${BASE}images/profiles/${person.id}.jpg`}
+            alt={person.name}
+            className="w-full h-full object-cover scale-[1.15] transition-transform duration-300 group-hover:scale-[1.21] will-change-transform"
+          />
+        </div>
         <div className="min-w-0">
-          <h3 className="font-serif font-medium text-base text-slate-100 leading-tight">{person.name}</h3>
+          <h3 className="font-serif font-medium text-[1.25rem] md:text-[1.5rem] text-slate-100 leading-tight">
+            {person.name}
+          </h3>
           <div className="mt-2 space-y-1">
             {person.etapper.map((e) => (
               <p key={e} className="font-sans font-medium text-xs text-orange-400 uppercase tracking-widest">{e}</p>
@@ -141,45 +150,47 @@ function PersonCard({ person, base, isActive, onSelect }) {
           </div>
         </div>
       </div>
-
-      {isActive && (
-        <div className="mt-6 pt-6 border-t border-white/[.06]">
-          {(person.alder || person.oppvokst || person.studerer) && (
-            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 mb-5">
-              {person.alder && (
-                <>
-                  <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest">Alder</dt>
-                  <dd className="font-sans text-sm text-slate-300">{person.alder}</dd>
-                </>
-              )}
-              {person.oppvokst && (
-                <>
-                  <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest">Oppvokst i</dt>
-                  <dd className="font-sans text-sm text-slate-300">{person.oppvokst}</dd>
-                </>
-              )}
-              {person.studerer && (
-                <>
-                  <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest">Studerer</dt>
-                  <dd className="font-sans text-sm text-slate-300">{person.studerer}</dd>
-                </>
-              )}
-            </dl>
-          )}
-          <div className="space-y-3">
-            {person.bio.map((para, i) => (
-              <p key={i} className="font-sans text-[1.125rem] text-slate-400 leading-normal text-pretty">{para}</p>
-            ))}
-          </div>
-        </div>
-      )}
     </article>
   )
 }
 
+function PersonSheetBody({ person }) {
+  const hasMeta = person.alder || person.oppvokst || person.studerer
+  return (
+    <div>
+      {hasMeta && (
+        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 mb-5">
+          {person.alder && (
+            <>
+              <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest self-center">Alder</dt>
+              <dd className="font-sans text-sm text-slate-300">{person.alder}</dd>
+            </>
+          )}
+          {person.oppvokst && (
+            <>
+              <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest self-center">Oppvokst i</dt>
+              <dd className="font-sans text-sm text-slate-300">{person.oppvokst}</dd>
+            </>
+          )}
+          {person.studerer && (
+            <>
+              <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest self-center">Studerer</dt>
+              <dd className="font-sans text-sm text-slate-300">{person.studerer}</dd>
+            </>
+          )}
+        </dl>
+      )}
+      <div className="space-y-3">
+        {person.bio.map((para, i) => (
+          <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty">{para}</p>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function OmOss() {
-  const base = import.meta.env.BASE_URL
-  const [activeId, setActiveId] = useState('Montarou')
+  const [selectedPerson, setSelectedPerson] = useState(null)
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
@@ -193,18 +204,33 @@ export default function OmOss() {
           Norge på langs ble gått av én person, men aldri alene. Ti personer bidro til eventyret — som turledsagere, venner og motivatorer.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {PEOPLE.map((person) => (
             <PersonCard
               key={person.id}
               person={person}
-              base={base}
-              isActive={activeId === person.id}
-              onSelect={() => setActiveId(activeId === person.id ? null : person.id)}
+              onSelect={() => setSelectedPerson(person)}
             />
           ))}
         </div>
       </main>
+
+      <BottomSheet
+        open={selectedPerson !== null}
+        onOpenChange={(isOpen) => { if (!isOpen) setSelectedPerson(null) }}
+        ariaLabel={selectedPerson?.name ?? 'Person'}
+      >
+        {selectedPerson && (
+          <SheetContent
+            image={`${BASE}images/profiles/${selectedPerson.id}.jpg`}
+            imageMode="cover"
+            title={selectedPerson.name}
+            subtitle={selectedPerson.etapper.join(' · ')}
+            body={<PersonSheetBody person={selectedPerson} />}
+          />
+        )}
+      </BottomSheet>
+
       <SiteFooter />
     </div>
   )

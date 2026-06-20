@@ -525,9 +525,31 @@ here as outstanding work, not shipped features.
   Fishing items (2) have no images (none existed in original source).
   Descriptions in Norwegian (2–4 sentences), links to current brand/product pages.
   Temp demo button and DEMO_ITEM const removed from Utstyr.jsx.
-- [ ] **Om Oss page** — color thumbnails with hover zoom (white border hidden in
-  circular crop), two-column desktop layout, reduced mobile card padding, larger
-  names, click-to-bottom-sheet instead of expand-in-place.
+- [x] **Om Oss page** — DONE 2026-06-21:
+  Color thumbnails (grayscale removed), hover zoom (baseline `scale-[1.15]` hides
+  baked-in white border from 70×70px sources; `group-hover:scale-[1.21]` is the
+  hover zoom ≈ 5% relative increase matching site-wide scale-105 convention).
+  Circular thumbnail uses a wrapper div (`overflow-hidden rounded-full`) containing
+  the img — the wrapper handles clipping so CSS `scale` transform on the img
+  genuinely hides the border. Two-column grid on desktop (`md:grid-cols-2`, was
+  `sm:grid-cols-2 lg:grid-cols-3`). Card padding: `p-5 md:p-6` (20px mobile /
+  24px desktop, was `p-6` both). Name: `text-[1.25rem] md:text-[1.5rem]` (was
+  `text-base`). Expand-in-place mechanic removed; clicking any card opens shared
+  BottomSheet with SheetContent (`imageMode="cover"`, portrait photos).
+  Sheet: image / name (title) / etappe(s) joined with " · " (subtitle, eyebrow
+  orange-400) / metadata dl (alder, oppvokst, studerer) + bio paragraphs (body,
+  via `PersonSheetBody` ReactNode). `activeId` state removed; replaced with
+  `selectedPerson` state driving BottomSheet open/close.
+- [ ] **Mobile nav redesign** — current nav strip (space-evenly pill, 5 items) gets cramped
+  on mobile, especially after font-size was already reduced to 0.75rem (12px, the type-scale
+  floor) to fit 5 items. Needs a better mobile navigation solution than the current
+  squeeze-to-fit approach. Alternatives to consider when picked up: abbreviated labels, a
+  different layout pattern, icon-based nav, or similar — not yet decided.
+- [ ] **Desktop nav refinement** — current desktop nav has too much spacing between items and
+  could use visual refinement. Consider adding a drop-shadow on the homepage/hero variant
+  specifically, for depth against the hero background image. Explicitly deferred: revisit once
+  all other content work (Om Oss, Reiserute rebuild) is complete, since the nav's visual weight
+  should be judged against the finished page, not a partially-built one.
 - [x] **Title card mobile eyebrow** — DONE 2026-06-20: "· Nordkapp → Lindesnes"
   hidden on mobile via `<span className="hidden sm:inline">`. Desktop unchanged.
 - [x] **Main nav: add Sponsorer as a real nav item** — DONE 2026-06-20: 5th item
@@ -1155,6 +1177,23 @@ here as outstanding work, not shipped features.
   background product PNGs render cleanly against the dark sheet. 'cover': `object-cover` fills
   the container edge-to-edge — appropriate for portrait and landscape photographs (Om Oss, Reiserute).
   Default changed from 'cover' to 'contain' to match the primary Utstyr use case.
+- 2026-06-21: Om Oss page redesign — card grid + BottomSheet integration.
+  Grayscale filter removed from thumbnail images (was applied always-on via className, lifted
+  only on the active card — now always full color). Circular thumbnail cropping: wrapper div
+  (`w-14 h-14 overflow-hidden rounded-full`) handles clipping; img inside at `scale-[1.15]`
+  baseline pushes the 3–4px white border baked into the 70×70px source JPGs outside the circle;
+  `group-hover:scale-[1.21]` adds hover zoom (≈ 5% relative increase on a 1.15 base, matching
+  the scale-105 site convention on sponsors and reisebrev covers). `will-change-transform` on
+  the img for GPU promotion. Grid changed from `sm:grid-cols-2 lg:grid-cols-3` to
+  `md:grid-cols-2` (two columns on desktop, one on mobile — better for card width given bio
+  content depth). Card padding: `p-5 md:p-6` (was flat `p-6` — reduces by 4px on mobile only).
+  Name font-size: `text-[1.25rem] md:text-[1.5rem]` (was `text-base` / 16px).
+  Expand-in-place mechanic (ring highlight, isActive prop, inline-expanding bio block) removed
+  entirely. `activeId` state → `selectedPerson` state. Clicking any card opens shared
+  BottomSheet with SheetContent: `imageMode="cover"` (portrait photos), title = person name,
+  subtitle = etapper joined with " · " (orange-400 eyebrow via .eyebrow class), body =
+  `<PersonSheetBody>` ReactNode (metadata dl + bio paragraphs). The ReactNode body approach
+  avoids duplicating SheetContent's font/size/color wrapper classes on each paragraph.
 - 2026-06-20: BottomSheet bug fixes — desktop non-render + mobile too-short height.
   Bug 1 (desktop): vaul's snap-point offset math (`window.innerHeight - snapPoint ×
   window.innerHeight`) assumes the drawer is full-viewport-height tall. When content is
