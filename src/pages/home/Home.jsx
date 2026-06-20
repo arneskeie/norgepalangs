@@ -18,27 +18,6 @@ const VELKOMMEN = [
 // Last sentence of VELKOMMEN[2] — rendered as a featured ingress paragraph in its original position
 const FEATURED = 'Vi legger bort vekkerklokka, timeplanen og de andre heftelsene som hører sivilisasjonen til og lar bekymringene dreie seg om å holde varmen, finne brensel, få ørret i gryta og tørke sokker.'
 
-// ─── Verbatim from 02-restored-static/index.html sidebar ────────────────────
-const LENKER = [
-  { label: 'Rasmus og Eike sin friluftsblogg', url: 'http://www.norgepaakryssogtvers.net' },
-  { label: 'Jens Nilsens telemarksklubb!',      url: 'http://www.halddetoppen.no'          },
-  { label: 'Magasin for naturopplevelse',        url: 'http://www.friluftsliv.no/ekspedisjoner' },
-]
-
-const EKSPEDISJONER = [
-  { label: 'Oddvar og Anne',     url: 'http://www.repstad.net'                    },
-  { label: 'Frederik',           url: 'http://www.frederikpaatur.blogspot.com'    },
-  { label: 'Tom og Simon',       url: 'http://www.keeperifokus.no'                },
-  { label: 'Tonice og Arnt Helge', url: 'http://www.tureroveralt.no'             },
-]
-
-const PRESSE = [
-  { alt: 'Arctic Femme',  file: 'arcticfemme.jpg',  url: 'http://www.arcticfemme.com/index.php?option=com_content&view=article&id=76' },
-  { alt: 'Saltenposten',  file: 'saltenposten.jpg',  url: 'http://www.saltenposten.no/nyheter/article191213.ece'                      },
-  { alt: 'Nordlys',       file: 'nordlys.png',       url: 'http://www.nordlys.no/nyheter/article3875706.ece'                          },
-  { alt: 'Gamme',         file: 'gamme.png',         url: 'http://www.eventyrblogg.com/default.asp?Newsid=267&side=nyheter'           },
-]
-
 // URLs verified 2026-06-19. Dead/unverifiable flagged with comment.
 const SPONSORS = [
   { name: 'XXL',                 file: 'XXL.jpg',           url: 'http://www.xxl.no/'                    },
@@ -205,81 +184,6 @@ export default function Home() {
                   <span className="font-sans font-normal text-slate-500 mr-2">{String(letter.n).padStart(2, '0')}</span>
                   {letter.title}
                 </h3>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Andre på tur ────────────────────────────────────────────────────── */}
-      <section id="andre-paa-tur" className="py-12 md:py-20">
-        <div className="max-w-content mx-auto px-6">
-          <p className="eyebrow mb-4">Lenker</p>
-          <h2 className="font-serif text-[2.5rem] md:text-5xl leading-[0.95] text-slate-50 mb-10">
-            Andre på tur
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-10">
-            <div>
-              <p className="font-sans font-medium text-sm uppercase tracking-[0.2em] text-slate-500 mb-5">Lenker</p>
-              <ul className="space-y-4">
-                {LENKER.map(({ label, url }) => (
-                  <li key={url}>
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-sans text-[1.125rem] text-slate-400 hover:text-slate-100 transition-colors duration-150"
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-sans font-medium text-sm uppercase tracking-[0.2em] text-slate-500 mb-5">NPL-Ekspedisjoner vi har møtt</p>
-              <ul className="space-y-4">
-                {EKSPEDISJONER.map(({ label, url }) => (
-                  <li key={url}>
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-sans text-[1.125rem] text-slate-400 hover:text-slate-100 transition-colors duration-150"
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Presse ──────────────────────────────────────────────────────────── */}
-      <section id="presse" className="py-12 md:py-20">
-        <div className="max-w-content mx-auto px-6">
-          <p className="eyebrow mb-4">Presse</p>
-          <h2 className="font-serif text-[2.5rem] md:text-5xl leading-[0.95] text-slate-50 mb-10">
-            I pressen.
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {PRESSE.map(({ alt, file, url }) => (
-              <a
-                key={alt}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center h-16 opacity-60 hover:opacity-100 transition-opacity duration-200"
-                aria-label={alt}
-              >
-                <img
-                  src={`${base}images/diverse/${file}`}
-                  alt={alt}
-                  className="max-h-full w-auto max-w-full object-contain"
-                  style={{ mixBlendMode: 'screen' }}
-                />
               </a>
             ))}
           </div>

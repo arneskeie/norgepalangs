@@ -222,22 +222,7 @@ current session.
    (font-serif, text-xl). No excerpt, no "Les mer" link, no "Alle reisebrev"
    button — all entries shown directly. Each card is a single `<a>` block link
    pointing to `reisebrevN.html`. The old list page (reisebrev.html) is deleted.
-5. **Andre på tur** — id="andre-paa-tur". Eyebrow "Lenker", h2 "Andre på tur".
-   Two-column grid (sm:grid-cols-2): left column "Lenker" (3 items), right column
-   "NPL-Ekspedisjoner vi har møtt" (4 items). Sub-labels styled as small eyebrow-like
-   text (`text-slate-500 uppercase tracking-[0.2em] text-sm`). Links styled as
-   `text-slate-400 hover:text-slate-100 text-[1.125rem]`, `target="_blank"`.
-   Content verbatim from 02-restored-static/index.html sidebar ("LENKER" + "NPL-Ekspedisjoner vi har møtt" blocks).
-   This section is intentionally lighter/lower visual weight than main content sections
-   (no images, simple text-link list).
-6. **Presse** — id="presse". Eyebrow "Presse", h2 "I pressen.". 4 press logos
-   in a 2-col mobile / 4-col desktop grid (`grid-cols-2 md:grid-cols-4 gap-8`).
-   Each logo is a clickable `<a>` link (external, target="_blank"). Logos: arcticfemme.jpg,
-   saltenposten.jpg, nordlys.png, gamme.png — all from `public/images/diverse/`.
-   Copied from 02-restored-static/images/diverse/. Hover: opacity-60 → opacity-100.
-   `mix-blend-mode: screen` on the img elements (same as sponsors).
-   Content/URLs verbatim from 02-restored-static/index.html sidebar ("PRESSE" block).
-7. **Sponsor logos** — own dedicated section, NOT inside the footer.
+5. **Sponsor logos** — own dedicated section, NOT inside the footer.
    Logo grid, all 20 real sponsors (see Content inventory). Logos sit
    directly on the dark background with `mix-blend-mode: screen`. Default:
    grayscale (`grayscale` Tailwind). Hover: full color (`group-hover:grayscale-0`) +
@@ -251,7 +236,7 @@ current session.
    transitions). Note: 5 logos (Helsport, MX Sport, Skaidi Hotel, Femund
    Fjellstue, Umbukta Fjellstue) have non-black backgrounds — they show their
    original bg color via screen blend; acceptable, PNG conversion deferred.
-8. **Footer** — two-part layout within `max-w-content` container:
+6. **Footer** — two-part layout within `max-w-content` container:
    LEFT: "NORGE på LANGS" wordmark at `text-[1.125rem]` via `<Wordmark>` component
    (same font/accent/tracking as TitleCard but footer-sized). RIGHT: credit as a
    `<div>` with 3 separate `<p>` lines (no "|" separators), `text-slate-500
@@ -379,7 +364,7 @@ The `00` images for entries 3–6 were 75×75 thumbnails; the `01` images were
 medium-res; the `02` images were consistently the highest-resolution.
 `LATEST_REISEBREV.img` on the homepage also updated to `Reisebrev0602.jpg`.
 
-**Homepage section ids:** hero, om-turen, ruta, reisebrev, andre-paa-tur, presse, sponsorer.
+**Homepage section ids:** hero, om-turen, ruta, reisebrev, sponsorer.
 
 ## Individual Reisebrev post pages
 
@@ -941,3 +926,28 @@ None currently open. Add new issues here as they're found, dated.
   only struct/zlib (no PIL/ImageMagick — not available in this environment).
   All 11 HTML entry points updated with 4 favicon `<link>` tags. Vite transforms
   `/favicon.svg` → `/norgepalangs/favicon.svg` at build time (base URL injection).
+- 2026-06-20: "Andre på tur" (id="andre-paa-tur") and "Presse" (id="presse") sections
+  removed from the homepage. Both were added in the same session but removed immediately
+  after: every link in "Andre på tur" (Lenker + NPL-Ekspedisjoner) returned 404 or
+  timed out on verification; every link in "Presse" was dead or flagged unsafe (arcticfemme.com
+  specifically flagged as unsafe regardless of HTTP status). Sections were data-arrays
+  + JSX only — removing them left no dangling CSS or shared imports.
+  Press logo image files deleted from public/images/diverse/: arcticfemme.jpg,
+  saltenposten.jpg, nordlys.png, gamme.png. Homepage section order renumbered:
+  Sponsors back to item 5, Footer item 6, Version switcher item 7.
+  Section ids updated: andre-paa-tur and presse removed.
+- 2026-06-20: Sponsorer page — mobile layout fix. Each sponsor entry (SponsorRow component
+  and the Rui Fjellstoge text-only entry) previously showed logo and text side-by-side on
+  all screen widths, which was cramped on narrow mobile screens. Changed outer div from
+  `flex` to `flex flex-col sm:flex-row` and logo container from `flex-none w-20` to
+  `flex-none w-full sm:w-20`. Desktop (sm+) layout unchanged. No changes to Sponsorer.jsx
+  content, description text, or sponsor URLs.
+- 2026-06-20: favicon.ico regenerated from new Norway silhouette source files.
+  apple-touch-icon.png, favicon-16x16.png, favicon-32x32.png, and favicon.svg were
+  manually replaced in place with a professionally designed Adobe Illustrator SVG
+  (115 lines, viewBox 0 0 180 180, orange-400 background, complex white Norway path).
+  favicon.ico regenerated via pure Python (no PIL/ImageMagick available): reads
+  favicon-16x16.png and favicon-32x32.png as raw PNG bytes; decodes 32x32 PNG to RGBA
+  (struct/zlib, all 5 filter types); bilinear-scales to 48x48; re-encodes 48x48 as PNG;
+  packs all three into a valid 3-image ICO container (PNG-in-ICO format, supported by
+  all modern browsers). Result: 7120 bytes.
