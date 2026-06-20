@@ -68,10 +68,13 @@ current session.
   pattern across components, not by guessing upfront. Current classes:
   - `.eyebrow` — `font-sans font-medium text-sm uppercase tracking-[0.2em] text-orange-400`
   - `.section-description` — `font-sans text-[1.5rem] leading-normal text-slate-400`
-    Applied to: #ruta description (Home), OmOss intro, Reisebrev intro,
-    Utstyr intro. Per-instance spacing (mb-*) and max-width stay in JSX.
+    Applied to: #ruta description (Home), #sponsorer description (Home),
+    OmOss intro, Utstyr intro, Sponsorer page intro.
+    Per-instance spacing (mb-*) stays in JSX; **no max-width** — text is
+    full content-column width, constrained only by the page's max-w-content wrapper.
+    The per-instance max-w was removed from all 3 inner pages (OmOss had 560px,
+    Utstyr and Sponsorer page had 640px each).
     NOT applied to Reiserute INTRO (uses slate-300, different visual role).
-    Future candidate: Sponsors section line (noted for a later batch).
 - Accent color: **orange-400** (`#fb923c`). Confirmed via real color
   analysis of 60 sampled trip photos — teal (the original logo color) was
   the weakest hue present in the actual photography; orange-400 matches
@@ -219,7 +222,22 @@ current session.
    (font-serif, text-xl). No excerpt, no "Les mer" link, no "Alle reisebrev"
    button — all entries shown directly. Each card is a single `<a>` block link
    pointing to `reisebrevN.html`. The old list page (reisebrev.html) is deleted.
-5. **Sponsor logos** — own dedicated section, NOT inside the footer.
+5. **Andre på tur** — id="andre-paa-tur". Eyebrow "Lenker", h2 "Andre på tur".
+   Two-column grid (sm:grid-cols-2): left column "Lenker" (3 items), right column
+   "NPL-Ekspedisjoner vi har møtt" (4 items). Sub-labels styled as small eyebrow-like
+   text (`text-slate-500 uppercase tracking-[0.2em] text-sm`). Links styled as
+   `text-slate-400 hover:text-slate-100 text-[1.125rem]`, `target="_blank"`.
+   Content verbatim from 02-restored-static/index.html sidebar ("LENKER" + "NPL-Ekspedisjoner vi har møtt" blocks).
+   This section is intentionally lighter/lower visual weight than main content sections
+   (no images, simple text-link list).
+6. **Presse** — id="presse". Eyebrow "Presse", h2 "I pressen.". 4 press logos
+   in a 2-col mobile / 4-col desktop grid (`grid-cols-2 md:grid-cols-4 gap-8`).
+   Each logo is a clickable `<a>` link (external, target="_blank"). Logos: arcticfemme.jpg,
+   saltenposten.jpg, nordlys.png, gamme.png — all from `public/images/diverse/`.
+   Copied from 02-restored-static/images/diverse/. Hover: opacity-60 → opacity-100.
+   `mix-blend-mode: screen` on the img elements (same as sponsors).
+   Content/URLs verbatim from 02-restored-static/index.html sidebar ("PRESSE" block).
+7. **Sponsor logos** — own dedicated section, NOT inside the footer.
    Logo grid, all 20 real sponsors (see Content inventory). Logos sit
    directly on the dark background with `mix-blend-mode: screen`. Default:
    grayscale (`grayscale` Tailwind). Hover: full color (`group-hover:grayscale-0`) +
@@ -227,15 +245,19 @@ current session.
    Section title h2/font-serif ("Sponsorer."). Description line below title
    uses `.section-description` class. Grid: 4 columns mobile, 5 columns md+
    (`grid-cols-4 md:grid-cols-5`). "Les mer om sponsorene" btn-outline below
-   grid links to `sponsorer.html`. `.sponsor-logo` GPU hint: `will-change: transform`
-   (opacity removed since opacity no longer transitions). Note: 5 logos
-   (Helsport, MX Sport, Skaidi Hotel, Femund Fjellstue, Umbukta Fjellstue)
-   have non-black backgrounds — they show their original bg color via screen blend;
-   acceptable, PNG conversion deferred.
-6. **Footer** — two-part layout within `max-w-content` container:
+   grid in a `<div className="mt-4">` wrapper (16px extra spacing above button,
+   on top of the grid's mb-10). Links to `sponsorer.html`. `.sponsor-logo` GPU
+   hint: `will-change: transform` (opacity removed since opacity no longer
+   transitions). Note: 5 logos (Helsport, MX Sport, Skaidi Hotel, Femund
+   Fjellstue, Umbukta Fjellstue) have non-black backgrounds — they show their
+   original bg color via screen blend; acceptable, PNG conversion deferred.
+8. **Footer** — two-part layout within `max-w-content` container:
    LEFT: "NORGE på LANGS" wordmark at `text-[1.125rem]` via `<Wordmark>` component
-   (same font/accent/tracking as TitleCard but footer-sized). RIGHT: credit text
-   `font-sans text-xs text-slate-600`, right-aligned on desktop.
+   (same font/accent/tracking as TitleCard but footer-sized). RIGHT: credit as a
+   `<div>` with 3 separate `<p>` lines (no "|" separators), `text-slate-500
+   text-[0.875rem] leading-snug`, right-aligned on desktop, centered mobile.
+   Lines: "Turgåer & Ansvarlig redaktør: Marius Montarou" (Marius linked to
+   norgepalangs-2009/omoss.html), "Webmaster: Arne S. Skeie", "NORGEpåLANGS © 2008/2009".
    Mobile: `flex-col items-center gap-4` (stacked centered). Desktop (sm+):
    `flex-row justify-between`. No eyebrow or subtitle from TitleCard — wordmark only.
    The `<Wordmark>` component is a named export from SiteHeader.jsx; import it from
@@ -357,7 +379,7 @@ The `00` images for entries 3–6 were 75×75 thumbnails; the `01` images were
 medium-res; the `02` images were consistently the highest-resolution.
 `LATEST_REISEBREV.img` on the homepage also updated to `Reisebrev0602.jpg`.
 
-**Homepage section ids:** hero, om-turen, ruta, reisebrev, sponsorer.
+**Homepage section ids:** hero, om-turen, ruta, reisebrev, andre-paa-tur, presse, sponsorer.
 
 ## Individual Reisebrev post pages
 
@@ -883,3 +905,39 @@ None currently open. Add new issues here as they're found, dated.
   a text-only entry (no logo in the 20-logo set). Personal thank-you list of 26 names.
   Not in primary nav — only reachable via the homepage "Les mer om sponsorene" button.
   Build now 11 pages (was 10).
+- 2026-06-20: Two new homepage sections added between Reisebrev and Sponsors.
+  "Andre på tur" (id="andre-paa-tur"): eyebrow "Lenker", h2 "Andre på tur", 2-column
+  text-link layout. Lenker (3) + NPL-Ekspedisjoner vi har møtt (4). All content
+  verbatim from 02-restored-static/index.html sidebar. Links in slate-400 with
+  hover:slate-100 transition, text-[1.125rem], target="_blank".
+  "Presse" (id="presse"): eyebrow "Presse", h2 "I pressen.", 4-logo grid
+  (grid-cols-2 md:grid-cols-4). Logos: arcticfemme.jpg, saltenposten.jpg,
+  nordlys.png, gamme.png — copied from 02-restored-static/images/diverse/ to
+  public/images/diverse/. mix-blend-mode: screen, opacity-60 default / opacity-100
+  hover. URLs verbatim from 02-restored-static. Homepage section order renumbered:
+  Sponsors now item 7, Footer item 8, Version switcher item 9.
+- 2026-06-20: Sponsor section button spacing: added `<div className="mt-4">` wrapper
+  around "Les mer om sponsorene" button — adds 16px (1rem, on-grid) above button
+  beyond the grid's existing mb-10.
+- 2026-06-20: `.section-description` max-width removed from all inner pages. OmOss
+  had max-w-[560px], Utstyr and Sponsorer page both had max-w-[640px]. All now
+  full content-column width (960px, constrained by max-w-content wrapper).
+  CLAUDE.md section-description rule updated accordingly.
+- 2026-06-20: Footer credit text restyled. Was: single `<p>` with `|` separators,
+  text-xs (12px), text-slate-600. Now: `<div>` with 3 separate `<p>` lines (no `|`),
+  text-[0.875rem] (14px), text-slate-500 (lighter), leading-snug. Lines:
+  "Turgåer & Ansvarlig redaktør: Marius Montarou" / "Webmaster: Arne S. Skeie" /
+  "NORGEpåLANGS © 2008/2009". Marius now linked to norgepalangs-2009/omoss.html
+  (was plain text on the modernized site; the restored-site omoss page is the
+  appropriate target since the link existed on the original 2009 site).
+- 2026-06-20: Favicon added. White Norway silhouette on orange-400 (#fb923c) background.
+  SVG source: simplemaps.com (free for commercial use;
+  https://simplemaps.com/resources/svg-license). Silhouette is a simplified 15-point
+  polygon approximation (not tracing the real SVG path data — at icon sizes, the actual
+  coastal complexity is illegible; a geometric approximation reads better). Generated:
+  favicon.svg (scalable, rx=14 rounded square bg), favicon-16x16.png, favicon-32x32.png,
+  apple-touch-icon.png (180×180), favicon.ico (16/32/48 multi-res PNG-in-ICO).
+  Rasterization: pure Python polygon fill with 8× supersampling (anti-aliasing) using
+  only struct/zlib (no PIL/ImageMagick — not available in this environment).
+  All 11 HTML entry points updated with 4 favicon `<link>` tags. Vite transforms
+  `/favicon.svg` → `/norgepalangs/favicon.svg` at build time (base URL injection).

@@ -204,7 +204,7 @@ export default function Sponsorer() {
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-4">
           Uten dem, ingen tur.
         </h1>
-        <p className="section-description max-w-[640px] mb-14 text-pretty">
+        <p className="section-description mb-14 text-pretty">
           {INTRO}
         </p>
 

@@ -163,7 +163,7 @@ export default function Utstyr() {
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-6">
           Det vi stolte på.
         </h1>
-        <p className="section-description max-w-[640px] mb-4 text-pretty">{INTRO}</p>
+        <p className="section-description mb-4 text-pretty">{INTRO}</p>
 
         <div className="flex justify-end mb-6">
           <button

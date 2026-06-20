@@ -189,7 +189,7 @@ export default function OmOss() {
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-4">
           Folka bak turen.
         </h1>
-        <p className="section-description max-w-[560px] mb-14 text-pretty">
+        <p className="section-description mb-14 text-pretty">
           Norge på langs ble gått av én person, men aldri alene. Ti personer bidro til eventyret — som turledsagere, venner og motivatorer.
         </p>
 

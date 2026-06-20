@@ -7,9 +7,11 @@ export default function SiteFooter() {
       <footer className="border-t border-white/[.06] py-8">
         <div className="max-w-content mx-auto px-6 flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Wordmark className="text-[1.125rem]" />
-          <p className="font-sans text-xs text-slate-600 text-center sm:text-right">
-            Turgåer &amp; Ansvarlig redaktør: Marius Montarou | Webmaster: Arne S. Skeie | NORGEpåLANGS © 2008/2009
-          </p>
+          <div className="font-sans text-[0.875rem] text-slate-500 leading-snug text-center sm:text-right">
+            <p>Turgåer &amp; Ansvarlig redaktør: <a href="https://arneskeie.github.io/norgepalangs-2009/omoss.html" className="hover:text-slate-300 transition-colors duration-150">Marius Montarou</a></p>
+            <p>Webmaster: Arne S. Skeie</p>
+            <p>NORGEpåLANGS © 2008/2009</p>
+          </div>
         </div>
       </footer>
 
