@@ -114,11 +114,10 @@ export default function Home() {
           </div>
           <div className="mt-8 flex justify-end">
             <img
-              src={`${base}images/diverse/SignaturLiten.jpg`}
+              src={`${base}images/diverse/Signatur.webp`}
               alt="Marius Montarou"
-              width={190}
-              height={46}
-              style={{ mixBlendMode: 'screen' }}
+              width={285}
+              height={69}
             />
           </div>
         </div>

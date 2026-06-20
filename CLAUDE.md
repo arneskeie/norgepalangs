@@ -165,8 +165,8 @@ current session.
    FEATURED paragraph rendered **in its original position** (between paragraphs
    2 and 3) with ingress styling (font-serif, 1.5rem, slate-200) — same
    `space-y-5` spacing as surrounding paragraphs. Closes with the
-   handwritten signature image (`public/images/diverse/SignaturLiten.jpg`,
-   190×46 JPG with white bg; `mix-blend-mode: screen`) **right-aligned**
+   handwritten signature image (`public/images/diverse/Signatur.webp`,
+   285×69 WebP with transparent background; no blend mode needed) **right-aligned**
    (flex justify-end). No text attribution — the image IS the attribution.
 3. **Ruta section** — id="ruta". Eyebrow "Ruta" + h2 "15 etapper,
    Nordkapp til Lindesnes." + short description (1.5rem / ingress size, full-width,
@@ -671,3 +671,9 @@ None currently open. Add new issues here as they're found, dated.
      animation's layout and paint effects from the rest of the page.
   4. `decoding="async"` added to strip `<img>` elements — moves JPEG decode
      off the main thread.
+- 2026-06-20: Signature image swapped — `SignaturLiten.jpg` (190×46, white bg,
+  mix-blend-mode: screen) replaced with `Signatur.webp` (800×194 source,
+  transparent bg, rendered at 285×69 — ~50% larger than original). No
+  mix-blend-mode needed; the WebP transparency renders naturally against the
+  dark section background with no white box/halo artifact. `SignaturLiten.jpg`
+  remains in public/images/diverse/ but is no longer referenced anywhere.
