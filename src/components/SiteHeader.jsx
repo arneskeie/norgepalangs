@@ -101,7 +101,7 @@ export function Wordmark({ className = '' }) {
 function TitleCard({ href = null }) {
   const inner = (
     <>
-      <p className="eyebrow mb-4">2008 — 2009 · Nordkapp → Lindesnes</p>
+      <p className="eyebrow mb-4">2008 — 2009<span className="hidden sm:inline"> · Nordkapp → Lindesnes</span></p>
       <h1 className="leading-none text-[1.75rem] sm:text-[3rem]">
         <Wordmark />
       </h1>

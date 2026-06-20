@@ -37,9 +37,11 @@
   }
 
   /* Section intro paragraph directly under a section h2 — function-based reuse.
-     Per-instance spacing (mb-*) and max-width stay in JSX. */
+     Per-instance spacing (mb-*) and max-width stay in JSX.
+     font-size uses clamp(): 1.25rem (20px) at ≤320px, 1.5rem (24px) at ≥457px. */
   .section-description {
-    @apply font-sans text-[1.5rem] leading-normal text-slate-400;
+    @apply font-sans leading-normal text-slate-400;
+    font-size: clamp(1.25rem, calc(3.5vw + 0.5rem), 1.5rem);
   }
 }
 
@@ -368,7 +370,7 @@
     border-radius: 0;
   }
   .nav-link {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
 }
 

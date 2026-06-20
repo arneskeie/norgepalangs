@@ -3,7 +3,8 @@ import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
 
 // ─── Verbatim from 02-restored-static/utstyr.html ────────────────────────────
-const INTRO = 'For å kunne gjennomføre prosjektet kreves produkter som ikke svikter under kontinuerlig og hard bruk. Alle produktene vi bruker er vi helt avhengige av at fungerer som de skal, når de skal. Dette stiller store krav til de produktene og produsentene vi velger å stole på. Alle produktene, med noen få unntak, har jeg mye personlig erfaring med. Gjennom deltidsjobben på XXL og tidligere jobb i Sport 1-butikk, samt en etter hvert betydelig porsjon turerfaring, har jeg en viss oversikt over hva som finnes på markedet og hva som fungerer. Dermed er lite overlatt til tilfeldighetene hva angår valg av utstyr.'
+const INTRO_DESC = 'For å kunne gjennomføre prosjektet kreves produkter som ikke svikter under kontinuerlig og hard bruk. Alle produktene vi bruker er vi helt avhengige av at fungerer som de skal, når de skal. Dette stiller store krav til de produktene og produsentene vi velger å stole på.'
+const INTRO_BODY = 'Alle produktene, med noen få unntak, har jeg mye personlig erfaring med. Gjennom deltidsjobben på XXL og tidligere jobb i Sport 1-butikk, samt en etter hvert betydelig porsjon turerfaring, har jeg en viss oversikt over hva som finnes på markedet og hva som fungerer. Dermed er lite overlatt til tilfeldighetene hva angår valg av utstyr.'
 
 const CATEGORIES = [
   {
@@ -163,7 +164,8 @@ export default function Utstyr() {
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-6">
           Det vi stolte på.
         </h1>
-        <p className="section-description mb-4 text-pretty">{INTRO}</p>
+        <p className="section-description mb-4 text-pretty">{INTRO_DESC}</p>
+        <p className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty mb-4">{INTRO_BODY}</p>
 
         <div className="flex justify-end mb-6">
           <button

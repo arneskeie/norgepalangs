@@ -177,7 +177,7 @@ function SponsorRow({ sponsor, base }) {
 
   return (
     <div className="flex flex-col sm:flex-row gap-6 items-start py-8 border-t border-white/[.06]">
-      <div className="flex-none w-full sm:w-20 h-14 flex items-center justify-center">
+      <div className="flex-none w-full sm:w-20 h-14 flex items-center justify-start sm:justify-center">
         {url ? (
           <a href={url} target="_blank" rel="noopener noreferrer" aria-label={name}>
             {logo}
@@ -227,8 +227,8 @@ export default function Sponsorer() {
             ))}
             {/* Rui Fjellstoge — no logo in sponsor set, text-only entry */}
             <div className="flex flex-col sm:flex-row gap-6 items-start py-8 border-t border-white/[.06]">
-              <div className="flex-none w-full sm:w-20 h-14 flex items-center justify-center">
-                <span className="font-serif text-xs text-slate-600 text-center leading-tight">Rui Fjellstoge</span>
+              <div className="flex-none w-full sm:w-20 h-14 flex items-center justify-start sm:justify-center">
+                <span className="font-serif text-xs text-slate-600 leading-tight">Rui Fjellstoge</span>
               </div>
               <div className="min-w-0">
                 <h3 className="font-serif text-xl text-slate-100 mb-2">Rui Fjellstoge, Haukeli</h3>

@@ -5,6 +5,7 @@ const NAV_LINKS = [
   { label: 'Reiserute & galleri', href: 'reiserute.html' },
   { label: 'Reisebrev',           href: 'index.html#reisebrev' },
   { label: 'Utstyr',              href: 'utstyr.html'    },
+  { label: 'Sponsorer',           href: 'sponsorer.html' },
 ]
 
 export default function SiteNav({ currentPage = '' }) {

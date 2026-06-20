@@ -96,14 +96,14 @@ export default function Home() {
       {/* ── Om turen ────────────────────────────────────────────────────────── */}
       <section id="om-turen" className="pt-8 pb-14 md:pt-8 md:pb-24">
         <div className="max-w-content mx-auto px-6">
-          <p className="font-serif text-[1.5rem] text-slate-200 leading-normal mb-8 text-pretty">{INGRESS}</p>
+          <p className="font-serif text-[clamp(1.25rem,calc(3.5vw+0.5rem),1.5rem)] text-slate-200 leading-normal mb-8 text-pretty">{INGRESS}</p>
           <div className="space-y-5">
             {VELKOMMEN.slice(0, 3).map((para, i) => (
               <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty">
                 {para}
               </p>
             ))}
-            <p className="font-serif text-[1.5rem] text-slate-200 leading-normal text-pretty">{FEATURED}</p>
+            <p className="font-serif text-[clamp(1.25rem,calc(3.5vw+0.5rem),1.5rem)] text-slate-200 leading-normal text-pretty">{FEATURED}</p>
             {VELKOMMEN.slice(3).map((para, i) => (
               <p key={i + 3} className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty">
                 {para}

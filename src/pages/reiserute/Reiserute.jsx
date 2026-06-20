@@ -186,7 +186,7 @@ export default function Reiserute() {
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-6">
           71°10′N → 57°58′N
         </h1>
-        <p className="font-sans text-[1.5rem] text-slate-300 leading-normal max-w-[640px] mb-4 text-pretty">{INTRO}</p>
+        <p className="section-description mb-4 text-pretty">{INTRO}</p>
 
         {/* Route note */}
         <div className="border-l-2 border-orange-400/30 pl-5 mb-16 max-w-[640px]">

@@ -67,14 +67,19 @@ current session.
   not just a coincidental style match. Identify new candidates by usage
   pattern across components, not by guessing upfront. Current classes:
   - `.eyebrow` — `font-sans font-medium text-sm uppercase tracking-[0.2em] text-orange-400`
-  - `.section-description` — `font-sans text-[1.5rem] leading-normal text-slate-400`
+  - `.section-description` — `font-sans leading-normal text-slate-400` with
+    `font-size: clamp(1.25rem, calc(3.5vw + 0.5rem), 1.5rem)` — scales from
+    20px (≤320px) to 24px (≥457px), smooth between. The previously fixed
+    `text-[1.5rem]` is replaced by this clamp in CSS.
     Applied to: #ruta description (Home), #sponsorer description (Home),
-    OmOss intro, Utstyr intro, Sponsorer page intro.
+    OmOss intro, Utstyr intro (first paragraph only — see split below),
+    Sponsorer page intro, Reisebrev post pages (first body paragraph),
+    Reiserute INTRO (added 2026-06-20).
     Per-instance spacing (mb-*) stays in JSX; **no max-width** — text is
     full content-column width, constrained only by the page's max-w-content wrapper.
     The per-instance max-w was removed from all 3 inner pages (OmOss had 560px,
-    Utstyr and Sponsorer page had 640px each).
-    NOT applied to Reiserute INTRO (uses slate-300, different visual role).
+    Utstyr and Sponsorer page had 640px each). Reiserute INTRO previously had
+    max-w-[640px] and text-slate-300; both removed/updated when class was applied.
 - Accent color: **orange-400** (`#fb923c`). Confirmed via real color
   analysis of 60 sampled trip photos — teal (the original logo color) was
   the weakest hue present in the actual photography; orange-400 matches
@@ -100,7 +105,7 @@ current session.
 
 ## Site structure decisions
 
-- **Nav (4 items only):** Om oss · Reiserute & galleri · Reisebrev · Utstyr
+- **Nav (5 items):** Om oss · Reiserute & galleri · Reisebrev · Utstyr · Sponsorer
   "Reisebrev" nav link now points to `index.html#reisebrev` (homepage section anchor) —
   no separate list page exists. It will never show as "active" since no page passes that
   href as currentPage; this is acceptable and expected.
@@ -108,7 +113,8 @@ current session.
   as a 912px-wide rounded pill. Mobile (< 768px): full-bleed strip (no
   pill shape, no max-width). Items use `justify-content: space-evenly`
   and `width: 100%` at ALL screen sizes. Nav items are **sentence case**
-  (no uppercase). Font size: 16px desktop / 14px mobile.
+  (no uppercase). Font size: 16px desktop / 12px mobile (reduced from 14px
+  when 5th item was added — 5 items at 14px is too cramped on 375px screens).
   Letter-spacing: 0.02em.
 - **Nav two-layer structure:** `.nav-inner` is an invisible layout wrapper
   (`max-width: 960px; margin: 0 auto; padding: 0 1.5rem` — no
@@ -129,12 +135,15 @@ current session.
   This was a deliberate nav-reduction decision, not an oversight.
 - **Signature header component** (title card + photo strip) appears on
   every page. TitleCard styling (shared across all variants):
-  - Eyebrow: "2008 — 2009 · Nordkapp → Lindesnes" — uses `.eyebrow` CSS class
-    (Work Sans, font-medium, uppercase, tracking-[0.2em], orange-400) with a
-    `.title-card .eyebrow` CSS override that reduces font-size to **0.75rem
-    (12px) / line-height 1rem** desktop; **0.625rem (10px)** mobile (see
-    mobile exception below). Eyebrow wraps to 2 lines on mobile — expected
-    and accounted for in the strip centering calculation.
+  - Eyebrow: "2008 — 2009 · Nordkapp → Lindesnes" on desktop / "2008 — 2009"
+    on mobile — uses `.eyebrow` CSS class (Work Sans, font-medium, uppercase,
+    tracking-[0.2em], orange-400) with a `.title-card .eyebrow` CSS override that
+    reduces font-size to **0.75rem (12px) / line-height 1rem** desktop;
+    **0.625rem (10px)** mobile (see mobile exception below). The "· Nordkapp →
+    Lindesnes" portion is wrapped in `<span className="hidden sm:inline">` —
+    hidden below 640px (sm breakpoint), visible at sm and above. Eyebrow wraps
+    to 2 lines on mobile — expected and accounted for in the strip centering
+    calculation.
   - Wordmark: "NORGE på LANGS" — rendered via `<Wordmark />` named export from
     SiteHeader.jsx. Base styles in Wordmark: `font-serif font-normal leading-none
     tracking-tight text-slate-50`, orange `<em>` on "på". TitleCard h1 wraps
@@ -398,8 +407,9 @@ same-page anchor clicks. This makes `index.html#reisebrev` actually land at the 
 ## Sponsorer page
 
 `sponsorer.html` is a dedicated inner page listing all sponsors with logos and verbatim
-descriptions from `02-restored-static/sponsorer.html`. **Not in the primary nav** — only
-reachable via the "Les mer om sponsorene" btn-outline on the homepage sponsors section.
+descriptions from `02-restored-static/sponsorer.html`. **Now the 5th primary nav item**
+("Sponsorer"), and also reachable via the "Les mer om sponsorene" btn-outline on the
+homepage sponsors section.
 
 **File structure:**
 - `src/pages/sponsorer/Sponsorer.jsx` — page component
@@ -434,28 +444,28 @@ here as outstanding work, not shipped features.
 - [ ] **Shared bottom-sheet component** — not yet built. Slide-up-from-bottom,
   partial-height peek, drag-to-expand/dismiss. Needed by: Utstyr page product
   details, Om Oss participant details, and eventually Reiserute etappe details.
-- [ ] **Utstyr page** — two sub-tasks:
-  (a) Section-description split: short intro paragraph stays as `.section-description`;
-  the rest of the current intro becomes body text below it.
-  (b) Items made clickable into bottom sheets showing image / description / external link.
+- [ ] **Utstyr page** — sub-task (b) still open:
+  Items made clickable into bottom sheets showing image / description / external link.
+  Sub-task (a) DONE: section-description split applied 2026-06-20.
 - [ ] **Om Oss page** — color thumbnails with hover zoom (white border hidden in
   circular crop), two-column desktop layout, reduced mobile card padding, larger
   names, click-to-bottom-sheet instead of expand-in-place.
-- [ ] **Title card mobile eyebrow** — should drop "· Nordkapp → Lindesnes" on mobile
-  only (keep full text on desktop). Mobile only.
-- [ ] **Main nav: add Sponsorer as a real nav item** — currently only reachable via
-  the "Les mer om sponsorene" btn-outline on the homepage. Adding it as a 5th nav
-  item is the intended final state but has not been implemented.
-- [ ] **Sponsorer page: mobile logo alignment** — logos should be left-aligned on
-  mobile (currently centered).
-- [ ] **Reisebrev post pages** — apply `.section-description` to the first paragraph
-  of each post, splitting long opening paragraphs sensibly at that boundary.
-- [ ] **General: ingress / `.section-description` mobile scaling** — currently fixed
-  at 1.5rem (24px) on all screen sizes. Should use `clamp()` to scale down on
-  mobile (~20px / 1.25rem) instead of being fixed at 24px.
-- [ ] **Reiserute & Galleri page** — apply `.section-description` to the route
-  summary paragraph (currently missing the class; uses a different slate-300 color
-  which would also need to align to slate-400 if the class is applied).
+- [x] **Title card mobile eyebrow** — DONE 2026-06-20: "· Nordkapp → Lindesnes"
+  hidden on mobile via `<span className="hidden sm:inline">`. Desktop unchanged.
+- [x] **Main nav: add Sponsorer as a real nav item** — DONE 2026-06-20: 5th item
+  added. Mobile font-size reduced from 14px to 12px (0.75rem) to fit 5 items.
+- [x] **Sponsorer page: mobile logo alignment** — DONE 2026-06-20: logos now
+  left-aligned on mobile via `justify-start sm:justify-center`.
+- [x] **Reisebrev post pages** — DONE 2026-06-20: `.section-description` applied
+  to first body paragraph. Long first paragraphs split at natural boundaries:
+  entry 1 (after "teltplass"), entry 3 (after "Alt avhenger av været"),
+  entry 6 (after "ikke noe problem"). Entries 2, 4, 5 not split (short enough).
+- [x] **General: ingress / `.section-description` mobile scaling** — DONE 2026-06-20:
+  `.section-description` now uses `clamp(1.25rem, calc(3.5vw + 0.5rem), 1.5rem)`.
+  Serif ingress paragraphs in Home.jsx (INGRESS, FEATURED) also updated to same
+  clamp as arbitrary Tailwind value `text-[clamp(1.25rem,calc(3.5vw+0.5rem),1.5rem)]`.
+- [x] **Reiserute & Galleri page** — DONE 2026-06-20: `.section-description` applied
+  to route summary paragraph; max-w-[640px] removed; color updated slate-300 → slate-400.
 - [ ] **SEO optimization** — meta descriptions, og:image, title tags, sitemap
   (modernized site only).
 - [ ] **Site security hardening** — review CSP headers, external link safety,
@@ -990,3 +1000,35 @@ here as outstanding work, not shipped features.
   (struct/zlib, all 5 filter types); bilinear-scales to 48x48; re-encodes 48x48 as PNG;
   packs all three into a valid 3-image ICO container (PNG-in-ICO format, supported by
   all modern browsers). Result: 7120 bytes.
+- 2026-06-20: Batch of 7 independent small fixes applied:
+  1. TitleCard mobile eyebrow: "· Nordkapp → Lindesnes" now hidden on mobile (<640px)
+     via `<span className="hidden sm:inline">` on the trailing text. Desktop unchanged.
+     Eyebrow still wraps to 2 lines on mobile (just "2008 — 2009").
+  2. Nav: Sponsorer added as 5th nav item (href: sponsorer.html). Mobile nav font-size
+     reduced from 0.875rem (14px) to 0.75rem (12px, type-scale floor) to prevent
+     cramping — 5 items at 14px on a 375px full-bleed strip left < 2px per gap.
+     CLAUDE.md nav count updated from 4 to 5. Sponsorer page status changed from
+     "not in nav" to "5th nav item."
+  3. Reisebrev post pages: `.section-description` applied to body[0] in ReisebrevPost.jsx.
+     Long first paragraphs split at natural sentence boundaries in reisebrev.js:
+     entry 1 (split after "teltplass" — terrain difficulty vs. anxiety/resolution),
+     entry 3 (split after "Alt avhenger av været" — route planning vs. daylight concerns),
+     entry 6 (split after "ikke noe problem" — status recap vs. etappe description).
+     Entries 2, 4, 5 not split (first paragraphs already short enough for ingress).
+  4. Sponsorer page: mobile logo container changed from `justify-center` to
+     `justify-start sm:justify-center`. Applies to all SponsorRow instances and
+     the Rui Fjellstoge text-only entry. Desktop (sm+) alignment unchanged.
+  5. Utstyr intro split: INTRO renamed to INTRO_DESC (first 3 sentences — the
+     section-description) + new INTRO_BODY (rest). INTRO_BODY rendered as normal
+     prose (`font-sans text-[1.125rem] text-slate-300`) below the section-description.
+  6. `.section-description` font-size changed from fixed `text-[1.5rem]` to
+     `clamp(1.25rem, calc(3.5vw + 0.5rem), 1.5rem)` in main.css — scales from
+     20px (≤320px) to 24px (≥457px). Serif ingress equivalents in Home.jsx (INGRESS
+     and FEATURED paragraphs) updated to the same clamp via Tailwind arbitrary value
+     `text-[clamp(1.25rem,calc(3.5vw+0.5rem),1.5rem)]`. These stay font-serif/slate-200
+     and cannot adopt the class, so the clamp is applied inline.
+  7. Reiserute INTRO: class changed from inline `font-sans text-[1.5rem] text-slate-300
+     leading-normal max-w-[640px]` to `.section-description`. Color shifts from
+     slate-300 → slate-400; max-w-[640px] removed (full content-column width).
+     CLAUDE.md updated: section-description "NOT applied to Reiserute INTRO" rule
+     reversed.
