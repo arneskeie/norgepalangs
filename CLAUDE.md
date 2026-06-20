@@ -263,6 +263,11 @@ Each letter has its own static page: `reisebrev1.html` through `reisebrev6.html`
 
 None currently open. Add new issues here as they're found, dated.
 
+## Live URLs (post-rename)
+
+- Restored 2009 site: https://arneskeie.github.io/norgepalangs-2009/ (repo: arneskeie/norgepalangs-2009)
+- Modernized site: https://arneskeie.github.io/norgepalangs/ (repo: arneskeie/norgepalangs)
+
 ## Decision changelog
 
 - Chose static multi-page Vite build (not SPA/React Router) specifically
@@ -443,3 +448,8 @@ None currently open. Add new issues here as they're found, dated.
   removed from ReisebrevPost.jsx. See "Content inventory" for selected filenames.
   Homepage LATEST_REISEBREV.img updated from 0601 to 0602.
 - 2026-06-20: Hero background image switched from Velkommen.jpg to Velkommen.webp.
+- 2026-06-20: Repo renamed norgepalangs-ny → norgepalangs. Vite base updated from
+  /norgepalangs-ny/ to /norgepalangs/. Version-switcher added to SiteFooter pointing
+  to arneskeie.github.io/norgepalangs-2009/ (restored site). Restored site repo renamed
+  norgepalangs → norgepalangs-2009 simultaneously. All June 19-20 uncommitted work
+  pushed in the same commit.
