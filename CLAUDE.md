@@ -430,6 +430,60 @@ homepage sponsors section.
   page — logos shown at full color directly (they have enough context/description here).
 - `SiteHeader variant="compact"` with no currentPage (not in nav, never active).
 
+## Bottom sheet component
+
+`src/components/BottomSheet.jsx` + `src/components/SheetContent.jsx`.
+Single source of truth for bottom-sheet behavior site-wide — Utstyr, Om Oss,
+and Reiserute all consume this same pair.
+
+**Library: vaul 1.1.2** (`npm install vaul`). Chosen because:
+- Purpose-built for bottom-sheet/drawer UX, ~15 KB gzipped.
+- Wraps Radix Dialog: focus trap, `aria-modal`, and Escape-key dismiss come free.
+- Handles snap-point geometry and drag-gesture math natively (no hand-rolled pointer math).
+- Used by shadcn/ui; actively maintained; API stable at v1.
+
+**Two-layer architecture:**
+
+1. **BottomSheet** (`src/components/BottomSheet.jsx`) — mechanics only, generic children.
+   - `snapPoints={[0.5, 1]}` — opens at 50% height ("peek"), drag up → 100%, drag down → dismiss.
+   - Resets to 0.5 snap on every close so re-opening is consistent.
+   - `Drawer.Overlay` dims page behind sheet; click to dismiss.
+   - Body scroll lock while open (vaul built-in).
+   - Focus trapped inside sheet; returns to trigger on close (Radix Dialog).
+   - Escape key dismisses (Radix Dialog).
+   - Visible drag-handle pill rendered as decorative `aria-hidden` div above content.
+   - `env(safe-area-inset-bottom)` spacer prevents iPhone notch clipping.
+   - `prefers-reduced-motion`: CSS in main.css targets `[data-vaul-drawer]` /
+     `[data-vaul-overlay]` with `transition: none !important` when motion is reduced.
+   - Props: `open`, `onOpenChange`, `ariaLabel` (string, default "Detaljer"), `children`.
+
+2. **SheetContent** (`src/components/SheetContent.jsx`) — layout template for the interior.
+   - Designed for the Utstyr / Om Oss / Reiserute use cases; all props optional except `title`.
+   - **image** `string` — full-width hero image at top of sheet (h-48 / 192px, object-cover).
+   - **title** `string | ReactNode` — Fraunces 1.5rem, slate-50.
+   - **subtitle** `string` — accent line above title, `.eyebrow` class (orange-400, uppercase).
+   - **body** `string | ReactNode` — prose text, Work Sans 1.125rem, slate-300, leading-normal.
+   - **link** `{ href, label, external? }` — rendered as `.btn-outline` pill; `external` defaults
+     to `true` (adds `target="_blank" rel="noopener noreferrer"`).
+   - **gallery** `Array<string | { src, alt }>` — 3-column `aspect-[4/3]` thumbnail grid;
+     omit or pass empty array to hide.
+   - Spacing: px-6 / pt-5 / pb-8 (all on 4/8pt grid). subtitle → title: mb-3. title → body: mb-4.
+     body → link/gallery: mt-6.
+
+**Accessibility implemented:**
+- `role="dialog"` + `aria-modal="true"` via Radix Dialog (vaul).
+- `aria-label` on `Drawer.Content` (consumer supplies meaningful label via BottomSheet prop).
+- Drag handle is `aria-hidden="true"` — decorative only.
+- Focus trap + Escape key dismiss — Radix Dialog.
+- Body scroll lock — vaul built-in.
+- Touch targets: handle area is pt-3 + 4px pill + pb-2 = 24px clickable zone (above 44px min
+  recommended for the handle area itself — drag interaction, not a tap target).
+- `prefers-reduced-motion` CSS suppresses slide animation.
+
+**Demo:** A temporary "Test BottomSheet" button is wired in `src/pages/utstyr/Utstyr.jsx`
+(marked `// TEMP — remove when Utstyr wires BottomSheet for real`). Remove it when Utstyr is
+properly wired in the next batch.
+
 ## Known open items / TO DO
 
 All items below are **NOT YET STARTED** unless explicitly marked otherwise.
@@ -441,9 +495,9 @@ here as outstanding work, not shipped features.
   Explicitly deferred to last, after all other work is done.
 - [ ] **Video gallery section** — to be added at the bottom of the Reiserute &
   Galleri page, sourced from `02-restored-static`'s video gallery tab.
-- [ ] **Shared bottom-sheet component** — not yet built. Slide-up-from-bottom,
-  partial-height peek, drag-to-expand/dismiss. Needed by: Utstyr page product
-  details, Om Oss participant details, and eventually Reiserute etappe details.
+- [x] **Shared bottom-sheet component** — DONE 2026-06-20: BottomSheet + SheetContent built.
+  See "Bottom sheet component" section above. Demo wired in Utstyr (temporary).
+  Consumers (Utstyr, Om Oss, Reiserute) still need to be wired in separately.
 - [ ] **Utstyr page** — sub-task (b) still open:
   Items made clickable into bottom sheets showing image / description / external link.
   Sub-task (a) DONE: section-description split applied 2026-06-20.
@@ -1032,3 +1086,16 @@ here as outstanding work, not shipped features.
      slate-300 → slate-400; max-w-[640px] removed (full content-column width).
      CLAUDE.md updated: section-description "NOT applied to Reiserute INTRO" rule
      reversed.
+- 2026-06-20: Shared bottom-sheet component built (vaul 1.1.2).
+  Two files: `src/components/BottomSheet.jsx` (mechanics wrapper) +
+  `src/components/SheetContent.jsx` (layout template).
+  Library choice: vaul over hand-rolling — handles snap-point geometry and drag
+  gestures natively; wraps Radix Dialog for focus trap + aria-modal + Escape key.
+  Architecture: BottomSheet is generic (any children), SheetContent provides the
+  shared layout used by all three consumers (image / title / subtitle / body / link /
+  gallery). snapPoints={[0.5, 1]}: opens at 50% height (peek), drag up → full,
+  drag down → dismiss. Resets to peek on every close. prefers-reduced-motion CSS
+  added to main.css targeting [data-vaul-drawer] and [data-vaul-overlay].
+  env(safe-area-inset-bottom) spacer handles iPhone notch. Temporary demo button
+  wired in Utstyr.jsx (marked TEMP — remove when Utstyr wires it for real next batch).
+  Build: 117 modules (up from 60 — vaul + Radix UI deps). 11 pages clean.

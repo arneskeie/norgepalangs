@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
+// TEMP — remove when Utstyr wires BottomSheet for real (next batch)
+import BottomSheet from '../../components/BottomSheet.jsx'
+import SheetContent from '../../components/SheetContent.jsx'
 
 // ─── Verbatim from 02-restored-static/utstyr.html ────────────────────────────
 const INTRO_DESC = 'For å kunne gjennomføre prosjektet kreves produkter som ikke svikter under kontinuerlig og hard bruk. Alle produktene vi bruker er vi helt avhengige av at fungerer som de skal, når de skal. Dette stiller store krav til de produktene og produsentene vi velger å stole på.'
@@ -136,8 +139,18 @@ function CategorySection({ cat, isOpen, onToggle }) {
   )
 }
 
+// TEMP — remove when Utstyr wires BottomSheet for real (next batch)
+const DEMO_ITEM = {
+  title: 'Trangia Hard Anodized Ultralight 25-8 stormkjøkken',
+  subtitle: 'Kjøkkenhjørnet',
+  body: 'Et av de mest pålitelige kokeapparatene for fjellturer. Hard anodized aluminiumfinish gir god varmeledning og lang holdbarhet under kontinuerlig bruk.',
+  link: { href: 'https://www.trangia.se', label: 'Trangia nettside' },
+}
+
 export default function Utstyr() {
   const [open, setOpen] = useState(new Set(['kjokken']))
+  // TEMP
+  const [demoOpen, setDemoOpen] = useState(false)
 
   const toggle = (id) => {
     setOpen((prev) => {
@@ -188,6 +201,22 @@ export default function Utstyr() {
         </div>
 
       </main>
+      {/* TEMP — BottomSheet demo, remove next batch */}
+      <div className="fixed bottom-6 right-6 z-30">
+        <button onClick={() => setDemoOpen(true)} className="btn-solid text-sm px-4 py-2">
+          Test BottomSheet
+        </button>
+      </div>
+      <BottomSheet open={demoOpen} onOpenChange={setDemoOpen} ariaLabel={DEMO_ITEM.title}>
+        <SheetContent
+          title={DEMO_ITEM.title}
+          subtitle={DEMO_ITEM.subtitle}
+          body={DEMO_ITEM.body}
+          link={DEMO_ITEM.link}
+        />
+      </BottomSheet>
+      {/* END TEMP */}
+
       <SiteFooter />
     </div>
   )

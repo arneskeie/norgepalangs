@@ -374,6 +374,19 @@
   }
 }
 
+/* ─── BottomSheet (vaul) ───────────────────────────────────────────────────── */
+
+/* Suppress vaul's slide animation for users who prefer reduced motion.
+   vaul applies transitions via JS-set inline styles on [data-vaul-drawer];
+   !important overrides those when this media query matches. */
+@media (prefers-reduced-motion: reduce) {
+  [data-vaul-drawer],
+  [data-vaul-overlay] {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
 /* ─── Hover-animated images — GPU acceleration hints ──────────────────────── */
 
 /* Sponsor logos: group-hover:scale-105 + group-hover:opacity-100 transition.
