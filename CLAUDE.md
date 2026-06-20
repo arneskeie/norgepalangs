@@ -211,9 +211,11 @@ current session.
    285×69 WebP with transparent background; no blend mode needed) **right-aligned**
    (flex justify-end). No text attribution — the image IS the attribution.
 3. **Ruta section** — id="ruta". Eyebrow "Ruta" + h2 "15 etapper,
-   Nordkapp til Lindesnes." + short description (1.5rem / ingress size, full-width,
-   no max-w constraint) + route-line SVG + 3 stats (2 500 km /
-   6 måneder / 15 etapper — NOT 4) + "Se hele ruta" button.
+   <span orange-400>Nordkapp til Lindesnes.</span>" (orange accent on the
+   "Nordkapp til Lindesnes." portion of the h2 only — section h2s are not
+   subject to the "inner-page h1s are fully white" rule) + short description
+   (1.5rem / ingress size, full-width, no max-w constraint) + route-line SVG
+   + 3 stats (2 500 km / 6 måneder / 15 etapper — NOT 4) + "Se hele ruta" button.
 4. **Reisebrev** — id="reisebrev". Eyebrow "Reisebrev", section h2
    "Oppdateringer underveis". Full 3-column grid of all 6 reisebrev entries
    (1 col mobile, 2 col sm, 3 col lg). Each card: cover image (aspect-[4/3],
@@ -418,9 +420,46 @@ reachable via the "Les mer om sponsorene" btn-outline on the homepage sponsors s
   page — logos shown at full color directly (they have enough context/description here).
 - `SiteHeader variant="compact"` with no currentPage (not in nav, never active).
 
-## Known open issues
+## Known open items / TO DO
 
-None currently open. Add new issues here as they're found, dated.
+All items below are **NOT YET STARTED** unless explicitly marked otherwise.
+A future session (or fresh instance with no chat history) should treat everything
+here as outstanding work, not shipped features.
+
+- [ ] **Reiserute & Galleri full rebuild** — real Norway map with route overlay,
+  per-etappe hover/click interaction, eventually animated SVG route.
+  Explicitly deferred to last, after all other work is done.
+- [ ] **Video gallery section** — to be added at the bottom of the Reiserute &
+  Galleri page, sourced from `02-restored-static`'s video gallery tab.
+- [ ] **Shared bottom-sheet component** — not yet built. Slide-up-from-bottom,
+  partial-height peek, drag-to-expand/dismiss. Needed by: Utstyr page product
+  details, Om Oss participant details, and eventually Reiserute etappe details.
+- [ ] **Utstyr page** — two sub-tasks:
+  (a) Section-description split: short intro paragraph stays as `.section-description`;
+  the rest of the current intro becomes body text below it.
+  (b) Items made clickable into bottom sheets showing image / description / external link.
+- [ ] **Om Oss page** — color thumbnails with hover zoom (white border hidden in
+  circular crop), two-column desktop layout, reduced mobile card padding, larger
+  names, click-to-bottom-sheet instead of expand-in-place.
+- [ ] **Title card mobile eyebrow** — should drop "· Nordkapp → Lindesnes" on mobile
+  only (keep full text on desktop). Mobile only.
+- [ ] **Main nav: add Sponsorer as a real nav item** — currently only reachable via
+  the "Les mer om sponsorene" btn-outline on the homepage. Adding it as a 5th nav
+  item is the intended final state but has not been implemented.
+- [ ] **Sponsorer page: mobile logo alignment** — logos should be left-aligned on
+  mobile (currently centered).
+- [ ] **Reisebrev post pages** — apply `.section-description` to the first paragraph
+  of each post, splitting long opening paragraphs sensibly at that boundary.
+- [ ] **General: ingress / `.section-description` mobile scaling** — currently fixed
+  at 1.5rem (24px) on all screen sizes. Should use `clamp()` to scale down on
+  mobile (~20px / 1.25rem) instead of being fixed at 24px.
+- [ ] **Reiserute & Galleri page** — apply `.section-description` to the route
+  summary paragraph (currently missing the class; uses a different slate-300 color
+  which would also need to align to slate-400 if the class is applied).
+- [ ] **SEO optimization** — meta descriptions, og:image, title tags, sitemap
+  (modernized site only).
+- [ ] **Site security hardening** — review CSP headers, external link safety,
+  and any other hardening applicable to a static GitHub Pages site.
 
 ## Live URLs (post-rename)
 
