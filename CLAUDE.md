@@ -448,6 +448,10 @@ None currently open. Add new issues here as they're found, dated.
   removed from ReisebrevPost.jsx. See "Content inventory" for selected filenames.
   Homepage LATEST_REISEBREV.img updated from 0601 to 0602.
 - 2026-06-20: Hero background image switched from Velkommen.jpg to Velkommen.webp.
+- 2026-06-20: Footer credit (02-restored-static): removed hyperlink from Arne's
+  WEBMASTER entry — folk.ntnu.no/arnesigm is outdated and no longer linked.
+  "WEBMASTER: ARNE S. SKEIE" is now plain text. Marius's omoss.html link unaffected.
+  Applied across all 16 HTML pages.
 - 2026-06-20: Version-switcher redesigned — segmented pill control. Outer dark pill
   (#1e1e1e) floats on the page's own background (no background of its own). Inner
   white pill on the active/current side; inactive side is a link with
