@@ -1,20 +1,24 @@
 import React from 'react'
+import { Wordmark } from './SiteHeader.jsx'
 
 export default function SiteFooter() {
   return (
     <>
       <footer className="border-t border-white/[.06] py-8">
-        <div className="max-w-content mx-auto px-6">
-          <p className="font-sans text-xs text-slate-600">
-            Turgåer & Ansvarlig redaktør: Marius Montarou | Webmaster: Arne S. Skeie | NORGEpåLANGS © 2008/2009
+        <div className="max-w-content mx-auto px-6 flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <Wordmark className="text-[1.125rem]" />
+          <p className="font-sans text-xs text-slate-600 text-center sm:text-right">
+            Turgåer &amp; Ansvarlig redaktør: Marius Montarou | Webmaster: Arne S. Skeie | NORGEpåLANGS © 2008/2009
           </p>
         </div>
       </footer>
-      <style>{`.npls-link:hover{background:rgba(255,255,255,0.1);}`}</style>
+
+      {/* Version switcher — modernized-site palette (02-restored-static keeps original black/white) */}
+      <style>{`.npls-link:hover{background:rgba(251,146,60,0.10);}`}</style>
       <div style={{display:'flex',justifyContent:'center',padding:'20px 16px',fontFamily:"'Work Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",fontSize:'14px'}}>
-        <div style={{display:'inline-flex',alignItems:'center',background:'rgba(0,0,0,0.9)',borderRadius:'9999px',padding:'4px'}}>
-          <a href="https://arneskeie.github.io/norgepalangs-2009/" className="npls-link" style={{color:'rgba(255,255,255,0.85)',textDecoration:'none',padding:'8px 18px',borderRadius:'9999px',whiteSpace:'nowrap',transition:'background 0.15s'}}>Original nettside</a>
-          <span style={{background:'#ffffff',color:'#1e1e1e',borderRadius:'9999px',padding:'8px 18px',fontWeight:500,whiteSpace:'nowrap'}}>Oppdatert nettside</span>
+        <div style={{display:'inline-flex',alignItems:'center',background:'#1e293b',borderRadius:'9999px',padding:'4px'}}>
+          <a href="https://arneskeie.github.io/norgepalangs-2009/" className="npls-link" style={{color:'rgba(148,163,184,0.9)',textDecoration:'none',padding:'8px 18px',borderRadius:'9999px',whiteSpace:'nowrap',transition:'background 0.15s'}}>Original nettside</a>
+          <span style={{background:'#f8fafc',color:'#0f172a',borderRadius:'9999px',padding:'8px 18px',fontWeight:500,whiteSpace:'nowrap'}}>Oppdatert nettside</span>
         </div>
       </div>
     </>

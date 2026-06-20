@@ -129,9 +129,13 @@ current session.
     (12px) / line-height 1rem** desktop; **0.625rem (10px)** mobile (see
     mobile exception below). Eyebrow wraps to 2 lines on mobile — expected
     and accounted for in the strip centering calculation.
-  - Wordmark: "NORGE på LANGS" — `font-serif font-normal leading-none
-    tracking-tight text-[1.75rem] sm:text-[3rem]`. Orange `<em>` on "på".
-    Mobile uses 1.75rem to keep compact at `white-space: nowrap` on 375px.
+  - Wordmark: "NORGE på LANGS" — rendered via `<Wordmark />` named export from
+    SiteHeader.jsx. Base styles in Wordmark: `font-serif font-normal leading-none
+    tracking-tight text-slate-50`, orange `<em>` on "på". TitleCard h1 wraps
+    it at `text-[1.75rem] sm:text-[3rem]` with `leading-none` on the h1 to
+    stabilize block line-height. Mobile 1.75rem stays compact at
+    `white-space: nowrap` (375px). Footer uses the same component at
+    `text-[1.125rem]`.
   - Subtitle: "med Montarou & co" — `font-sans font-medium text-[0.625rem]
     sm:text-[0.75rem] leading-4 uppercase tracking-[0.2em] text-slate-400
     mt-4` (desktop 0.75rem / 12px; mobile 0.625rem / 10px; line-height 1rem
@@ -223,9 +227,23 @@ current session.
    (Helsport, MX Sport, Skaidi Hotel, Femund Fjellstue, Umbukta Fjellstue)
    have non-black backgrounds — they will show their original bg color via
    screen blend; acceptable for now, PNG conversion deferred.
-6. **Footer** — single line only: "Turgåer & Ansvarlig redaktør: Marius Montarou
-   | Webmaster: Arne S. Skeie | NORGEpåLANGS © 2008/2009". No Kontakt
-   heading, no email, no sponsor list (moved to its own section, #5).
+6. **Footer** — two-part layout within `max-w-content` container:
+   LEFT: "NORGE på LANGS" wordmark at `text-[1.125rem]` via `<Wordmark>` component
+   (same font/accent/tracking as TitleCard but footer-sized). RIGHT: credit text
+   `font-sans text-xs text-slate-600`, right-aligned on desktop.
+   Mobile: `flex-col items-center gap-4` (stacked centered). Desktop (sm+):
+   `flex-row justify-between`. No eyebrow or subtitle from TitleCard — wordmark only.
+   The `<Wordmark>` component is a named export from SiteHeader.jsx; import it from
+   there to avoid drift between TitleCard and footer wordmark markup.
+7. **Version switcher** — sits BELOW the footer (separate element), centered.
+   The modernized site uses on-palette colors (differs from 02-restored-static):
+   - Outer pill: `#1e293b` (slate-800)
+   - Active side (Oppdatert nettside): bg `#f8fafc`, color `#0f172a`, fontWeight 500
+   - Inactive link (Original nettside): color `rgba(148,163,184,0.9)` (slate-400)
+   - Inactive hover: `rgba(251,146,60,0.10)` (orange-400 at 10% — accent tint)
+   `02-restored-static` intentionally keeps its original `rgba(0,0,0,0.9)` outer pill /
+   `#ffffff` active pill / `rgba(255,255,255,0.1)` hover. The two sites' switchers now
+   intentionally differ — do not sync them back to match.
 
 ## Content inventory (verified real values — use these exactly)
 
@@ -753,3 +771,17 @@ None currently open. Add new issues here as they're found, dated.
      - Photo strip images: NOT given per-image hints. `.strip-track { will-change:
        transform }` already handles the animated track as one compositor layer;
        per-image hints would create 36+ unnecessary additional layers.
+- 2026-06-20: Version-switcher recolored for modernized site (03-modernized only).
+  02-restored-static keeps its original rgba(0,0,0,0.9)/white switcher unchanged.
+  New modernized-site colors: outer pill #1e293b (slate-800); active span bg #f8fafc /
+  color #0f172a; inactive link rgba(148,163,184,0.9) (slate-400); hover tint
+  rgba(251,146,60,0.10) (orange-400 10%). The two sites' switchers now intentionally
+  differ and should not be synced back to match.
+- 2026-06-20: Footer redesigned — two-part layout with wordmark left and credit right.
+  `<Wordmark>` extracted as named export from SiteHeader.jsx (base styles: font-serif
+  font-normal leading-none tracking-tight text-slate-50, orange <em> on "på"). TitleCard
+  h1 refactored to `<Wordmark />` inside `<h1 className="leading-none text-[1.75rem]
+  sm:text-[3rem]">` — leading-none kept on both h1 (stabilizes block strut) and Wordmark
+  span (inline line-height). Footer: Wordmark at text-[1.125rem], credit text
+  font-sans text-xs text-slate-600 right-aligned (sm+). Mobile: flex-col centered.
+  Desktop (sm+): flex-row justify-between. Version switcher remains below footer.

@@ -87,13 +87,23 @@ function PhotoStrip({ base, count = 18 }) {
   )
 }
 
+/* Shared wordmark — used in TitleCard (large) and SiteFooter (small).
+   Parent element controls font-size; base styles live here to avoid drift. */
+export function Wordmark({ className = '' }) {
+  return (
+    <span className={`font-serif font-normal leading-none tracking-tight text-slate-50 ${className}`}>
+      NORGE <em className="text-orange-400">på</em> LANGS
+    </span>
+  )
+}
+
 /* TitleCard — when href is provided (inner pages), renders as a link to homepage */
 function TitleCard({ href = null }) {
   const inner = (
     <>
       <p className="eyebrow mb-4">2008 — 2009 · Nordkapp → Lindesnes</p>
-      <h1 className="font-serif font-normal leading-none tracking-tight text-slate-50 text-[1.75rem] sm:text-[3rem]">
-        NORGE <em className="text-orange-400">på</em> LANGS
+      <h1 className="leading-none text-[1.75rem] sm:text-[3rem]">
+        <Wordmark />
       </h1>
       <p className="font-sans font-medium text-[0.625rem] sm:text-[0.75rem] leading-4 uppercase tracking-[0.2em] text-slate-400 mt-4">
         med Montarou &amp; co
