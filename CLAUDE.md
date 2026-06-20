@@ -650,3 +650,24 @@ None currently open. Add new issues here as they're found, dated.
   (pt-8 = 2rem); bottom padding unchanged. INGRESS paragraph changed from
   font-sans to font-serif (Fraunces). Signature image right-aligned
   (flex justify-end on wrapper div).
+- 2026-06-20: Photo strip performance fix. Root cause: full-res strip images
+  (675–1000px, 13MB total across 48 files) were being downloaded, decoded, and
+  held as GPU textures at their native resolution despite being displayed at
+  64–136px (SIZE_BUCKETS range). The CPU/GPU heat and animation degradation over
+  time was thermal throttling from sustained GPU texture overhead — NOT a memory
+  leak; the React component is clean (useMemo, no effects, no intervals).
+  Fix applied (four changes):
+  1. Resized copies of all 48 strip images created at 400px max dimension
+     (maintaining aspect ratio) using sips. Saved to `public/strip-thumbs/`
+     (separate from originals). Total: 13MB → 1.8MB (7× reduction). Largest
+     file dropped from 840KB to 66KB.
+     `public/strip/` (originals) remains the source for galleries and all
+     other image references — untouched. `public/strip-thumbs/` is the
+     canonical source for the photo strip in SiteHeader.jsx only.
+  2. `will-change: transform` added to `.strip-track` — promotes the element
+     to its own compositor layer before animation begins, so the GPU composites
+     a pre-rasterized layer rather than repainting per frame.
+  3. `contain: layout paint` added to `.strip-wrapper` — isolates the
+     animation's layout and paint effects from the rest of the page.
+  4. `decoding="async"` added to strip `<img>` elements — moves JPEG decode
+     off the main thread.

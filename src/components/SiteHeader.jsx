@@ -56,7 +56,7 @@ function PhotoStrip({ base, count = 18 }) {
   const items = useMemo(() => {
     const picked = pickRandom(PHOTO_POOL, Math.min(count, PHOTO_POOL.length))
     return picked.map((slug) => ({
-      src: `${base}strip/${slug}.jpg`,
+      src: `${base}strip-thumbs/${slug}.jpg`,
       size: randomFrom(SIZE_BUCKETS),
       rotate: randomFrom(ROTATIONS),
     }))
@@ -79,6 +79,7 @@ function PhotoStrip({ base, count = 18 }) {
             style={{ width: size.w, height: size.h }}
             className="strip-img"
             loading="eager"
+            decoding="async"
           />
         </div>
       ))}

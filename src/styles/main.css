@@ -120,6 +120,7 @@
   transform: translateY(-50%);
   height: 133px;
   overflow: hidden;
+  contain: layout paint;
   mask-image: linear-gradient(
     to right,
     transparent 0%,
@@ -144,6 +145,7 @@
   padding: 8px 8px;
   width: max-content;
   animation: strip-drift 42s linear infinite;
+  will-change: transform;
 }
 
 .strip-item {
