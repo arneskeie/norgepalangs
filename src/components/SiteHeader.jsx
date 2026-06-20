@@ -92,10 +92,10 @@ function TitleCard({ href = null }) {
   const inner = (
     <>
       <p className="eyebrow mb-4">2008 — 2009 · Nordkapp → Lindesnes</p>
-      <h1 className="font-serif font-normal leading-none tracking-tight text-slate-50 text-[2rem] sm:text-[3rem]">
+      <h1 className="font-serif font-normal leading-none tracking-tight text-slate-50 text-[1.75rem] sm:text-[3rem]">
         NORGE <em className="text-orange-400">på</em> LANGS
       </h1>
-      <p className="font-sans font-medium text-[0.75rem] leading-4 uppercase tracking-[0.2em] text-slate-400 mt-4">
+      <p className="font-sans font-medium text-[0.625rem] sm:text-[0.75rem] leading-4 uppercase tracking-[0.2em] text-slate-400 mt-4">
         med Montarou &amp; co
       </p>
     </>

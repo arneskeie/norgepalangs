@@ -101,16 +101,23 @@ current session.
   - Eyebrow: "2008 — 2009 · Nordkapp → Lindesnes" — uses `.eyebrow` CSS class
     (Work Sans, font-medium, uppercase, tracking-[0.2em], orange-400) with a
     `.title-card .eyebrow` CSS override that reduces font-size to **0.75rem
-    (12px) / line-height 1rem** (floor value per type scale). `mb-4` below.
-    Eyebrow wraps to 2 lines on mobile — that's expected and accounted for in
-    the strip centering calculation.
+    (12px) / line-height 1rem** desktop; **0.625rem (10px)** mobile (see
+    mobile exception below). Eyebrow wraps to 2 lines on mobile — expected
+    and accounted for in the strip centering calculation.
   - Wordmark: "NORGE på LANGS" — `font-serif font-normal leading-none
-    tracking-tight text-[2rem] sm:text-[3rem]`. Orange `<em>` on "på". Mobile
-    keeps 2rem to avoid overflow at `white-space: nowrap`.
-  - Subtitle: "med Montarou & co" — `font-sans font-medium text-[0.75rem]
-    leading-4 uppercase tracking-[0.2em] text-slate-400 mt-4` (0.75rem /
-    12px, line-height 1rem = 16px). Matches eyebrow treatment exactly
-    except color (slate-400, not orange-400).
+    tracking-tight text-[1.75rem] sm:text-[3rem]`. Orange `<em>` on "på".
+    Mobile uses 1.75rem to keep compact at `white-space: nowrap` on 375px.
+  - Subtitle: "med Montarou & co" — `font-sans font-medium text-[0.625rem]
+    sm:text-[0.75rem] leading-4 uppercase tracking-[0.2em] text-slate-400
+    mt-4` (desktop 0.75rem / 12px; mobile 0.625rem / 10px; line-height 1rem
+    = 16px at both sizes). Matches eyebrow treatment exactly except color
+    (slate-400, not orange-400).
+  - **Mobile-only TitleCard typography exception (permanent):** eyebrow and
+    subtitle both drop to 0.625rem (10px) on mobile (< 640px). This is below
+    the site-wide 0.75rem type-scale floor. Exception is TitleCard-only and
+    mobile-only — the floor rule still applies everywhere else. h1 drops to
+    1.75rem on mobile (vs 3rem desktop). All three values are set in the
+    CSS/JSX mobile breakpoint, not changing the base/desktop rules.
   - Card padding: **1.5rem 3rem** (desktop); mobile override **1.25rem 1.5rem**
     to prevent h1 overflow on narrow screens.
   - Card border-radius: **4px**.
@@ -640,7 +647,8 @@ None currently open. Add new issues here as they're found, dated.
 - 2026-06-20: Photo strip centering recalculated after subtitle/spacing changes:
   Desktop: card height = 24+16+16+48+16+16+24 = 160px → strip top = 24+80 = 104px
   (was 100px). Mobile: card height = 20+32+16+32+16+16+20 = 152px →
-  strip top = 24+76 = 100px (was 96px).
+  strip top = 24+76 = 100px (was 96px). [Mobile h1 subsequently reduced to
+  1.75rem — see 2026-06-20 mobile TitleCard entry: strip top updated to 98px.]
 - 2026-06-20: hero-header min-height reduced from max(75vh,480px) to max(65vh,480px).
 - 2026-06-20: hero-headline max clamp reduced from 6rem to 4.5rem →
   `clamp(3rem, 8vw, 4.5rem)`. Em-dash moved into accent span:
@@ -677,3 +685,21 @@ None currently open. Add new issues here as they're found, dated.
   mix-blend-mode needed; the WebP transparency renders naturally against the
   dark section background with no white box/halo artifact. `SignaturLiten.jpg`
   remains in public/images/diverse/ but is no longer referenced anywhere.
+- 2026-06-20: TitleCard mobile typography exception (permanent, mobile-only).
+  On mobile (< 640px): eyebrow and subtitle scale down to 0.625rem (10px) —
+  below the site-wide 0.75rem floor, which still applies everywhere else.
+  h1 reduced from 2rem to 1.75rem to fit tighter at 375px while maintaining
+  white-space: nowrap. Both changes in CSS/JSX mobile breakpoint; desktop
+  (sm:) rules unchanged. Strip centering recalculated: mobile card height =
+  20+32+16+28+16+16+20 = 148px → strip top = 24+74 = 98px (was 100px).
+- 2026-06-20: Hero/nav overlap fix on iPhone 8 (375×667). Root cause:
+  `.hero-text-block { position: absolute; bottom: 0 }` is not a flex child,
+  so it floats outside normal flow. At min-height 480px with ~248px of
+  in-flow content (hero-content + nav), the text block's height at 3rem
+  headline on 375px exceeded the remaining ~232px gap, pushing it up into
+  the nav zone. Fix: on mobile (< 640px), override to `position: relative;
+  bottom: auto` — the block becomes a 3rd flex child after the nav. Added
+  `padding-top: 32px` to `.hero-text-inner` on mobile (matching `pt-8` used
+  on the om-turen section below, and the same approach as inner pages — normal
+  flow, not absolute positioning). Desktop behavior (absolute bottom: 0)
+  unchanged at sm and above.

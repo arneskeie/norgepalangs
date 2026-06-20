@@ -253,16 +253,30 @@
     padding: 1.25rem 1.5rem;
   }
 
-  /* Strip center for mobile card:
-     padding 20px, eyebrow 2 lines (32px), mb-4 16px, h1 2rem 32px,
-     mt-4 16px, subtitle 16px, padding 20px → height 152px → center = 24 + 76 = 100px */
-  .strip-wrapper {
-    top: 100px;
+  /* TitleCard mobile typography exception (permanent, TitleCard-only):
+     eyebrow/subtitle drop to 0.625rem (below 0.75rem floor — documented exception).
+     h1 drops to 1.75rem (set in JSX: text-[1.75rem] sm:text-[3rem]).
+     Strip center for mobile card:
+     padding 20px, eyebrow 2 lines (32px), mb-4 16px, h1 1.75rem=28px,
+     mt-4 16px, subtitle 16px, padding 20px → height 148px → center = 24 + 74 = 98px */
+  .title-card .eyebrow {
+    font-size: 0.625rem;
   }
 
-  /* Tighter bottom padding — hero is proportionally smaller on mobile */
+  .strip-wrapper {
+    top: 98px;
+  }
+
+  /* Hero text block: flow element on mobile to prevent overlap with nav.
+     position:absolute;bottom:0 is removed — block follows nav in flex column.
+     padding-top: 32px matches pt-8 (inner-page section top spacing) — shared value. */
+  .hero-text-block {
+    position: relative;
+    bottom: auto;
+  }
+
   .hero-text-inner {
-    padding: 0 1.5rem 2.5rem;
+    padding: 32px 1.5rem 2.5rem;
     text-align: left;
   }
 }
