@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Drawer } from 'vaul'
 
 /**
@@ -11,14 +11,18 @@ import { Drawer } from 'vaul'
  *   children      ReactNode        — content to render inside (typically <SheetContent />)
  *
  * Behaviour:
- *   • Opens at 50% viewport height ("peek") — user drags up to 100% or down to dismiss.
+ *   • Opens at 93dvh — leaves ~7% of the page visible at the top edge.
  *   • Backdrop dims page; tapping it dismisses.
  *   • Escape key dismisses.
+ *   • Drag handle + drag-down gesture dismisses.
  *   • Focus trapped inside the sheet while open; returns on close (via Radix Dialog).
  *   • Body scroll locked while open (vaul built-in).
- *   • Resets to peek snap on every open so re-opening is always consistent.
  *   • env(safe-area-inset-bottom) padding applied to avoid iPhone notch clipping.
  *   • prefers-reduced-motion: CSS in main.css suppresses vaul's slide transition.
+ *
+ * No snap points — vaul's snap-point height math assumes the drawer fills the full
+ * viewport, which breaks when content is shorter. The simple slideFromBottom animation
+ * (used when snapPoints is omitted) is height-independent and works on all viewports.
  */
 export default function BottomSheet({
   open,
@@ -26,28 +30,19 @@ export default function BottomSheet({
   ariaLabel = 'Detaljer',
   children,
 }) {
-  const [snap, setSnap] = useState(0.5)
-
-  useEffect(() => {
-    if (!open) setSnap(0.5)
-  }, [open])
-
   return (
     <Drawer.Root
       open={open}
       onOpenChange={onOpenChange}
-      snapPoints={[0.5, 1]}
-      activeSnapPoint={snap}
-      setActiveSnapPoint={setSnap}
       shouldScaleBackground={false}
     >
       <Drawer.Portal>
         {/* Backdrop — dims page, click to dismiss */}
         <Drawer.Overlay className="fixed inset-0 bg-slate-950/80 z-40" />
 
-        {/* Sheet panel */}
+        {/* Sheet panel — h-[93dvh] leaves ~7% of viewport visible at top */}
         <Drawer.Content
-          className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-xl bg-slate-900 outline-none max-h-screen"
+          className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-xl bg-slate-900 outline-none h-[93dvh]"
           aria-label={ariaLabel}
         >
           {/* Drag handle affordance — purely visual, aria-hidden */}

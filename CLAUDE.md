@@ -445,8 +445,18 @@ and Reiserute all consume this same pair.
 **Two-layer architecture:**
 
 1. **BottomSheet** (`src/components/BottomSheet.jsx`) — mechanics only, generic children.
-   - `snapPoints={[0.5, 1]}` — opens at 50% height ("peek"), drag up → 100%, drag down → dismiss.
-   - Resets to 0.5 snap on every close so re-opening is consistent.
+   - **No snap points** — opens at `h-[93dvh]`, leaves ~7% of viewport visible at top edge.
+     Drag handle + drag-down dismisses. No two-stage peek/expand.
+   - Why no snap points: vaul's `snapPointsOffset` calculation (`window.innerHeight −
+     snapPoint × window.innerHeight`) assumes the drawer fills the full viewport. When
+     content is shorter than `window.innerHeight`, the resulting `translateY` overshoots
+     and pushes the drawer off-screen. Without snap points, vaul uses a simple
+     `slideFromBottom` animation (translateY(100%) → translateY(0)) that is height-
+     independent and works on all viewport sizes and screen types (desktop AND mobile).
+   - `h-[93dvh]` — explicit viewport-relative height ensures the drawer is always 93% of
+     the dynamic viewport height regardless of content. `dvh` (dynamic viewport height)
+     accounts for browser UI showing/hiding on mobile. This value is exempt from the
+     4/8pt spacing grid (viewport-relative sizing, not a pixel spacing decision).
    - `Drawer.Overlay` dims page behind sheet; click to dismiss.
    - Body scroll lock while open (vaul built-in).
    - Focus trapped inside sheet; returns to trigger on close (Radix Dialog).
@@ -1099,3 +1109,18 @@ here as outstanding work, not shipped features.
   env(safe-area-inset-bottom) spacer handles iPhone notch. Temporary demo button
   wired in Utstyr.jsx (marked TEMP — remove when Utstyr wires it for real next batch).
   Build: 117 modules (up from 60 — vaul + Radix UI deps). 11 pages clean.
+- 2026-06-20: BottomSheet bug fixes — desktop non-render + mobile too-short height.
+  Bug 1 (desktop): vaul's snap-point offset math (`window.innerHeight - snapPoint ×
+  window.innerHeight`) assumes the drawer is full-viewport-height tall. When content is
+  shorter (e.g. ~300px for the demo entry), applying `translateY(offset_px)` where
+  `offset_px = 0.5 × 800px = 400px` onto a 300px drawer at `position:fixed;bottom:0`
+  pushes the entire element below the fold. On mobile the content happened to fill more
+  of the narrow viewport, leaving a partial sliver visible; on desktop wider viewports
+  the same content filled less and disappeared entirely.
+  Bug 2 (height): Initial snap=0.5 opened at 50vh which required user to drag up before
+  seeing most content.
+  Fix for both: removed snap points entirely. Without snapPoints, vaul uses the simpler
+  `slideFromBottom` CSS animation (translateY(100%) → translateY(0)) which is completely
+  height-independent. Added `h-[93dvh]` to Drawer.Content — explicit near-full height,
+  7% gap at top, `dvh` accounts for mobile browser UI. The snapshot/animation approach
+  is now the same on desktop and mobile. `useState(snap)` and `useEffect` removed.
