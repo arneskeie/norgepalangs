@@ -11,7 +11,6 @@ export default defineConfig({
         main:        resolve(__dirname, 'index.html'),
         omoss:       resolve(__dirname, 'omoss.html'),
         reiserute:   resolve(__dirname, 'reiserute.html'),
-        reisebrev:   resolve(__dirname, 'reisebrev.html'),
         utstyr:      resolve(__dirname, 'utstyr.html'),
         reisebrev1:  resolve(__dirname, 'reisebrev1.html'),
         reisebrev2:  resolve(__dirname, 'reisebrev2.html'),

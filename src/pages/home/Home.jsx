@@ -1,6 +1,7 @@
 import React from 'react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
+import { LETTERS } from '../../data/reisebrev.js'
 
 // ─── Verbatim from 02-restored-static/index.html ────────────────────────────
 const INGRESS =
@@ -16,17 +17,6 @@ const VELKOMMEN = [
 
 // Last sentence of VELKOMMEN[2] — rendered as a featured ingress paragraph in its original position
 const FEATURED = 'Vi legger bort vekkerklokka, timeplanen og de andre heftelsene som hører sivilisasjonen til og lar bekymringene dreie seg om å holde varmen, finne brensel, få ørret i gryta og tørke sokker.'
-
-// Latest recovered reisebrev — verbatim excerpt from 02-restored-static/reisebrev.html
-const LATEST_REISEBREV = {
-  label:    'Etappe 6',
-  title:    'Hegra – Gressli',
-  date:     '10. november 2008',
-  excerpt:  'Oktober har blitt til november. Enda en måned har passert og gjort sinnet rikere og midjen smalere. Vi har blitt nødt til å flytte prosjektet sørover som tidligere antatt.',
-  img:      'Reisebrev0602.jpg',
-  postHref: 'reisebrev6.html',
-  href:     'reisebrev.html',
-}
 
 // URLs verified 2026-06-19. Dead/unverifiable flagged with comment.
 const SPONSORS = [
@@ -160,39 +150,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Siste reisebrev ─────────────────────────────────────────────────── */}
-      <section id="siste-reisebrev" className="py-12 md:py-20">
+      {/* ── Reisebrev ───────────────────────────────────────────────────────── */}
+      <section id="reisebrev" className="py-12 md:py-20">
         <div className="max-w-content mx-auto px-6">
           <p className="eyebrow mb-4">Reisebrev</p>
           <h2 className="font-serif text-[2.5rem] md:text-5xl leading-[0.95] text-slate-50 mb-10">
-            Siste reisebrev
+            Oppdateringer underveis
           </h2>
-          <article className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-8 mb-10">
-            <div className="aspect-[4/3] md:aspect-auto overflow-hidden rounded">
-              <img
-                src={`${base}images/reisebrev/${LATEST_REISEBREV.img}`}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col justify-center">
-              <p className="font-sans text-xs text-slate-500 tracking-wider mb-1">{LATEST_REISEBREV.date}</p>
-              <p className="font-sans font-medium text-xs text-orange-400 uppercase tracking-widest mb-2">{LATEST_REISEBREV.label}</p>
-              <h3 className="font-serif font-semibold text-2xl text-slate-100 mb-3">{LATEST_REISEBREV.title}</h3>
-              <p className="font-sans text-sm text-slate-400 leading-relaxed mb-4 text-pretty">
-                {LATEST_REISEBREV.excerpt}
-              </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {LETTERS.map((letter) => (
               <a
-                href={`${base}${LATEST_REISEBREV.postHref}`}
-                className="font-sans font-medium text-sm text-orange-400 hover:text-orange-300 transition-colors mb-6 self-start"
+                key={letter.n}
+                href={`${base}reisebrev${letter.n}.html`}
+                className="group block"
               >
-                Les mer →
+                <div className="overflow-hidden rounded mb-4 aspect-[4/3]">
+                  <img
+                    src={`${base}images/reisebrev/${letter.img}`}
+                    alt=""
+                    className="reisebrev-cover-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <p className="font-sans text-xs text-slate-500 tracking-wider mb-2">{letter.date}</p>
+                <h3 className="font-serif text-xl leading-snug text-slate-100">
+                  <span className="font-sans font-normal text-slate-500 mr-2">{String(letter.n).padStart(2, '0')}</span>
+                  {letter.title}
+                </h3>
               </a>
-              <div>
-                <a href={`${base}${LATEST_REISEBREV.href}`} className="btn-outline">Alle reisebrev</a>
-              </div>
-            </div>
-          </article>
+            ))}
+          </div>
         </div>
       </section>
 

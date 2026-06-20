@@ -15,13 +15,13 @@ export default function ReisebrevPost({ n }) {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
-      <SiteHeader variant="compact" currentPage="reisebrev.html" />
+      <SiteHeader variant="compact" />
 
       <main className="max-w-content mx-auto px-6 py-12 md:py-20">
 
         {/* Back link */}
         <a
-          href={`${base}reisebrev.html`}
+          href={`${base}index.html#reisebrev`}
           className="font-sans text-sm text-slate-500 hover:text-slate-300 transition-colors inline-flex items-center gap-2 mb-10"
         >
           ← Alle reisebrev
@@ -116,7 +116,7 @@ export default function ReisebrevPost({ n }) {
           ) : <div />}
         </div>
 
-        <a href={`${base}reisebrev.html`} className="btn-outline">Alle reisebrev</a>
+        <a href={`${base}index.html#reisebrev`} className="btn-outline">Alle reisebrev</a>
 
       </main>
       <SiteFooter />

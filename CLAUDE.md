@@ -98,6 +98,9 @@ current session.
 ## Site structure decisions
 
 - **Nav (4 items only):** Om oss · Reiserute & galleri · Reisebrev · Utstyr
+  "Reisebrev" nav link now points to `index.html#reisebrev` (homepage section anchor) —
+  no separate list page exists. It will never show as "active" since no page passes that
+  href as currentPage; this is acceptable and expected.
 - **Nav layout:** No hamburger menu. Desktop (≥ 768px): nav renders
   as a 912px-wide rounded pill. Mobile (< 768px): full-bleed strip (no
   pill shape, no max-width). Items use `justify-content: space-evenly`
@@ -208,14 +211,14 @@ current session.
    Nordkapp til Lindesnes." + short description (1.5rem / ingress size, full-width,
    no max-w constraint) + route-line SVG + 3 stats (2 500 km /
    6 måneder / 15 etapper — NOT 4) + "Se hele ruta" button.
-4. **Siste reisebrev** — id="siste-reisebrev". Eyebrow "Reisebrev",
-   section h2 "Siste reisebrev". Grid layout matching Reisebrev page:
-   image (260px col, aspect-[4/3] on mobile) + content column (date,
-   etappe label, h3 title, excerpt). "Les mer →" text link after excerpt
-   linking to per-post URL (pattern: `reisebrev6.html`). "Alle reisebrev"
-   outline button at bottom linking to reisebrev.html. Latest entry:
-   Etappe 6, Hegra–Gressli (image: Reisebrev0601.jpg). Future per-post
-   pages will use the pattern `reisebrevN.html` (N = letter number).
+4. **Reisebrev** — id="reisebrev". Eyebrow "Reisebrev", section h2
+   "Oppdateringer underveis". Full 3-column grid of all 6 reisebrev entries
+   (1 col mobile, 2 col sm, 3 col lg). Each card: cover image (aspect-[4/3],
+   hover:scale-105 via .reisebrev-cover-img), date label, then h3 with
+   zero-padded entry number (muted, font-sans font-normal) + title text
+   (font-serif, text-xl). No excerpt, no "Les mer" link, no "Alle reisebrev"
+   button — all entries shown directly. Each card is a single `<a>` block link
+   pointing to `reisebrevN.html`. The old list page (reisebrev.html) is deleted.
 5. **Sponsor logos** — own dedicated section, NOT inside the footer.
    Logo grid, all 20 real sponsors (see Content inventory). Logos sit
    directly on the dark background with `mix-blend-mode: screen` — JPGs
@@ -236,14 +239,19 @@ current session.
    The `<Wordmark>` component is a named export from SiteHeader.jsx; import it from
    there to avoid drift between TitleCard and footer wordmark markup.
 7. **Version switcher** — sits BELOW the footer (separate element), centered.
+   Vertical padding: `32px 16px` (32px top/bottom — on-grid; was 20px). Applied
+   identically on both sites.
+   **Hover behavior (both sites):** Text-color-only hover — the inactive link
+   text brightens to full white on hover. No background pill/tint on hover.
+   CSS: `.npls-link:hover { color: #ffffff }` (02-restored-static) /
+   `color: #f8fafc` (03-modernized). Transition: `color 0.15s` (was `background`).
    The modernized site uses on-palette colors (differs from 02-restored-static):
    - Outer pill: `#1e293b` (slate-800)
    - Active side (Oppdatert nettside): bg `#f8fafc`, color `#0f172a`, fontWeight 500
    - Inactive link (Original nettside): color `rgba(148,163,184,0.9)` (slate-400)
-   - Inactive hover: `rgba(251,146,60,0.10)` (orange-400 at 10% — accent tint)
-   `02-restored-static` intentionally keeps its original `rgba(0,0,0,0.9)` outer pill /
-   `#ffffff` active pill / `rgba(255,255,255,0.1)` hover. The two sites' switchers now
-   intentionally differ — do not sync them back to match.
+   `02-restored-static` keeps: outer pill `rgba(0,0,0,0.9)`, active bg `#ffffff` /
+   color `#1e1e1e`, inactive link `rgba(255,255,255,0.85)`. The two sites' switchers
+   intentionally differ in palette — do not sync them back to match.
 
 ## Content inventory (verified real values — use these exactly)
 
@@ -341,25 +349,27 @@ The `00` images for entries 3–6 were 75×75 thumbnails; the `01` images were
 medium-res; the `02` images were consistently the highest-resolution.
 `LATEST_REISEBREV.img` on the homepage also updated to `Reisebrev0602.jpg`.
 
-**Homepage section ids:** hero, om-turen, ruta, siste-reisebrev, sponsorer.
+**Homepage section ids:** hero, om-turen, ruta, reisebrev, sponsorer.
 
 ## Individual Reisebrev post pages
 
 Each letter has its own static page: `reisebrev1.html` through `reisebrev6.html`.
+The standalone list page (`reisebrev.html`) has been deleted — all 6 entries are now
+presented directly in the homepage `#reisebrev` section.
 
 **File structure (all in `03-modernized/`):**
-- `src/data/reisebrev.js` — single source of truth for all letter data (etappe, title, date, images, excerpt, body paragraphs, kadaver table for entry 1). Both the list page and post pages import from here.
-- `src/pages/reisebrevpost/ReisebrevPost.jsx` — shared post template (compact masthead, back link, eyebrow/h1/date, hero image, body text, kadaver table, additional images gallery, prev/next nav, "Alle reisebrev" button).
+- `src/data/reisebrev.js` — single source of truth for all letter data (etappe, title, date, img, excerpt, body paragraphs, kadaver table for entry 1). Both Home.jsx and ReisebrevPost.jsx import from here.
+- `src/pages/reisebrevpost/ReisebrevPost.jsx` — shared post template (compact masthead, back link → homepage #reisebrev, eyebrow/h1/date, hero image, body text, kadaver table, prev/next nav, "Alle reisebrev" button → homepage #reisebrev).
 - `src/pages/reisebrevN/main.jsx` (N=1..6) — minimal entry points rendering `<ReisebrevPost n={N} />`.
 - `reisebrevN.html` (N=1..6) — HTML entry points at project root.
 
-**All 6 pages registered in `vite.config.js` under `build.rollupOptions.input`.**
-
-**Image layout per post:** First `images[]` entry is displayed as the hero (full-width, max-h-[480px]). Remaining images shown in a grid below the body text: 1 extra → 2-col grid (entry 1 & 2); 2 extra → 3-col grid (entries 3-6).
+**All 6 pages registered in `vite.config.js` under `build.rollupOptions.input`.** (reisebrev.html removed.)
 
 **Kadaver status table** appears only on entry 1 (Etappe 1), rendered as a CSS grid table with header row + 5 body rows (Føtter/Knær/Rygg/Skuldre/Moral × Marius/Emil).
 
-**Linking:** Reisebrev list page (`src/pages/reisebrev/Reisebrev.jsx`) imports `LETTERS` from the shared data file. Image, title, and "Les mer →" on each article card all link to the respective post page. Homepage "Les mer →" in `#siste-reisebrev` links to `reisebrev6.html`. Both confirmed ✓.
+**Linking:** Back link (top) and "Alle reisebrev" button (bottom) on each post page both
+link to `${base}index.html#reisebrev` (smooth-scroll anchor on homepage). Homepage grid
+card links each go to `reisebrev${n}.html`.
 
 ## Known open issues
 
@@ -777,6 +787,24 @@ None currently open. Add new issues here as they're found, dated.
   color #0f172a; inactive link rgba(148,163,184,0.9) (slate-400); hover tint
   rgba(251,146,60,0.10) (orange-400 10%). The two sites' switchers now intentionally
   differ and should not be synced back to match.
+- 2026-06-20: Version-switcher hover refined on BOTH sites. Removed background-tint
+  hover (rgba tint pill on hover) in favour of text-color-only hover: the inactive link
+  brightens to full white (#ffffff on 02-restored-static, #f8fafc on 03-modernized).
+  No background change on hover — cleaner, no extra "pill within pill" visual effect.
+  Transition updated from `background 0.15s` to `color 0.15s`. Vertical padding
+  increased from 20px to 32px top/bottom (on 4/8pt grid) on both sites — more
+  breathing room. Applied to all 16 02-restored-static HTML pages and SiteFooter.jsx.
+- 2026-06-20: Reisebrev homepage migration (03-modernized only). Deleted standalone
+  reisebrev.html list page and its source files (src/pages/reisebrev/Reisebrev.jsx,
+  main.jsx). Replaced the `#siste-reisebrev` section on the homepage with a full
+  3-column grid (1/2/3 cols at mobile/sm/lg) showing all 6 entries. New section:
+  id="reisebrev", h2 "Oppdateringer underveis". Cards show cover image
+  (aspect-[4/3], hover:scale-105), date, and h3 with zero-padded entry number
+  (muted, font-sans) + title (font-serif text-xl). No excerpt, no "Les mer",
+  no button — all entries directly visible. Nav "Reisebrev" link updated from
+  reisebrev.html → index.html#reisebrev (homepage anchor). Post page back-links
+  and "Alle reisebrev" buttons both updated to index.html#reisebrev. Grep confirms
+  zero remaining references to reisebrev.html in src/ or vite.config.js.
 - 2026-06-20: Footer redesigned — two-part layout with wordmark left and credit right.
   `<Wordmark>` extracted as named export from SiteHeader.jsx (base styles: font-serif
   font-normal leading-none tracking-tight text-slate-50, orange <em> on "på"). TitleCard
