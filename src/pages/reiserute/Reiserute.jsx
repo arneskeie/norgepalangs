@@ -122,14 +122,14 @@ function EtappeRow({ etappe, base, activeSlug, onToggle }) {
         onClick={() => onToggle(etappe.slug + etappe.nr)}
         aria-expanded={isOpen}
       >
-        <span className="font-mono text-xs text-slate-600 w-8 flex-shrink-0 pt-1">
+        <span className="font-sans text-xs text-slate-600 w-8 flex-shrink-0 pt-1">
           {String(etappe.nr).replace('a','').replace('b','b')}
         </span>
         <div className="flex-1 min-w-0">
-          <p className="font-serif text-lg text-slate-100">
-            {etappe.fra} <span className="text-slate-500 font-sans text-base">→</span> {etappe.til}
+          <p className="font-sans font-medium text-base text-slate-100">
+            {etappe.fra} <span className="text-slate-500 font-sans text-sm">→</span> {etappe.til}
           </p>
-          <p className="font-mono text-xs text-slate-500 mt-1">
+          <p className="font-sans text-xs text-slate-500 mt-1">
             {etappe.dager} dager
             {etappe.hvile > 0 && ` · ${etappe.hvile} hvile`}
             {etappe.km && ` · ${etappe.km} km`}
@@ -180,26 +180,26 @@ export default function Reiserute() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
       <SiteHeader variant="compact" currentPage="reiserute.html" />
-      <main className="max-w-[1100px] mx-auto px-6 py-12 md:py-20">
+      <main className="max-w-content mx-auto px-6 py-12 md:py-20">
 
         <p className="eyebrow mb-4">Reiserute & galleri</p>
-        <h1 className="font-serif text-4xl md:text-5xl text-slate-50 leading-[0.95] mb-6">
-          71°10′N <span className="text-orange-400">→</span> 57°58′N
+        <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-6">
+          71°10′N → 57°58′N
         </h1>
-        <p className="font-sans text-[0.9375rem] text-slate-300 leading-relaxed max-w-[640px] mb-4">{INTRO}</p>
+        <p className="font-sans text-[1.5rem] text-slate-300 leading-normal max-w-[640px] mb-4">{INTRO}</p>
 
         {/* Route note */}
         <div className="border-l-2 border-orange-400/30 pl-5 mb-16 max-w-[640px]">
-          <p className="font-sans text-sm text-slate-500 leading-relaxed italic">{NOTE}</p>
+          <p className="font-sans text-[1.125rem] text-slate-500 leading-normal italic">{NOTE}</p>
         </div>
 
         {/* Oppvarmingstur */}
         <div className="mb-12">
           <p className="eyebrow mb-6">Oppvarmingstur</p>
           <div className="flex items-start gap-6 py-4 border-b border-white/[.06]">
-            <span className="font-mono text-xs text-slate-600 w-8 flex-shrink-0 pt-1">—</span>
+            <span className="font-sans text-xs text-slate-600 w-8 flex-shrink-0 pt-1">—</span>
             <div className="flex-1">
-              <p className="font-serif text-lg text-slate-100">Nord-Finland (kanotur)</p>
+              <p className="font-sans font-medium text-base text-slate-100">Nord-Finland (kanotur)</p>
               <p className="font-sans text-sm text-slate-400 mt-1 leading-relaxed">{OPPVARMINGSTUR.note}</p>
             </div>
             <div className="hidden sm:flex gap-1.5 flex-shrink-0">

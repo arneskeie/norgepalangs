@@ -35,8 +35,7 @@ const SIZE_BUCKETS = [
 // Wide rotation range — real scrapbook scatter
 const ROTATIONS = [-9, -6.5, -4.8, -3.2, -1.5, 0.8, 2.5, 4.2, 6.0, 8.5]
 
-function seededShuffle(arr, seed) {
-  // Simple deterministic-ish shuffle using Math.random seeded at component init
+function seededShuffle(arr) {
   const out = [...arr]
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -45,10 +44,8 @@ function seededShuffle(arr, seed) {
   return out
 }
 
-// Pick `n` random items from array, non-repeating
 function pickRandom(arr, n) {
-  const shuffled = seededShuffle(arr)
-  return shuffled.slice(0, n)
+  return seededShuffle(arr).slice(0, n)
 }
 
 function randomFrom(arr) {
@@ -56,7 +53,6 @@ function randomFrom(arr) {
 }
 
 function PhotoStrip({ base, count = 18 }) {
-  // Randomize on every page load — useMemo with no deps = stable per mount
   const items = useMemo(() => {
     const picked = pickRandom(PHOTO_POOL, Math.min(count, PHOTO_POOL.length))
     return picked.map((slug) => ({
@@ -67,7 +63,6 @@ function PhotoStrip({ base, count = 18 }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Double for seamless loop
   const doubled = [...items, ...items]
 
   return (
@@ -91,17 +86,30 @@ function PhotoStrip({ base, count = 18 }) {
   )
 }
 
-function TitleCard({ size = 'lg' }) {
-  return (
-    <div className={size === 'lg' ? 'title-card' : 'title-card-compact'}>
-      <h1 className={`font-serif font-normal leading-none tracking-tight text-slate-50 ${
-        size === 'lg' ? 'text-[1.875rem] sm:text-[3.5rem]' : 'text-2xl sm:text-3xl'
-      }`}>
+/* TitleCard — when href is provided (inner pages), renders as a link to homepage */
+function TitleCard({ href = null }) {
+  const inner = (
+    <>
+      <h1 className="font-serif font-normal leading-none tracking-tight text-slate-50 text-[2rem] sm:text-[3.5rem]">
         NORGE <em className="text-orange-400">på</em> LANGS
       </h1>
-      <p className="font-mono text-xs sm:text-sm text-slate-400 mt-1.5 sm:mt-2 tracking-widest">
+      <p className="font-sans font-medium text-xs sm:text-sm text-slate-400 mt-1.5 sm:mt-2 tracking-widest">
         med Montarou &amp; co
       </p>
+    </>
+  )
+
+  if (href) {
+    return (
+      <a href={href} className="title-card" aria-label="Til forsiden" style={{ textDecoration: 'none', display: 'block' }}>
+        {inner}
+      </a>
+    )
+  }
+
+  return (
+    <div className="title-card">
+      {inner}
     </div>
   )
 }
@@ -113,7 +121,7 @@ export function HeroHeader({ base }) {
       <header className="hero-header">
         <div
           className="hero-bg"
-          style={{ backgroundImage: `url(${base}images/Velkommen.jpg)` }}
+          style={{ backgroundImage: `url(${base}images/Velkommen.webp)` }}
           aria-hidden="true"
         />
         <div className="hero-overlay" aria-hidden="true" />
@@ -125,7 +133,7 @@ export function HeroHeader({ base }) {
 
         {/* Title card — pinned near the top */}
         <div className="hero-content">
-          <TitleCard size="lg" />
+          <TitleCard />
         </div>
 
         {/* Text block — bottom-anchored, lower third */}
@@ -135,7 +143,7 @@ export function HeroHeader({ base }) {
               <span className="accent-bar" aria-hidden="true" />
               71°10′N → 57°58′N
             </div>
-            <h2 className="hero-headline">Veien er <span className="hero-headline-accent">målet.</span></h2>
+            <h2 className="hero-headline">Veien er målet.</h2>
             <p className="hero-subtext">
               Det å kunne se mot horisonten vitende om at bak den er en ny horisont,
               og bak den enda en, og tenke at «over den skal vi» blir et eventyr.
@@ -152,24 +160,16 @@ export function HeroHeader({ base }) {
   )
 }
 
-/* ─── Compact masthead (inner pages) ─── */
-export function CompactHeader({ base, currentPage = '' }) {
+/* ─── Inner page header (card + strip, no hero bg/text) ─── */
+export function InnerHeader({ base, currentPage = '' }) {
   return (
     <>
-      <header className="compact-header">
-        <div className="compact-strip-wrapper" aria-hidden="true">
+      <header className="inner-header">
+        <div className="strip-wrapper" aria-hidden="true">
           <PhotoStrip base={base} count={14} />
         </div>
-
-        <div className="compact-inner">
-          <a href={`${base}index.html`} className="compact-card" aria-label="Til forsiden">
-            <span className="font-serif text-2xl font-normal leading-none text-slate-50">
-              NORGE <em className="text-orange-400">på</em> LANGS
-            </span>
-            <span className="font-mono text-xs text-slate-400 ml-4 tracking-widest hidden sm:inline">
-              med Montarou &amp; co
-            </span>
-          </a>
+        <div className="hero-content">
+          <TitleCard href={`${base}index.html`} />
         </div>
       </header>
       <SiteNav currentPage={currentPage} />
@@ -180,6 +180,6 @@ export function CompactHeader({ base, currentPage = '' }) {
 export default function SiteHeader({ variant = 'hero', currentPage = '' }) {
   const base = import.meta.env.BASE_URL
   return variant === 'compact'
-    ? <CompactHeader base={base} currentPage={currentPage} />
+    ? <InnerHeader base={base} currentPage={currentPage} />
     : <HeroHeader base={base} />
 }

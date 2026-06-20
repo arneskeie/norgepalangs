@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -16,6 +16,7 @@
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
+    font-size: 1rem;
   }
 }
 
@@ -25,7 +26,7 @@
   }
 
   .eyebrow {
-    @apply font-mono text-xs uppercase tracking-[0.2em] text-orange-400;
+    @apply font-sans font-medium text-sm uppercase tracking-[0.2em] text-orange-400;
   }
 }
 
@@ -34,7 +35,7 @@
 /* ─── Hero variant ─── */
 .hero-header {
   position: relative;
-  min-height: max(85vh, 480px);
+  min-height: max(75vh, 480px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -54,9 +55,9 @@
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(2, 6, 23, 0.35) 0%,
-    rgba(2, 6, 23, 0.55) 45%,
-    rgba(2, 6, 23, 0.85) 75%,
+    rgba(2, 6, 23, 0.52) 0%,
+    rgba(2, 6, 23, 0.68) 45%,
+    rgba(2, 6, 23, 0.90) 75%,
     rgba(2, 6, 23, 1.00) 100%
   );
 }
@@ -83,19 +84,17 @@
   padding: 28px 1.5rem 0;
 }
 
-/* Clipped-corner card — fill only, no border stroke.
-   filter:drop-shadow renders shadow outside the clip-path shape. */
+/* Fill only, no border stroke.
+   clip-path was removed — box-shadow now works normally. */
 .title-card {
   background: rgba(15, 23, 42, 0.90);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 2rem 2.5rem;
-  clip-path: polygon(0 0, calc(100% - 32px) 0, 100% 32px, 100% 100%, 0 100%);
   width: fit-content;
-  filter:
-    drop-shadow(0 0 32px rgba(251, 146, 60, 0.18))
-    drop-shadow(0 24px 56px rgba(0, 0, 0, 1.00))
-    drop-shadow(0 6px 12px rgba(0, 0, 0, 0.90));
+  box-shadow:
+    0 28px 64px -12px rgba(2, 6, 23, 0.92),
+    0 6px 20px rgba(2, 6, 23, 0.88);
 }
 
 .title-card h1 {
@@ -163,17 +162,21 @@
 }
 
 .hero-text-inner {
-  max-width: 1100px;
+  box-sizing: border-box;
+  max-width: 960px;
   margin: 0 auto;
   padding: 0 1.5rem 4rem;
+  text-align: center;
 }
 
 .hero-eyebrow {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.7rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.22em;
   color: #94a3b8; /* muted foreground */
@@ -191,7 +194,7 @@
 .hero-headline {
   font-family: 'Instrument Serif', Georgia, serif;
   font-weight: 400;
-  font-size: clamp(2.75rem, 8vw, 6rem);
+  font-size: clamp(3rem, 8vw, 6rem);
   line-height: 0.95;
   color: #f8fafc;
   margin: 0 0 1.25rem;
@@ -203,17 +206,17 @@
 
 .hero-subtext {
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: 0.9375rem;
-  line-height: 1.65;
-  color: rgba(148, 163, 184, 0.85);
-  max-width: 560px;
-  margin: 0 0 2rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: #94a3b8; /* slate-400 — matches inner-page sub-text */
+  margin: 0 auto 2rem;
 }
 
 .hero-buttons {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* Rule 1: pill-shaped (border-radius: 9999px). Rule 2: fill only, no border. */
@@ -221,15 +224,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.75rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1.125rem;
   line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.02em;
   color: #020617;
   background: #fb923c;
   border-radius: 9999px;
-  padding: 0.65rem 1.5rem;
+  padding: 0.75rem 2rem;
   text-decoration: none;
   transition: background 0.2s;
 }
@@ -243,16 +246,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.75rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1.125rem;
   line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.02em;
   color: #fb923c;
   background: transparent;
   border: 2px solid #fb923c;
   border-radius: 9999px;
-  padding: 0.65rem 1.5rem;
+  padding: 0.75rem 2rem;
   text-decoration: none;
   transition: background 0.2s;
 }
@@ -261,76 +264,11 @@
   background: rgba(251, 146, 60, 0.10);
 }
 
-/* ─── Compact masthead (inner pages) ─── */
-.compact-header {
+/* ─── Inner pages header (card + strip, no hero bg/text) ─── */
+.inner-header {
   position: relative;
-  background: #0f172a;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-  min-height: 76px;
-}
-
-.compact-inner {
-  position: relative;
-  z-index: 10;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: center;
-}
-
-/* Rule 2: fill only, no border. */
-.compact-card {
-  display: inline-flex;
-  align-items: baseline;
-  background: rgba(2, 6, 23, 0.80);
-  padding: 0.5rem 1.25rem 0.5rem 1rem;
-  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
-  text-decoration: none;
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.70));
-  transition: filter 0.2s ease;
-}
-
-.compact-card:hover {
-  filter: drop-shadow(0 4px 20px rgba(251, 146, 60, 0.20));
-}
-
-.compact-strip-wrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 60%;
-  height: 100%;
-  overflow: hidden;
-  mask-image: linear-gradient(to right, transparent 0%, black 25%, black 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 100%);
-  opacity: 0.20;
-  z-index: 1;
-}
-
-.compact-strip-wrapper .strip-track {
-  align-items: center;
-  padding: 0;
-  animation-duration: 30s;
-}
-
-.compact-strip-wrapper .strip-img {
-  border-width: 2px;
-}
-
-/* Rule 1: pill. Rule 2: border only, no fill. */
-.gjenfunnet-tag {
-  display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: #fb923c;
-  border: 2px solid rgba(251, 146, 60, 0.30);
-  border-radius: 9999px;
-  padding: 0.2rem 0.65rem;
-  line-height: 1.6;
+  background: #020617;
+  padding-bottom: 24px;
 }
 
 /* ─── Mobile overrides (< 640px) ─── */
@@ -338,11 +276,10 @@
   /* Title card: smaller font needs smaller padding to avoid overflow */
   .title-card {
     padding: 1.25rem 1.5rem;
-    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
   }
 
-  /* Strip center recalculated for shorter card:
-     card height ≈ 20+20+30+22px = 92px → center = 28 + 46 = 74px */
+  /* Strip center recalculated for shorter card (mobile padding):
+     card height ≈ 20+20+32+6+12px = 90px → center = 28 + 45 = 73px ≈ 74px */
   .strip-wrapper {
     top: 74px;
   }
@@ -350,53 +287,53 @@
   /* Tighter bottom padding — hero is proportionally smaller on mobile */
   .hero-text-inner {
     padding: 0 1.5rem 2.5rem;
+    text-align: center;
   }
 }
 
 /* ─── SiteNav ─────────────────────────────────────── */
 
-/* Outer wrapper: no full-bleed background — just breathing room */
 .site-nav {
   position: relative;
-  padding: 10px 2rem;
+  padding: 10px 0;
 }
 
-/* Inner pill: constrained to content width, rounded ends */
+/* Invisible layout wrapper — same box model as content sections:
+   box-sizing border-box, max-width 960px, margin auto, padding px-6.
+   No background, no border-radius — layout only. */
 .nav-inner {
-  max-width: 1100px;
+  box-sizing: border-box;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 0 1.75rem;
+  padding: 0 1.5rem;
+}
+
+/* Pill background — fills nav-inner's padded content area naturally:
+   960px - 2×24px = 912px, exactly matching content section text width. */
+.nav-pill {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   height: 48px;
   background: #0f172a;
   border-radius: 9999px;
 }
 
-/* Desktop link list */
 .nav-links {
-  display: none;
+  display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 2.5rem;
-}
-
-@media (min-width: 768px) {
-  .nav-links {
-    display: flex;
-  }
-  .nav-hamburger {
-    display: none;
-  }
+  width: 100%;
+  justify-content: space-evenly;
+  gap: 0;
 }
 
 .nav-link {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
   color: rgba(148, 163, 184, 0.80);
   text-decoration: none;
   padding: 0.25rem 0;
@@ -414,64 +351,19 @@
   border-bottom-color: #fb923c;
 }
 
-/* Mobile hamburger */
-.nav-hamburger {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  color: rgba(148, 163, 184, 0.80);
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: color 0.2s;
-}
-
-.nav-hamburger:hover {
-  color: #f8fafc;
-}
-
-/* Mobile dropdown — constrained to same pill width */
-.nav-mobile {
-  position: absolute;
-  top: calc(100% - 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 4rem);
-  max-width: 1100px;
-  background: #0f172a;
-  border-radius: 20px;
-  z-index: 50;
-  padding: 1rem 1.75rem 1.5rem;
-}
-
-.nav-mobile ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.nav-mobile-link {
-  display: block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: rgba(148, 163, 184, 0.80);
-  text-decoration: none;
-  padding: 0.875rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  transition: color 0.2s;
-}
-
-.nav-mobile-link:last-child {
-  border-bottom: none;
-}
-
-.nav-mobile-link:hover,
-.nav-mobile-link--active {
-  color: #f8fafc;
+/* Mobile: full-bleed strip */
+@media (max-width: 767px) {
+  .site-nav {
+    padding: 0;
+  }
+  .nav-inner {
+    max-width: 100%;
+    padding: 0;
+  }
+  .nav-pill {
+    border-radius: 0;
+  }
+  .nav-link {
+    font-size: 0.875rem;
+  }
 }

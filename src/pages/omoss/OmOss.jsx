@@ -133,10 +133,10 @@ function PersonCard({ person, base, isActive, onSelect }) {
           style={isActive ? { filter: 'none' } : undefined}
         />
         <div className="min-w-0">
-          <h3 className="font-serif text-lg text-slate-100 leading-tight">{person.name}</h3>
+          <h3 className="font-sans font-medium text-base text-slate-100 leading-tight">{person.name}</h3>
           <div className="mt-2 space-y-1">
             {person.etapper.map((e) => (
-              <p key={e} className="font-mono text-[0.65rem] text-orange-400 uppercase tracking-widest">{e}</p>
+              <p key={e} className="font-sans font-medium text-[0.625rem] text-orange-400 uppercase tracking-widest">{e}</p>
             ))}
           </div>
         </div>
@@ -148,19 +148,19 @@ function PersonCard({ person, base, isActive, onSelect }) {
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 mb-5">
               {person.alder && (
                 <>
-                  <dt className="font-mono text-xs text-slate-500 uppercase tracking-widest">Alder</dt>
+                  <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest">Alder</dt>
                   <dd className="font-sans text-sm text-slate-300">{person.alder}</dd>
                 </>
               )}
               {person.oppvokst && (
                 <>
-                  <dt className="font-mono text-xs text-slate-500 uppercase tracking-widest">Oppvokst i</dt>
+                  <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest">Oppvokst i</dt>
                   <dd className="font-sans text-sm text-slate-300">{person.oppvokst}</dd>
                 </>
               )}
               {person.studerer && (
                 <>
-                  <dt className="font-mono text-xs text-slate-500 uppercase tracking-widest">Studerer</dt>
+                  <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest">Studerer</dt>
                   <dd className="font-sans text-sm text-slate-300">{person.studerer}</dd>
                 </>
               )}
@@ -168,7 +168,7 @@ function PersonCard({ person, base, isActive, onSelect }) {
           )}
           <div className="space-y-3">
             {person.bio.map((para, i) => (
-              <p key={i} className="font-sans text-sm text-slate-400 leading-relaxed">{para}</p>
+              <p key={i} className="font-sans text-[1.125rem] text-slate-400 leading-normal">{para}</p>
             ))}
           </div>
         </div>
@@ -184,12 +184,12 @@ export default function OmOss() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
       <SiteHeader variant="compact" currentPage="omoss.html" />
-      <main className="max-w-[1100px] mx-auto px-6 py-12 md:py-20">
+      <main className="max-w-content mx-auto px-6 py-12 md:py-20">
         <p className="eyebrow mb-4">Om oss</p>
-        <h1 className="font-serif text-4xl md:text-5xl text-slate-50 leading-[0.95] mb-4">
-          Folka bak <span className="text-orange-400">turen.</span>
+        <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-4">
+          Folka bak turen.
         </h1>
-        <p className="font-sans text-[0.9375rem] text-slate-400 leading-relaxed max-w-[560px] mb-14">
+        <p className="font-sans text-[1.5rem] text-slate-400 leading-normal max-w-[560px] mb-14">
           Norge på langs ble gått av én person, men aldri alene. Ti personer bidro til eventyret — som turledsagere, venner og motivatorer.
         </p>
 

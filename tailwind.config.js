@@ -20,7 +20,9 @@ export default {
       fontFamily: {
         serif: ['"Instrument Serif"', 'Georgia', 'serif'],
         sans:  ['Inter', 'system-ui', 'sans-serif'],
-        mono:  ['"JetBrains Mono"', '"Courier New"', 'monospace'],
+      },
+      maxWidth: {
+        content: '960px',
       },
       colors: {
         // explicit aliases keep utility classes readable in JSX

@@ -3,6 +3,9 @@ import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
 
 // ─── Verbatim from 02-restored-static/index.html ────────────────────────────
+const INGRESS =
+  'Da er det endelig avgjort at det blir langtur! Norge skal krysses fra nord til sør det kommende året! Høsten 2008 setter to glade vandrere ut fra Nordkapp i håp om å nå helskinnet gjennom vår langsgående rute nedover Norges land. Ruta vil inneholde vidder, skoger og fjell kledd i nesten alle årstidene. Tidsperspektivet er ca seks måneder, tre før jul og tre etter.'
+
 const VELKOMMEN = [
   'Hvorfor spør mange. Et stort spørsmål for noen, helt naturlig for andre. Er det en flukt fra hverdagen? En asketisk øvelse? En test eller en utfordring? En søken etter noe annet? En annerledes hverdag? Antageligvis litt av alle disse tingene, men fremfor alt handler det om å leve ute i og med naturen over tid. Ren glede over å være ute og bryne seg på naturens meny av utfordringer; holde varmen, bli mett, finne en god leirplass, eller få liv i bålet.',
   'Jeg legger på ingen måte skjul på at å legge vekk klokka, mobilen og universitetet er noe av poenget å komme nærmere noe vi stadig beveger oss bort fra i hverdagen. Hva dette noe er håper jeg å finne ut. Det vil i så fall bli publisert her!',
@@ -11,28 +14,69 @@ const VELKOMMEN = [
   'Før Norge på langs 08/09 skal jeg på en måneds kanotur i Nord-Finland. Det blir en glimrende innledning til livet i villmarken! Bilder fra denne turen vil også bli lagt ut på denne siden.',
 ]
 
-const STATS = [
-  { value: '2 500', unit: 'km',           label: 'Turen lengde'          },
-  { value: '15',    unit: 'etapper',      label: 'Norges ryggrad'        },
-  { value: 'Sep',   unit: '2008 → 2009', label: 'Tidsrom'               },
-  { value: '71°N',  unit: '→ 57°N',      label: 'Nordkapp – Lindesnes'  },
-]
-
-// 4 recovered turlogg entries — tagged GJENFUNNET, not TURLOGG
-const GJENFUNNET = [
-  { title: 'Andre dag på sykkel',       date: '19. mai 2009' },
-  { title: 'Avgang etappe 14!',         date: '18. mai 2009' },
-  { title: 'Bilder (igjen)',             date: '14. mai 2009' },
-  { title: 'Tilbakefall på Geilosyken', date: '14. mai 2009' },
-]
-
-// Latest recovered reisebrev — verbatim excerpt from reisebrev.html
+// Latest recovered reisebrev — verbatim excerpt from 02-restored-static/reisebrev.html
 const LATEST_REISEBREV = {
-  label: 'Etappe 6',
-  title: 'Hegra – Gressli',
-  date:  '10. november 2008',
-  excerpt: 'Oktober har blitt til november. Enda en måned har passert og gjort sinnet rikere og midjen smalere. Vi har blitt nødt til å flytte prosjektet sørover som tidligere antatt.',
-  href: 'reisebrev6.html',
+  label:    'Etappe 6',
+  title:    'Hegra – Gressli',
+  date:     '10. november 2008',
+  excerpt:  'Oktober har blitt til november. Enda en måned har passert og gjort sinnet rikere og midjen smalere. Vi har blitt nødt til å flytte prosjektet sørover som tidligere antatt.',
+  img:      'Reisebrev0602.jpg',
+  postHref: 'reisebrev6.html',
+  href:     'reisebrev.html',
+}
+
+// URLs verified 2026-06-19. Dead/unverifiable flagged with comment.
+const SPONSORS = [
+  { name: 'XXL',                 file: 'XXL.jpg',           url: 'http://www.xxl.no/'                    },
+  { name: 'Janus',               file: 'Janus.jpg',         url: 'http://www.janus.no/'                  },
+  { name: 'Sportsbua',           file: 'sportsbua.jpg',     url: 'http://www.sportsbua.no/'              },
+  { name: 'Helsport',            file: 'Helsport.jpg',      url: 'http://www.helsport.no/'               },
+  { name: 'Cappelen',            file: 'Cappelen.jpg',      url: 'http://www.cappelendamm.no/'           },
+  { name: 'Alfasko',             file: 'Alfasko.jpg',       url: 'https://www.alfa.no/'                  }, // rebranded to Alfa, new domain
+  { name: 'Åsnes',               file: 'Asnes.jpg',         url: 'http://www.asnes.com/'                 },
+  { name: 'Fjellpulken',         file: 'Fjellpulken.jpg',   url: 'https://www.fjellpulken.com/'          },
+  { name: 'Rottefella',          file: 'rottefella.jpg',    url: 'https://www.rottefella.com/'           },
+  { name: 'Amfibi',              file: 'amfibi.jpg',        url: 'http://www.amfibi.no/'                 },
+  { name: 'Adidas',              file: 'adidaseyewear.jpg', url: 'https://www.adidas.com/eyewear'        }, // 403 is bot-detection, path updated to lowercase
+  { name: 'MX Sport',            file: 'mxsport.jpg',       url: 'http://www.mx-sport.no/'               }, // original subpath /medlemmer/telemark/ 404; upgraded to root
+  { name: 'Skaidi',              file: 'Skaidi.jpg',        url: 'http://www.skaidihotel.no/'            },
+  { name: 'Breidablikk',         file: 'Breidablikk.jpg',   url: 'http://www.breidablikk.no/'            },
+  { name: 'Lundhogda',           file: 'Lundhogda.jpg',     url: 'http://www.lundhogdacamping.no/'       },
+  { name: 'Femund Fjellstue',    file: 'Femund.jpg',        url: 'http://www.femundfjellstue.no/'        },
+  { name: 'Umbukta Fjellstue',   file: 'Umbukta.jpg',       url: 'http://www.umbuktafjellstue.no/'       },
+  { name: 'Jule Ferie & Fritid', file: 'Jule.jpg',          url: null                                    }, // no current website — intentionally no link
+  { name: 'Dokka Camping',       file: 'Dokkacamping.jpg',  url: 'http://www.dokkacamping.no/'           },
+  { name: 'Gudbrandsdal Hotell', file: 'sgh.jpg',           url: 'http://www.sgh.no/'                    },
+]
+
+function RouteLine() {
+  const DOTS = 15
+  const W = 640
+  const pad = 16
+  const inner = W - pad * 2
+  return (
+    <svg
+      viewBox={`0 0 ${W} 40`}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-full max-w-[640px]"
+      aria-hidden="true"
+    >
+      <line x1={pad} y1="20" x2={W - pad} y2="20" stroke="#fb923c" strokeWidth="1.5" strokeOpacity="0.2" />
+      {Array.from({ length: DOTS }).map((_, i) => (
+        <circle
+          key={i}
+          cx={pad + (inner / (DOTS - 1)) * i}
+          cy="20"
+          r="3"
+          fill="#fb923c"
+          fillOpacity="0.45"
+        />
+      ))}
+      <circle cx={pad} cy="20" r="6" fill="#fb923c" />
+      <circle cx={W - pad} cy="20" r="6" fill="#fb923c" />
+    </svg>
+  )
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -42,95 +86,163 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
-      <SiteHeader variant="hero" />
 
-      {/* ── Om turen ──────────────────────────────────────────────────────── */}
+      {/* ── Hero ────────────────────────────────────────────────────────────── */}
+      <div id="hero">
+        <SiteHeader variant="hero" />
+      </div>
+
+      {/* ── Om turen ────────────────────────────────────────────────────────── */}
       <section id="om-turen" className="py-14 md:py-24">
-        <div className="max-w-[1100px] mx-auto px-6">
-          <div className="max-w-[680px]">
-            <p className="eyebrow mb-6">Om turen</p>
-            <h2 className="font-serif text-4xl md:text-5xl leading-[0.95] text-slate-50 mb-10">
-              Veien er <span className="text-orange-400">målet.</span>
-            </h2>
-            <div className="space-y-5">
-              {VELKOMMEN.map((para, i) => (
-                <p key={i} className="font-sans text-[0.9375rem] text-slate-300 leading-relaxed">
-                  {para}
-                </p>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Stats ─────────────────────────────────────────────────────────── */}
-      <section className="py-10 md:py-16 border-t border-b border-white/[.06]">
-        <div className="max-w-[1100px] mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
-            {STATS.map(({ value, unit, label }) => (
-              <div key={label}>
-                <p className="font-serif text-3xl md:text-4xl text-slate-50 leading-none">{value}</p>
-                <p className="font-mono text-xs text-orange-400 mt-1 tracking-wider">{unit}</p>
-                <p className="font-mono text-[0.65rem] text-slate-500 mt-2 uppercase tracking-widest">{label}</p>
-              </div>
+        <div className="max-w-content mx-auto px-6">
+          <p className="font-sans text-[1.5rem] text-slate-200 leading-normal mb-8">{INGRESS}</p>
+          <div className="space-y-5">
+            {VELKOMMEN.map((para, i) => (
+              <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal">
+                {para}
+              </p>
             ))}
           </div>
+          <div className="mt-8">
+            <img
+              src={`${base}images/diverse/SignaturLiten.jpg`}
+              alt="Marius Montarou"
+              width={190}
+              height={46}
+              style={{ mixBlendMode: 'screen' }}
+            />
+          </div>
         </div>
       </section>
 
-      {/* ── Pull-quote ────────────────────────────────────────────────────── */}
-      <section className="py-12 md:py-20">
-        <div className="max-w-[1100px] mx-auto px-6">
-          <blockquote className="max-w-[760px] mx-auto text-center">
+      {/* ── Pull-quote ──────────────────────────────────────────────────────── */}
+      <section id="quote" className="py-12 md:py-20">
+        <div className="max-w-content mx-auto px-6">
+          <blockquote className="text-center">
             <div className="w-px h-14 bg-orange-400 mx-auto mb-8" />
-            <p className="font-serif text-xl md:text-2xl text-slate-200 leading-snug italic">
+            <p className="font-serif text-[2.5rem] text-slate-200 leading-snug italic">
               «Vi legger bort vekkerklokka, timeplanen og de andre heftelsene som hører sivilisasjonen til
               og lar bekymringene dreie seg om å holde varmen, finne brensel, få ørret i gryta og tørke sokker.»
             </p>
             <footer className="mt-6">
-              <cite className="font-mono text-xs text-slate-500 uppercase tracking-widest not-italic">
-                Marius Montarou — Velkommen-tekst
+              <cite className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest not-italic">
+                Marius Montarou
               </cite>
             </footer>
           </blockquote>
         </div>
       </section>
 
-      {/* ── Siste nytt ────────────────────────────────────────────────────── */}
-      <section className="py-20 border-t border-white/[.06]">
-        <div className="max-w-[1100px] mx-auto px-6">
-          <p className="eyebrow mb-3">Siste nytt</p>
-          <p className="font-mono text-xs text-slate-500 mb-10 max-w-prose">
-            Fire logginnlegg er gjenfunnet fra det opprinnelige nettstedet. Resten av turloggen er tapt.
+      {/* ── Ruta ────────────────────────────────────────────────────────────── */}
+      <section id="ruta" className="py-12 md:py-20">
+        <div className="max-w-content mx-auto px-6">
+          <p className="eyebrow mb-5">Ruta</p>
+          <h2 className="font-serif text-[2.5rem] md:text-5xl leading-[0.95] text-slate-50 mb-6">
+            15 etapper, <span className="text-orange-400">Nordkapp til Lindesnes.</span>
+          </h2>
+          <p className="font-sans text-[1.5rem] text-slate-400 leading-normal mb-10">
+            Et halvt år til fots langs Norges ryggrad — fra Arctic Ocean-kapp til Skandinavias sydspiss.
+            Gjennom vidder, skoger og fjell, i alle årstidene.
           </p>
 
-          {/* GJENFUNNET cards — fill only (rule 2) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-            {GJENFUNNET.map(({ title, date }) => (
-              <article key={title} className="bg-slate-900 rounded-lg p-5">
-                <span className="gjenfunnet-tag">GJENFUNNET</span>
-                <h3 className="font-serif text-lg text-slate-100 leading-snug mt-3 mb-2">{title}</h3>
-                <p className="font-mono text-xs text-slate-500 tracking-wider">{date}</p>
-              </article>
-            ))}
-          </div>
-
-          {/* Latest reisebrev */}
-          <div className="border-t border-white/[.06] pt-12">
-            <p className="eyebrow mb-6">Siste reisebrev</p>
-            <div className="max-w-[560px]">
-              <p className="font-mono text-xs text-slate-500 tracking-wider mb-2">{LATEST_REISEBREV.date}</p>
-              <p className="font-mono text-xs text-orange-400 uppercase tracking-widest mb-1">{LATEST_REISEBREV.label}</p>
-              <h3 className="font-serif text-2xl text-slate-100 mb-3">{LATEST_REISEBREV.title}</h3>
-              <p className="font-sans text-[0.9375rem] text-slate-400 leading-relaxed mb-6">
-                {LATEST_REISEBREV.excerpt}
-              </p>
-              <a href={`${base}${LATEST_REISEBREV.href}`} className="btn-outline">
-                Les reisebrev
-              </a>
+          <div className="mb-10">
+            <RouteLine />
+            <div className="flex justify-between mt-2 max-w-[640px]">
+              <span className="font-sans font-medium text-[0.625rem] text-slate-600 uppercase tracking-widest">Nordkapp 71°10′N</span>
+              <span className="font-sans font-medium text-[0.625rem] text-slate-600 uppercase tracking-widest">Lindesnes 57°58′N</span>
             </div>
           </div>
 
+          <div className="flex flex-wrap gap-10 mb-10">
+            {[
+              { value: '2 500', unit: 'km'       },
+              { value: '6',     unit: 'måneder'  },
+              { value: '15',    unit: 'etapper'  },
+            ].map(({ value, unit }) => (
+              <div key={unit}>
+                <p className="font-sans text-[2rem] md:text-[2.5rem] text-slate-50 leading-none">{value}</p>
+                <p className="font-sans text-xs text-orange-400 mt-1 tracking-wider">{unit}</p>
+              </div>
+            ))}
+          </div>
+
+          <a href={`${base}reiserute.html`} className="btn-outline">Se hele ruta</a>
+        </div>
+      </section>
+
+      {/* ── Siste reisebrev ─────────────────────────────────────────────────── */}
+      <section id="siste-reisebrev" className="py-12 md:py-20">
+        <div className="max-w-content mx-auto px-6">
+          <p className="eyebrow mb-4">Reisebrev</p>
+          <h2 className="font-serif text-[2.5rem] md:text-5xl leading-[0.95] text-slate-50 mb-10">
+            Siste reisebrev
+          </h2>
+          <article className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-8 mb-10">
+            <div className="aspect-[4/3] md:aspect-auto overflow-hidden rounded">
+              <img
+                src={`${base}images/reisebrev/${LATEST_REISEBREV.img}`}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col justify-center">
+              <p className="font-sans text-xs text-slate-500 tracking-wider mb-1">{LATEST_REISEBREV.date}</p>
+              <p className="font-sans font-medium text-xs text-orange-400 uppercase tracking-widest mb-2">{LATEST_REISEBREV.label}</p>
+              <h3 className="font-sans font-semibold text-2xl text-slate-100 mb-3">{LATEST_REISEBREV.title}</h3>
+              <p className="font-sans text-sm text-slate-400 leading-relaxed mb-4">
+                {LATEST_REISEBREV.excerpt}
+              </p>
+              <a
+                href={`${base}${LATEST_REISEBREV.postHref}`}
+                className="font-sans font-medium text-sm text-orange-400 hover:text-orange-300 transition-colors mb-6 self-start"
+              >
+                Les mer →
+              </a>
+              <div>
+                <a href={`${base}${LATEST_REISEBREV.href}`} className="btn-outline">Alle reisebrev</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      {/* ── Sponsorer ───────────────────────────────────────────────────────── */}
+      <section id="sponsorer" className="py-12 md:py-20">
+        <div className="max-w-content mx-auto px-6">
+          <h2 className="font-serif text-[2.5rem] md:text-5xl leading-[0.95] text-slate-50 mb-4">
+            Sponsorer.
+          </h2>
+          <p className="font-sans text-xs text-slate-500 mb-10">
+            Uten støtte fra sponsorene hadde ikke dette vært mulig.
+          </p>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-6">
+            {SPONSORS.map(({ name, file, url }) => {
+              const img = (
+                <img
+                  src={`${base}images/sponsors/${file}`}
+                  alt={name}
+                  className="max-h-full w-auto max-w-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"
+                  style={{ mixBlendMode: 'screen' }}
+                />
+              )
+              return url ? (
+                <a
+                  key={name}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-center h-16"
+                  aria-label={name}
+                >
+                  {img}
+                </a>
+              ) : (
+                <div key={name} className="group flex items-center justify-center h-16">
+                  {img}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </section>
 

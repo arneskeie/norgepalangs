@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import React from 'react'
 
 const NAV_LINKS = [
   { label: 'Om oss',              href: 'omoss.html'     },
@@ -9,49 +8,21 @@ const NAV_LINKS = [
 ]
 
 export default function SiteNav({ currentPage = '' }) {
-  const [open, setOpen] = useState(false)
   const base = import.meta.env.BASE_URL
-
   const isActive = (href) => currentPage === href
 
   return (
     <nav className="site-nav" aria-label="Hovednavigasjon">
+      {/* Invisible layout wrapper — same box model as content sections (960px, px-6) */}
       <div className="nav-inner">
-        {/* Desktop links */}
-        <ul className="nav-links" role="list">
-          {NAV_LINKS.map(({ label, href }) => (
-            <li key={href}>
-              <a
-                href={`${base}${href}`}
-                className={`nav-link ${isActive(href) ? 'nav-link--active' : ''}`}
-              >
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        {/* Mobile hamburger */}
-        <button
-          className="nav-hamburger"
-          aria-label={open ? 'Lukk meny' : 'Åpne meny'}
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
-
-      {/* Mobile dropdown */}
-      {open && (
-        <div className="nav-mobile" role="dialog" aria-label="Meny">
-          <ul role="list">
+        {/* Pill background — fills nav-inner's padded content area (912px) */}
+        <div className="nav-pill">
+          <ul className="nav-links" role="list">
             {NAV_LINKS.map(({ label, href }) => (
               <li key={href}>
                 <a
                   href={`${base}${href}`}
-                  className={`nav-mobile-link ${isActive(href) ? 'nav-mobile-link--active' : ''}`}
-                  onClick={() => setOpen(false)}
+                  className={`nav-link ${isActive(href) ? 'nav-link--active' : ''}`}
                 >
                   {label}
                 </a>
@@ -59,7 +30,7 @@ export default function SiteNav({ currentPage = '' }) {
             ))}
           </ul>
         </div>
-      )}
+      </div>
     </nav>
   )
 }

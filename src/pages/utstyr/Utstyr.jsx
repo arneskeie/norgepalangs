@@ -116,8 +116,8 @@ function CategorySection({ cat, isOpen, onToggle }) {
         onClick={onToggle}
         aria-expanded={isOpen}
       >
-        <span className="font-serif text-xl text-slate-100">{cat.label}</span>
-        <span className="font-mono text-xs text-slate-600">
+        <span className="font-sans font-medium text-[1.5rem] text-slate-100">{cat.label}</span>
+        <span className="font-sans text-xs text-slate-600">
           {cat.items.length} gjenstander {isOpen ? '↑' : '↓'}
         </span>
       </button>
@@ -157,13 +157,13 @@ export default function Utstyr() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
       <SiteHeader variant="compact" currentPage="utstyr.html" />
-      <main className="max-w-[1100px] mx-auto px-6 py-12 md:py-20">
+      <main className="max-w-content mx-auto px-6 py-12 md:py-20">
 
         <p className="eyebrow mb-4">Utstyr</p>
-        <h1 className="font-serif text-4xl md:text-5xl text-slate-50 leading-[0.95] mb-6">
-          Det vi <span className="text-orange-400">stolte på.</span>
+        <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-6">
+          Det vi stolte på.
         </h1>
-        <p className="font-sans text-[0.9375rem] text-slate-400 leading-relaxed max-w-[640px] mb-4">{INTRO}</p>
+        <p className="font-sans text-[1.5rem] text-slate-400 leading-normal max-w-[640px] mb-4">{INTRO}</p>
 
         <div className="flex justify-end mb-6">
           <button
