@@ -452,6 +452,9 @@ None currently open. Add new issues here as they're found, dated.
   WEBMASTER entry — folk.ntnu.no/arnesigm is outdated and no longer linked.
   "WEBMASTER: ARNE S. SKEIE" is now plain text. Marius's omoss.html link unaffected.
   Applied across all 16 HTML pages.
+- 2026-06-20: Version-switcher outer pill background changed from #1e1e1e to
+  rgba(0,0,0,0.9) — true black at 90% opacity reads more consistently against
+  both sites' backgrounds. Hover tint and all other values unchanged.
 - 2026-06-20: Version-switcher redesigned — segmented pill control. Outer dark pill
   (#1e1e1e) floats on the page's own background (no background of its own). Inner
   white pill on the active/current side; inactive side is a link with
