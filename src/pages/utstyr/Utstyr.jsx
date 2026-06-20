@@ -125,7 +125,7 @@ function CategorySection({ cat, isOpen, onToggle }) {
         <ul className="pb-6 pl-2 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
           {cat.items.map((item) => (
             <li key={item} className="flex items-start gap-3">
-              <span className="text-orange-400/60 mt-1.5 flex-shrink-0 text-xs">—</span>
+              <span className="text-orange-400/60 mt-2 flex-shrink-0 text-xs">—</span>
               <span className="font-sans text-sm text-slate-300 leading-relaxed">{item}</span>
             </li>
           ))}

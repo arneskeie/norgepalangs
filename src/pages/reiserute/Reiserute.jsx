@@ -137,7 +137,7 @@ function EtappeRow({ etappe, base, activeSlug, onToggle }) {
         </div>
 
         {/* Gallery thumbnails — hidden on small screens where they'd crowd the route name */}
-        <div className="hidden sm:flex gap-1.5 flex-shrink-0">
+        <div className="hidden sm:flex gap-2 flex-shrink-0">
           {[0,1,2].map((i) => (
             <img
               key={i}
@@ -202,7 +202,7 @@ export default function Reiserute() {
               <p className="font-serif font-medium text-base text-slate-100">Nord-Finland (kanotur)</p>
               <p className="font-sans text-sm text-slate-400 mt-1 leading-relaxed">{OPPVARMINGSTUR.note}</p>
             </div>
-            <div className="hidden sm:flex gap-1.5 flex-shrink-0">
+            <div className="hidden sm:flex gap-2 flex-shrink-0">
               {[0,1,2].map((i) => (
                 <img key={i} src={`${base}strip/opp_${i}.jpg`} alt="" className="w-12 h-9 object-cover rounded opacity-60" />
               ))}

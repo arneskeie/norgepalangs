@@ -136,7 +136,7 @@ function PersonCard({ person, base, isActive, onSelect }) {
           <h3 className="font-serif font-medium text-base text-slate-100 leading-tight">{person.name}</h3>
           <div className="mt-2 space-y-1">
             {person.etapper.map((e) => (
-              <p key={e} className="font-sans font-medium text-[0.625rem] text-orange-400 uppercase tracking-widest">{e}</p>
+              <p key={e} className="font-sans font-medium text-xs text-orange-400 uppercase tracking-widest">{e}</p>
             ))}
           </div>
         </div>

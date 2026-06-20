@@ -148,8 +148,8 @@ export default function Home() {
           <div className="mb-10">
             <RouteLine />
             <div className="flex justify-between mt-2 max-w-[640px]">
-              <span className="font-sans font-medium text-[0.625rem] text-slate-600 uppercase tracking-widest">Nordkapp 71°10′N</span>
-              <span className="font-sans font-medium text-[0.625rem] text-slate-600 uppercase tracking-widest">Lindesnes 57°58′N</span>
+              <span className="font-sans font-medium text-xs text-slate-600 uppercase tracking-widest">Nordkapp 71°10′N</span>
+              <span className="font-sans font-medium text-xs text-slate-600 uppercase tracking-widest">Lindesnes 57°58′N</span>
             </div>
           </div>
 

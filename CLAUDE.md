@@ -36,6 +36,16 @@ current session.
   to `none`). At small sizes Fraunces auto-selects a cut with more
   open spacing and taller x-height, resolving the readability issue
   that the old Instrument Serif floor rule was compensating for.
+- **4/8pt spacing & sizing grid.** All padding, margin, gap, border-radius,
+  and general element sizing (widths/heights of UI elements) must use values
+  from this list (in px):
+  **4 · 8 · 12 · 16 · 18 · 20 · 24 · 32 · 36 · 40 · 48 · 56 · 64 · 72 · 80**
+  and continuing in 8px increments above 80 (88, 96, 104, 112, 120 …).
+  This does NOT apply to `font-size` (governed by the type scale ladder above),
+  `line-height`, `letter-spacing`, or content column max-widths (text flow
+  decisions). Any new off-grid spacing value must be flagged rather than silently
+  introduced. Existing documented off-grid values: see Decision changelog entry
+  for 2026-06-20 spacing audit — flagged items deferred pending user review.
 - Accent color: **orange-400** (`#fb923c`). Confirmed via real color
   analysis of 60 sampled trip photos — teal (the original logo color) was
   the weakest hue present in the actual photography; orange-400 matches
@@ -194,21 +204,29 @@ wrappers and CSS header/nav inner containers. Exception: the full-bleed
 hero outer container has no width cap.
 
 **Type scale (rem ladder — only use these values):**
-0.625rem · 0.75rem · 0.875rem · 1rem · 1.5rem · 2rem · 2.5rem · 3rem · 3.5rem
-Any off-ladder value encountered in JSX or CSS must be snapped to the
-nearest rung. Eyebrow text: **14px (0.875rem = text-sm)**.
+0.75rem · 0.875rem · 1rem · 1.125rem · 1.25rem · 1.5rem · 2rem · 2.5rem · 3rem · 3.5rem · 4rem · 4.5rem · 5rem (and continuing by 0.5rem)
+
+Increment rule:
+- **At or below 2rem:** use the rungs as listed above (irregular spacing is intentional — finer steps at small sizes).
+- **Above 2rem:** only 0.5rem increments — 2.5, 3, 3.5, 4, 4.5, 5, 5.5 … extending indefinitely.
+  The existing `clamp(3rem, 8vw, 6rem)` hero headline and `4.5rem` inner-page h1 both fit this rule.
+
+**New floor: 0.75rem (12px).** The old 0.625rem (10px) floor is removed. 10px type was the old floor and has been audited out; `text-xs` (0.75rem) is now the minimum permitted size. Eyebrow text: **0.875rem (14px = `text-sm`)**.
 Base font size: 16px (1rem) on `body`. Hero headline: `clamp(3rem, 8vw, 6rem)`.
 
-**Explicit off-ladder exceptions (user-specified, do not snap):**
+**Type role reference (not exceptions — these are on the ladder):**
+- **0.75rem (12px = `text-xs`):** small labels, metadata, icon captions. Floor — nothing smaller.
+- **0.875rem (14px = `text-sm`):** eyebrows, secondary labels, captions.
+- **1rem (16px = `text-base`):** nav links, general UI text.
 - **1.125rem (18px):** body/bulk text — all long-form prose paragraphs
   (#om-turen VELKOMMEN, Reisebrev post body, OmOss bio, Reisebrev excerpts,
   Reiserute NOTE). Use `text-[1.125rem] leading-normal`.
+- **1.25rem (20px):** available as a rung between body and ingress, use when 1.125rem is too small and 1.5rem too large.
 - **1.5rem:** ingress/sub-text — the supporting paragraph directly under a
   page or section h1/h2 title. All inner-page intro paragraphs + homepage
   INGRESS and #ruta description. Use `text-[1.5rem] leading-normal`.
-  Note: 1.5rem IS on the ladder; listed here for role clarity.
 - **4.5rem:** inner-page h1 titles (desktop). Use `text-[2.5rem] md:text-[4.5rem]`
-  (2.5rem mobile fallback). Applies to all inner pages and Reisebrev post pages.
+  (2.5rem mobile fallback). Valid rung (above 2rem, 0.5rem increments apply).
 
 **line-height: 1.5 = `leading-normal`** — use this for all body and ingress text
 (replaces old `leading-relaxed` / 1.625 in prose contexts).
@@ -487,6 +505,44 @@ None currently open. Add new issues here as they're found, dated.
   Inter in their original intended role (eyebrows, labels, body prose, nav,
   buttons) are now Work Sans. font-optical-sizing: auto is in effect (browser
   default — not overridden anywhere).
+- 2026-06-20: Type scale updated — floor raised from 0.625rem to 0.75rem
+  (10px removed, 12px is new minimum). 1.125rem (18px) and 1.25rem (20px)
+  added as proper rungs (1.125rem was previously a documented off-ladder
+  exception; it is now simply on the ladder). Increment rule clarified:
+  at/below 2rem, use rungs as listed (irregular fine-grained steps);
+  above 2rem, only 0.5rem increments permitted (2.5, 3, 3.5, 4, 4.5, 5 …).
+  The existing 4.5rem inner-page h1 size and clamp(3rem,8vw,6rem) hero
+  headline are valid. Type scale audit applied:
+  - Snapped: `text-[0.625rem]` → `text-xs` (0.75rem) in Home.jsx (×2,
+    RouteLine Nordkapp/Lindesnes labels), OmOss.jsx (×1, etappe label).
+  - No other off-ladder font-size values found in JSX or CSS.
+- 2026-06-20: 4/8pt spacing & sizing grid established as a hard rule.
+  Applies to: padding, margin, gap, border-radius, element widths/heights.
+  Does NOT apply to: font-size, line-height, letter-spacing, or text column
+  max-widths. Grid (px): 4, 8, 12, 16, 18, 20, 24, 32, 36, 40, 48, 56,
+  64, 72, 80, then +8 per step (88, 96, 104 …).
+  Spacing audit applied — snapped values:
+  - `.site-nav` padding: 10px → 8px (CSS)
+  - `.strip-track` gap: 14px → 16px (equidistant; went up for cleaner image spacing)
+  - `.strip-track` padding: 10px 7px → 8px 8px (both to nearest grid value)
+  - `gap-1.5` (6px) → `gap-2` (8px) in Reiserute.jsx strip thumbnail rows (×2)
+  - `mt-1.5` (6px) → `mt-2` (8px) in Utstyr.jsx bullet dash
+  - `mt-1.5` (6px) → `mt-2` (8px) in SiteHeader.jsx title card subtitle
+  Flagged (not auto-applied — pending user review):
+  A. `.hero-content { padding: 28px 1.5rem 0 }` — 28px off-grid (24 or 32).
+     Shifts title card vertical position.
+  B. `.strip-wrapper { top: 102px; height: 133px }` — both off-grid (96/104
+     and 128/136 respectively), derived together from title card height and
+     photo aspect ratios. Must be changed in tandem or not at all.
+  C. `SIZE_BUCKETS` in SiteHeader.jsx — photo strip image dimensions include
+     off-grid values (76, 58, 90, 68, 106, 90, 102px). These set the visual
+     size variety in the scrapbook strip; snapping would change the aesthetic
+     rhythm.
+  D. Version-switcher pill inner padding: `7px 18px` in SiteFooter.jsx — 7px
+     off-grid (→8px). NOT applied: changing only the modernized site while
+     leaving 02-restored-static at 7px would create a visible cross-site
+     inconsistency. Requires updating both simultaneously (or accepting the
+     1px discrepancy as intentional).
 - 2026-06-20: Repo renamed norgepalangs-ny → norgepalangs. Vite base updated from
   /norgepalangs-ny/ to /norgepalangs/. Version-switcher added to SiteFooter pointing
   to arneskeie.github.io/norgepalangs-2009/ (restored site). Restored site repo renamed

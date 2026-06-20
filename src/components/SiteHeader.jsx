@@ -93,7 +93,7 @@ function TitleCard({ href = null }) {
       <h1 className="font-serif font-normal leading-none tracking-tight text-slate-50 text-[2rem] sm:text-[3.5rem]">
         NORGE <em className="text-orange-400">på</em> LANGS
       </h1>
-      <p className="font-sans font-medium text-xs sm:text-sm text-slate-400 mt-1.5 sm:mt-2 tracking-widest">
+      <p className="font-sans font-medium text-xs sm:text-sm text-slate-400 mt-2 tracking-widest">
         med Montarou &amp; co
       </p>
     </>
