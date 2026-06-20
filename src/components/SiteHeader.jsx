@@ -90,10 +90,11 @@ function PhotoStrip({ base, count = 18 }) {
 function TitleCard({ href = null }) {
   const inner = (
     <>
-      <h1 className="font-serif font-normal leading-none tracking-tight text-slate-50 text-[2rem] sm:text-[3.5rem]">
+      <p className="eyebrow mb-4">2008 — 2009 · Nordkapp → Lindesnes</p>
+      <h1 className="font-serif font-normal leading-none tracking-tight text-slate-50 text-[2rem] sm:text-[3rem]">
         NORGE <em className="text-orange-400">på</em> LANGS
       </h1>
-      <p className="font-sans font-medium text-xs sm:text-sm text-slate-400 mt-2 tracking-widest">
+      <p className="font-sans font-medium text-[0.75rem] leading-4 uppercase tracking-[0.2em] text-slate-400 mt-4">
         med Montarou &amp; co
       </p>
     </>
@@ -117,46 +118,38 @@ function TitleCard({ href = null }) {
 /* ─── Hero (homepage) ─── */
 export function HeroHeader({ base }) {
   return (
-    <>
-      <header className="hero-header">
-        <div
-          className="hero-bg"
-          style={{ backgroundImage: `url(${base}images/Velkommen.webp)` }}
-          aria-hidden="true"
-        />
-        <div className="hero-overlay" aria-hidden="true" />
+    <header className="hero-header">
+      <div
+        className="hero-bg"
+        style={{ backgroundImage: `url(${base}images/Velkommen.webp)` }}
+        aria-hidden="true"
+      />
+      <div className="hero-overlay" aria-hidden="true" />
 
-        {/* Photo strip — behind card */}
-        <div className="strip-wrapper" aria-hidden="true">
-          <PhotoStrip base={base} count={18} />
-        </div>
+      {/* Photo strip — behind card */}
+      <div className="strip-wrapper" aria-hidden="true">
+        <PhotoStrip base={base} count={18} />
+      </div>
 
-        {/* Title card — pinned near the top */}
-        <div className="hero-content">
-          <TitleCard />
-        </div>
+      {/* Title card */}
+      <div className="hero-content">
+        <TitleCard />
+      </div>
 
-        {/* Text block — bottom-anchored, lower third */}
-        <div className="hero-text-block">
-          <div className="hero-text-inner">
-            <div className="hero-eyebrow">
-              <span className="accent-bar" aria-hidden="true" />
-              71°10′N → 57°58′N
-            </div>
-            <h2 className="hero-headline">Veien er målet.</h2>
-            <p className="hero-subtext">
-              Det å kunne se mot horisonten vitende om at bak den er en ny horisont,
-              og bak den enda en, og tenke at «over den skal vi» blir et eventyr.
-            </p>
-            <div className="hero-buttons">
-              <a href="#om-turen" className="btn-solid">Les historien</a>
-              <a href={`${base}reiserute.html`} className="btn-outline">Se ruta</a>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Nav — below card, still within hero background */}
       <SiteNav />
-    </>
+
+      {/* Text block — bottom-anchored */}
+      <div className="hero-text-block">
+        <div className="hero-text-inner">
+          <p className="eyebrow mb-4">Velkommen</p>
+          <h2 className="hero-headline">
+            Norge skal krysses fra nord til sør{' '}
+            <span className="hero-headline-accent">— veien er målet.</span>
+          </h2>
+        </div>
+      </div>
+    </header>
   )
 }
 

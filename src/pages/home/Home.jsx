@@ -4,15 +4,18 @@ import SiteFooter from '../../components/SiteFooter.jsx'
 
 // ─── Verbatim from 02-restored-static/index.html ────────────────────────────
 const INGRESS =
-  'Da er det endelig avgjort at det blir langtur! Norge skal krysses fra nord til sør det kommende året! Høsten 2008 setter to glade vandrere ut fra Nordkapp i håp om å nå helskinnet gjennom vår langsgående rute nedover Norges land. Ruta vil inneholde vidder, skoger og fjell kledd i nesten alle årstidene. Tidsperspektivet er ca seks måneder, tre før jul og tre etter.'
+  'Høsten 2008 setter to glade vandrere ut fra Nordkapp i håp om å nå helskinnet gjennom vår langsgående rute nedover Norges land. Ruta vil inneholde vidder, skoger og fjell kledd i nesten alle årstidene. Tidsperspektivet er ca seks måneder, tre før jul og tre etter.'
 
 const VELKOMMEN = [
   'Hvorfor spør mange. Et stort spørsmål for noen, helt naturlig for andre. Er det en flukt fra hverdagen? En asketisk øvelse? En test eller en utfordring? En søken etter noe annet? En annerledes hverdag? Antageligvis litt av alle disse tingene, men fremfor alt handler det om å leve ute i og med naturen over tid. Ren glede over å være ute og bryne seg på naturens meny av utfordringer; holde varmen, bli mett, finne en god leirplass, eller få liv i bålet.',
   'Jeg legger på ingen måte skjul på at å legge vekk klokka, mobilen og universitetet er noe av poenget å komme nærmere noe vi stadig beveger oss bort fra i hverdagen. Hva dette noe er håper jeg å finne ut. Det vil i så fall bli publisert her!',
-  'Viktig er det også å nevne at dette ikke er et rekordsforsøk. Snarere tvert imot. Her er veien målet. Det å kunne se mot horisonten vitende om at bak den er en ny horisont, og bak den enda en, og tenke at «over den skal vi» blir et eventyr. Vi legger bort vekkerklokka, timeplanen og de andre heftelsene som hører sivilisasjonen til og lar bekymringene dreie seg om å holde varmen, finne brensel, få ørret i gryta og tørke sokker.',
+  'Viktig er det også å nevne at dette ikke er et rekordsforsøk. Snarere tvert imot. Her er veien målet. Det å kunne se mot horisonten vitende om at bak den er en ny horisont, og bak den enda en, og tenke at «over den skal vi» blir et eventyr.',
   'På denne siden vil vi prøve å holde deg oppdatert på hva som skjer, så du kan få med deg alt som går galt og glatt underveis.',
   'Før Norge på langs 08/09 skal jeg på en måneds kanotur i Nord-Finland. Det blir en glimrende innledning til livet i villmarken! Bilder fra denne turen vil også bli lagt ut på denne siden.',
 ]
+
+// Last sentence of VELKOMMEN[2] — rendered as a featured ingress paragraph in its original position
+const FEATURED = 'Vi legger bort vekkerklokka, timeplanen og de andre heftelsene som hører sivilisasjonen til og lar bekymringene dreie seg om å holde varmen, finne brensel, få ørret i gryta og tørke sokker.'
 
 // Latest recovered reisebrev — verbatim excerpt from 02-restored-static/reisebrev.html
 const LATEST_REISEBREV = {
@@ -93,17 +96,23 @@ export default function Home() {
       </div>
 
       {/* ── Om turen ────────────────────────────────────────────────────────── */}
-      <section id="om-turen" className="py-14 md:py-24">
+      <section id="om-turen" className="pt-8 pb-14 md:pt-8 md:pb-24">
         <div className="max-w-content mx-auto px-6">
-          <p className="font-sans text-[1.5rem] text-slate-200 leading-normal mb-8">{INGRESS}</p>
+          <p className="font-serif text-[1.5rem] text-slate-200 leading-normal mb-8">{INGRESS}</p>
           <div className="space-y-5">
-            {VELKOMMEN.map((para, i) => (
+            {VELKOMMEN.slice(0, 3).map((para, i) => (
               <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal">
                 {para}
               </p>
             ))}
+            <p className="font-serif text-[1.5rem] text-slate-200 leading-normal">{FEATURED}</p>
+            {VELKOMMEN.slice(3).map((para, i) => (
+              <p key={i + 3} className="font-sans text-[1.125rem] text-slate-300 leading-normal">
+                {para}
+              </p>
+            ))}
           </div>
-          <div className="mt-8">
+          <div className="mt-8 flex justify-end">
             <img
               src={`${base}images/diverse/SignaturLiten.jpg`}
               alt="Marius Montarou"
@@ -112,24 +121,6 @@ export default function Home() {
               style={{ mixBlendMode: 'screen' }}
             />
           </div>
-        </div>
-      </section>
-
-      {/* ── Pull-quote ──────────────────────────────────────────────────────── */}
-      <section id="quote" className="py-12 md:py-20">
-        <div className="max-w-content mx-auto px-6">
-          <blockquote className="text-center">
-            <div className="w-px h-14 bg-orange-400 mx-auto mb-8" />
-            <p className="font-serif text-[2.5rem] text-slate-200 leading-snug italic">
-              «Vi legger bort vekkerklokka, timeplanen og de andre heftelsene som hører sivilisasjonen til
-              og lar bekymringene dreie seg om å holde varmen, finne brensel, få ørret i gryta og tørke sokker.»
-            </p>
-            <footer className="mt-6">
-              <cite className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest not-italic">
-                Marius Montarou
-              </cite>
-            </footer>
-          </blockquote>
         </div>
       </section>
 

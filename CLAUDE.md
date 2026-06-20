@@ -44,8 +44,9 @@ current session.
   This does NOT apply to `font-size` (governed by the type scale ladder above),
   `line-height`, `letter-spacing`, or content column max-widths (text flow
   decisions). Any new off-grid spacing value must be flagged rather than silently
-  introduced. Existing documented off-grid values: see Decision changelog entry
-  for 2026-06-20 spacing audit — flagged items deferred pending user review.
+  introduced. Permanent documented exceptions: `.strip-wrapper` top/height
+  (photo geometry, not spacing) and `SIZE_BUCKETS` in SiteHeader.jsx (aesthetic
+  scrapbook size variety) — both confirmed in 2026-06-20 changelog. Do not re-audit.
 - Accent color: **orange-400** (`#fb923c`). Confirmed via real color
   analysis of 60 sampled trip photos — teal (the original logo color) was
   the weakest hue present in the actual photography; orange-400 matches
@@ -96,11 +97,31 @@ current session.
   etapper + Oppvarmingstur, and each leg's photo gallery all live together.
   This was a deliberate nav-reduction decision, not an oversight.
 - **Signature header component** (title card + photo strip) appears on
-  every page.
-  - **Homepage:** full hero variant — `HeroHeader` renders the real Velkommen.webp
-    background image, dark overlay, photo strip, title card (not a link), and
-    the bottom-anchored hero text block (eyebrow / headline / subtext / buttons).
-    CSS class: `.hero-header` (overflow: hidden to contain the bg image).
+  every page. TitleCard styling (shared across all variants):
+  - Eyebrow: "2008 — 2009 · Nordkapp → Lindesnes" — uses `.eyebrow` CSS class
+    (Work Sans, font-medium, uppercase, tracking-[0.2em], orange-400) with a
+    `.title-card .eyebrow` CSS override that reduces font-size to **0.75rem
+    (12px) / line-height 1rem** (floor value per type scale). `mb-4` below.
+    Eyebrow wraps to 2 lines on mobile — that's expected and accounted for in
+    the strip centering calculation.
+  - Wordmark: "NORGE på LANGS" — `font-serif font-normal leading-none
+    tracking-tight text-[2rem] sm:text-[3rem]`. Orange `<em>` on "på". Mobile
+    keeps 2rem to avoid overflow at `white-space: nowrap`.
+  - Subtitle: "med Montarou & co" — `font-sans font-medium text-[0.75rem]
+    leading-4 uppercase tracking-[0.2em] text-slate-400 mt-4` (0.75rem /
+    12px, line-height 1rem = 16px). Matches eyebrow treatment exactly
+    except color (slate-400, not orange-400).
+  - Card padding: **1.5rem 3rem** (desktop); mobile override **1.25rem 1.5rem**
+    to prevent h1 overflow on narrow screens.
+  - Card border-radius: **4px**.
+  - All content is centered: `text-align: center` on `.title-card` in CSS.
+  - Card/nav spacing: `.hero-content` has `padding-bottom: 24px` — this is the
+    single shared source of truth for the gap between the card and the nav in
+    BOTH hero and inner variants. `.inner-header` has no padding-bottom.
+  - **Homepage:** full hero variant — `HeroHeader` renders Velkommen.webp
+    background, dark overlay, photo strip, title card (not a link), nav strip
+    (inside the hero, below the card), and bottom-anchored text block (eyebrow
+    "Velkommen" + headline). CSS class: `.hero-header` (overflow: hidden).
   - **Inner pages:** `InnerHeader` — same card + photo strip on plain dark
     (#020617) background, no hero image/overlay/text. Title card renders as an
     `<a href="index.html">` link to the homepage. CSS class: `.inner-header`
@@ -120,26 +141,38 @@ current session.
 
 ## Homepage section order (confirmed, do not deviate without asking)
 
-1. Header component — full hero variant
-2. Hero text block: eyebrow ("71°10′N → 57°58′N" — confirmed accurate:
-   Nordkapp / Lindesnes coordinates), headline "Veien er målet." (large,
-   bottom-anchored in hero), one real supporting line pulled from
-   Velkommen text, two pill buttons ("Les historien →", "Se ruta →")
-3. **Om turen** — **single column, full-width.** No eyebrow or headline
-   (both removed). INGRESS paragraph at 1.5rem (ingress/sub-text size), followed by
-   VELKOMMEN body paragraphs at 1.125rem (bulk body size). Closes with the
+1. **Hero** — one continuous hero section containing three layers top-to-bottom:
+   a. TitleCard + photo strip (card centered at top, strip behind it)
+   b. Nav strip (`<SiteNav />` rendered inside `<header className="hero-header">`,
+      directly below the card — hero bg/overlay extend behind it). `.site-nav`
+      has `z-index: 20` to stay above the photo strip layer (z-index 5).
+   c. Bottom-anchored text block (`.hero-text-block`, absolute bottom:0):
+      eyebrow "Velkommen" (`.eyebrow mb-4`) + headline "Norge skal krysses fra
+      nord til sør <span class='hero-headline-accent'>— veien er målet.</span>"
+      (`hero-headline` clamp(3rem, 8vw, 4.5rem) Fraunces). No subtext paragraph.
+      No buttons. Text is **left-aligned**. The em-dash and second clause both
+      render in orange-400 via the accent span. Documented exception to the
+      "no accent on titles" rule — the accent span is explicitly part of the
+      design here.
+2. **Om turen** — **single column, full-width.** No eyebrow or headline
+   (both removed). Padding-top: 2rem (32px); bottom padding unchanged (56px /
+   96px on md). INGRESS paragraph at 1.5rem using **font-serif (Fraunces)**,
+   followed by VELKOMMEN body paragraphs at 1.125rem (font-sans). INGRESS
+   starts: "Høsten 2008 setter to glade vandrere..." — the two opening sentences
+   ("Da er det endelig avgjort..." and "Norge skal krysses...") were removed
+   as redundant with the hero headline. The last sentence of VELKOMMEN[2]
+   ("Vi legger bort vekkerklokka…tørke sokker.") is split into a standalone
+   FEATURED paragraph rendered **in its original position** (between paragraphs
+   2 and 3) with ingress styling (font-serif, 1.5rem, slate-200) — same
+   `space-y-5` spacing as surrounding paragraphs. Closes with the
    handwritten signature image (`public/images/diverse/SignaturLiten.jpg`,
-   190×46 JPG with white bg; `mix-blend-mode: screen` makes white
-   disappear on the dark background, leaving just the ink signature).
-   No text attribution — the image IS the attribution.
-4. **Pull-quote** — id="quote". Full-width (no max-width constraint on
-   blockquote), centered text. Quote at fixed 2.5rem (no responsive
-   variant). Attribution: "Marius Montarou" only (no "— Velkommen-tekst").
-5. **Ruta section** — id="ruta". Eyebrow "Ruta" + h2 "15 etapper,
+   190×46 JPG with white bg; `mix-blend-mode: screen`) **right-aligned**
+   (flex justify-end). No text attribution — the image IS the attribution.
+3. **Ruta section** — id="ruta". Eyebrow "Ruta" + h2 "15 etapper,
    Nordkapp til Lindesnes." + short description (1.5rem / ingress size, full-width,
    no max-w constraint) + route-line SVG + 3 stats (2 500 km /
    6 måneder / 15 etapper — NOT 4) + "Se hele ruta" button.
-6. **Siste reisebrev** — id="siste-reisebrev". Eyebrow "Reisebrev",
+4. **Siste reisebrev** — id="siste-reisebrev". Eyebrow "Reisebrev",
    section h2 "Siste reisebrev". Grid layout matching Reisebrev page:
    image (260px col, aspect-[4/3] on mobile) + content column (date,
    etappe label, h3 title, excerpt). "Les mer →" text link after excerpt
@@ -147,7 +180,7 @@ current session.
    outline button at bottom linking to reisebrev.html. Latest entry:
    Etappe 6, Hegra–Gressli (image: Reisebrev0601.jpg). Future per-post
    pages will use the pattern `reisebrevN.html` (N = letter number).
-7. **Sponsor logos** — own dedicated section, NOT inside the footer.
+5. **Sponsor logos** — own dedicated section, NOT inside the footer.
    Logo grid, all 20 real sponsors (see Content inventory). Logos sit
    directly on the dark background with `mix-blend-mode: screen` — JPGs
    with black backgrounds: screen blend makes black pixels disappear,
@@ -158,9 +191,9 @@ current session.
    (Helsport, MX Sport, Skaidi Hotel, Femund Fjellstue, Umbukta Fjellstue)
    have non-black backgrounds — they will show their original bg color via
    screen blend; acceptable for now, PNG conversion deferred.
-8. **Footer** — single line only: "Turgåer & Ansvarlig redaktør: Marius Montarou
+6. **Footer** — single line only: "Turgåer & Ansvarlig redaktør: Marius Montarou
    | Webmaster: Arne S. Skeie | NORGEpåLANGS © 2008/2009". No Kontakt
-   heading, no email, no sponsor list (moved to its own section, #7).
+   heading, no email, no sponsor list (moved to its own section, #5).
 
 ## Content inventory (verified real values — use these exactly)
 
@@ -212,7 +245,7 @@ Increment rule:
   The existing `clamp(3rem, 8vw, 6rem)` hero headline and `4.5rem` inner-page h1 both fit this rule.
 
 **New floor: 0.75rem (12px).** The old 0.625rem (10px) floor is removed. 10px type was the old floor and has been audited out; `text-xs` (0.75rem) is now the minimum permitted size. Eyebrow text: **0.875rem (14px = `text-sm`)**.
-Base font size: 16px (1rem) on `body`. Hero headline: `clamp(3rem, 8vw, 6rem)`.
+Base font size: 16px (1rem) on `body`. Hero headline: `clamp(3rem, 8vw, 4.5rem)`.
 
 **Type role reference (not exceptions — these are on the ladder):**
 - **0.75rem (12px = `text-xs`):** small labels, metadata, icon captions. Floor — nothing smaller.
@@ -236,11 +269,12 @@ sub-texts use the same values: `font-size: 1.5rem; line-height: 1.5; color: #94a
 (slate-400). The previous hero-subtext was 1.125rem / lh 1.65 / rgba opacity 0.85;
 all three were aligned to match the inner-page style.
 
-**Titles and headlines are entirely white — no accent word.** The `.hero-headline`
-("Veien er målet.") and all inner-page h1s are plain `text-slate-50` with no
-`<span>` accent treatment. The TitleCard wordmark (`NORGE <em>på</em> LANGS`) is
-a brand mark, not a page title — it keeps the orange "på". Section h2s on the
-homepage (e.g. #ruta, #siste-reisebrev) are unaffected by this rule.
+**Inner-page h1s are entirely white — no accent word.** All inner-page h1s are
+plain `text-slate-50` with no `<span>` accent treatment. Exception: the
+`.hero-headline` carries orange-400 on both the em-dash and second clause
+("— veien er målet.") — documented design decision, not a violation. The
+TitleCard wordmark (`NORGE <em>på</em> LANGS`) is a brand mark, not a title.
+Section h2s on the homepage (e.g. #ruta, #siste-reisebrev) are unaffected.
 
 **Reisebrev images — single highest-res per entry.** Each entry previously had
 multiple images (same photo at different resolutions). All entries now use only
@@ -257,7 +291,7 @@ The `00` images for entries 3–6 were 75×75 thumbnails; the `01` images were
 medium-res; the `02` images were consistently the highest-resolution.
 `LATEST_REISEBREV.img` on the homepage also updated to `Reisebrev0602.jpg`.
 
-**Homepage section ids:** hero, om-turen, quote, ruta, siste-reisebrev, sponsorer.
+**Homepage section ids:** hero, om-turen, ruta, siste-reisebrev, sponsorer.
 
 ## Individual Reisebrev post pages
 
@@ -304,8 +338,9 @@ None currently open. Add new issues here as they're found, dated.
 - Sponsor logos moved out of the footer into their own dedicated
   section with grayscale/hover-color treatment. Footer reduced to a
   single credit line.
-- Reordered homepage: Hero → Om turen → Pull-quote → Ruta → Siste
-  reisebrev → Sponsor logos → Footer. Ruta section (stats + route
+- Reordered homepage: Hero → Om turen → Ruta → Siste reisebrev →
+  Sponsor logos → Footer. (Pull-quote section added here; subsequently
+  removed — see 2026-06-20 changelog.) Ruta section (stats + route
   visual) moved from its earlier position to directly above Siste
   reisebrev.
 - 2026-06-19: Content max-width token introduced — 960px, defined once
@@ -411,12 +446,11 @@ None currently open. Add new issues here as they're found, dated.
   hero-subtext margin auto).
 - 2026-06-19: Homepage section ids added (hero, om-turen, quote, ruta,
   siste-reisebrev, sponsorer). All border-t dividers between sections removed.
+  (quote id subsequently removed — see 2026-06-20 changelog.)
 - 2026-06-19: om-turen section redesigned — eyebrow and "Veien er målet."
   headline removed; single-column full-width layout; typed signature
   replaced with handwritten SignaturLiten.jpg (190×46, mix-blend-mode:
   screen). Image copied to public/images/diverse/.
-- 2026-06-19: Pull-quote (id="quote") — full-width (no max-w-[760px]),
-  fixed 2.5rem (no md:3rem), attribution trimmed to "Marius Montarou".
 - 2026-06-19: Ruta section (id="ruta") — description made full-width
   (removed max-w-[560px]).
 - 2026-06-19: Siste reisebrev (id="siste-reisebrev") — eyebrow changed
@@ -528,23 +562,91 @@ None currently open. Add new issues here as they're found, dated.
   - `gap-1.5` (6px) → `gap-2` (8px) in Reiserute.jsx strip thumbnail rows (×2)
   - `mt-1.5` (6px) → `mt-2` (8px) in Utstyr.jsx bullet dash
   - `mt-1.5` (6px) → `mt-2` (8px) in SiteHeader.jsx title card subtitle
-  Flagged (not auto-applied — pending user review):
-  A. `.hero-content { padding: 28px 1.5rem 0 }` — 28px off-grid (24 or 32).
-     Shifts title card vertical position.
-  B. `.strip-wrapper { top: 102px; height: 133px }` — both off-grid (96/104
-     and 128/136 respectively), derived together from title card height and
-     photo aspect ratios. Must be changed in tandem or not at all.
-  C. `SIZE_BUCKETS` in SiteHeader.jsx — photo strip image dimensions include
-     off-grid values (76, 58, 90, 68, 106, 90, 102px). These set the visual
-     size variety in the scrapbook strip; snapping would change the aesthetic
-     rhythm.
-  D. Version-switcher pill inner padding: `7px 18px` in SiteFooter.jsx — 7px
-     off-grid (→8px). NOT applied: changing only the modernized site while
-     leaving 02-restored-static at 7px would create a visible cross-site
-     inconsistency. Requires updating both simultaneously (or accepting the
-     1px discrepancy as intentional).
+  Resolved:
+  A. `.hero-content { padding: 28px 1.5rem 0 }` → `24px 1.5rem 0`.
+     Chose 24px (card moves up 4px). 1.5rem (24px) and 0 were already on grid.
+  D. Version-switcher pill inner padding: `7px 18px` → `8px 18px` applied
+     simultaneously in SiteFooter.jsx AND all 16 02-restored-static HTML pages.
+     18px (horizontal) is on-grid ✓. Both sites now pixel-identical at 8px.
+  Permanent exceptions (do not re-audit):
+  B. `.strip-wrapper { height: 133px }` — off-grid. Derived from photo aspect
+     ratios. Geometry, not a spacing decision. Leave as-is indefinitely.
+     Note: `top` changes when card content/padding changes (formula:
+     hero-content-padding-top + card-height/2). Current: 104px desktop,
+     100px mobile. Not a permanent value but also not a spacing decision.
+  C. `SIZE_BUCKETS` in SiteHeader.jsx — photo strip image dimensions (76, 58,
+     90, 68, 106, 90, 102px) are intentionally off-grid. They create the
+     organic size variety of a real scrapbook strip; snapping to the grid
+     would produce uniform sizes and kill the aesthetic. Leave as-is indefinitely.
 - 2026-06-20: Repo renamed norgepalangs-ny → norgepalangs. Vite base updated from
   /norgepalangs-ny/ to /norgepalangs/. Version-switcher added to SiteFooter pointing
   to arneskeie.github.io/norgepalangs-2009/ (restored site). Restored site repo renamed
   norgepalangs → norgepalangs-2009 simultaneously. All June 19-20 uncommitted work
   pushed in the same commit.
+- 2026-06-20: TitleCard styling updated (applies to both hero and inner page variant):
+  - Eyebrow line added above wordmark: "2008 — 2009 · Nordkapp → Lindesnes" using
+    `.eyebrow` class (orange-400, uppercase, tracking-[0.2em], text-sm). `mb-2`.
+  - Wordmark "NORGE på LANGS" reduced from `text-[2rem] sm:text-[3.5rem]` to
+    `text-[2rem] sm:text-[3rem]` (desktop from 56px to 48px; mobile unchanged at 32px
+    to prevent overflow at `white-space: nowrap`).
+  - Subtitle "med Montarou & co" changed from `text-xs sm:text-sm` to `text-base
+    leading-normal` (from 12/14px to 16px / lh 1.5).
+  - `text-align: center` added to `.title-card` CSS — all content now centered.
+- 2026-06-20: Homepage hero restructured. Nav moved inside `<header class="hero-header">`,
+  between the title card and the bottom-anchored text block. Hero background image and
+  overlay now visually span all three layers (card/strip → nav → text block). Removed:
+  old `.hero-eyebrow` div (with accent-bar), `.hero-subtext` paragraph, `.hero-buttons`
+  div, and the two buttons ("Les historien", "Se ruta"). Removed associated CSS:
+  `.hero-eyebrow`, `.accent-bar`, `.hero-subtext`, `.hero-buttons`. New text block:
+  eyebrow "Velkommen" + headline "Norge skal krysses fra nord til sør —
+  <span>veien er målet.</span>" (accent span on the second clause — explicit exception
+  to the no-accent-on-titles rule). No subtext. No buttons. Added `z-index: 20` to
+  `.site-nav` to ensure it sits above the photo strip layer (z-index 5). HeroHeader
+  now returns a single `<header>` element (no outer fragment needed).
+- 2026-06-20: Om turen INGRESS trimmed — opening two sentences removed ("Da er det
+  endelig avgjort at det blir langtur! Norge skal krysses fra nord til sør det
+  kommende året!"). These repeated ideas now in the hero headline. INGRESS now
+  starts: "Høsten 2008 setter to glade vandrere ut fra Nordkapp..." Verified against
+  02-restored-static/index.html source before editing.
+- 2026-06-20: TitleCard refinements:
+  - Padding changed from `2rem 2.5rem` to `1.5rem 3rem` (taller→shorter, narrower→wider).
+    Mobile override stays `1.25rem 1.5rem`.
+  - `border-radius: 4px` added to `.title-card`.
+  - Eyebrow font-size overridden via `.title-card .eyebrow { font-size: 0.75rem; line-height: 1rem }`
+    (0.75rem = type scale floor; the `.eyebrow` class itself stays at text-sm site-wide).
+  - Subtitle `leading-normal` removed — single-line element, line-height inherited at 1.5 from
+    html preflight (same visual result, no redundant declaration).
+- 2026-06-20: Photo strip centering recalculated after card padding/size changes:
+  Desktop: card height = 24+16+8+48+8+24+24 = 152px → strip top = 24+76 = 100px (was 102px).
+  Mobile: eyebrow wraps to 2 lines, card height = 20+32+8+32+8+24+20 = 144px →
+  strip top = 24+72 = 96px (was 74px — the old value was stale, pre-eyebrow).
+- 2026-06-20: Homepage/inner-page nav spacing unified. Root cause: when SiteNav was
+  moved inside `<header class="hero-header">` in the previous task, the 24px spacing that
+  `.inner-header { padding-bottom: 24px }` provided on inner pages was not replicated in
+  the hero variant, giving HeroHeader only 8px (site-nav top padding) vs InnerHeader's
+  32px (24px + 8px). Fix: moved the 24px to `.hero-content { padding-bottom: 24px }`,
+  which is shared by both HeroHeader and InnerHeader. Removed `padding-bottom` from
+  `.inner-header`. Both variants now have exactly 32px from card bottom to nav pill top.
+- 2026-06-20: Pull-quote section (id="quote") removed entirely from the homepage.
+  Not deferred or hidden — gone. The sentence "Vi legger bort vekkerklokka…
+  tørke sokker." (last sentence of VELKOMMEN[2]) is rendered as a FEATURED
+  paragraph with ingress styling (font-serif, 1.5rem) in its original position
+  within the text flow (between paragraphs 2 and 3), not moved to the end.
+- 2026-06-20: TitleCard subtitle restyled to match eyebrow treatment —
+  `text-[0.75rem] leading-4 uppercase tracking-[0.2em]` (0.75rem font, 1rem lh).
+  Color stays slate-400 (not orange-400). Eyebrow spacing increased: `mb-2` →
+  `mb-4` (8px → 16px above title). Subtitle spacing increased: `mt-2` → `mt-4`
+  (8px → 16px below title). Both are grid-compliant (16px).
+- 2026-06-20: Photo strip centering recalculated after subtitle/spacing changes:
+  Desktop: card height = 24+16+16+48+16+16+24 = 160px → strip top = 24+80 = 104px
+  (was 100px). Mobile: card height = 20+32+16+32+16+16+20 = 152px →
+  strip top = 24+76 = 100px (was 96px).
+- 2026-06-20: hero-header min-height reduced from max(75vh,480px) to max(65vh,480px).
+- 2026-06-20: hero-headline max clamp reduced from 6rem to 4.5rem →
+  `clamp(3rem, 8vw, 4.5rem)`. Em-dash moved into accent span:
+  "— veien er målet." both orange-400. Text-align: center → left on
+  `.hero-text-inner` (both desktop and mobile).
+- 2026-06-20: Om turen section: padding-top changed from 56px (py-14) to 32px
+  (pt-8 = 2rem); bottom padding unchanged. INGRESS paragraph changed from
+  font-sans to font-serif (Fraunces). Signature image right-aligned
+  (flex justify-end on wrapper div).

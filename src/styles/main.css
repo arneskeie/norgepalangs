@@ -35,7 +35,7 @@
 /* ─── Hero variant ─── */
 .hero-header {
   position: relative;
-  min-height: max(75vh, 480px);
+  min-height: max(65vh, 480px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -75,13 +75,13 @@
   pointer-events: none;
 }
 
-/* Title card — pinned near top */
+/* Title card — pinned near top; bottom padding is shared spacing to nav */
 .hero-content {
   position: relative;
   z-index: 20;
   display: flex;
   justify-content: center;
-  padding: 28px 1.5rem 0;
+  padding: 24px 1.5rem 24px;
 }
 
 /* Fill only, no border stroke.
@@ -90,21 +90,31 @@
   background: rgba(15, 23, 42, 0.90);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 2rem 2.5rem;
+  padding: 1.5rem 3rem;
+  border-radius: 4px;
   width: fit-content;
+  text-align: center;
   box-shadow:
     0 28px 64px -12px rgba(2, 6, 23, 0.92),
     0 6px 20px rgba(2, 6, 23, 0.88);
+}
+
+/* Eyebrow inside title-card is smaller than site-wide eyebrow (0.75rem vs 0.875rem) */
+.title-card .eyebrow {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 
 .title-card h1 {
   white-space: nowrap;
 }
 
-/* Photo strip — centered on card vertical midpoint (102px from hero top) */
+/* Photo strip — centered on card vertical midpoint
+   Formula: hero-content-padding-top(24) + card-height(160)/2 = 104px
+   card-height = 24(top) + 16(eyebrow lh) + 16(mb-4) + 48(h1 3rem) + 16(mt-4) + 16(sub lh) + 24(bot) */
 .strip-wrapper {
   position: absolute;
-  top: 102px;
+  top: 104px;
   left: 0;
   right: 0;
   transform: translateY(-50%);
@@ -166,57 +176,20 @@
   max-width: 960px;
   margin: 0 auto;
   padding: 0 1.5rem 4rem;
-  text-align: center;
-}
-
-.hero-eyebrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  font-family: 'Work Sans', system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  color: #94a3b8; /* muted foreground */
-  margin-bottom: 1rem;
-}
-
-.accent-bar {
-  display: inline-block;
-  width: 32px;
-  height: 1px;
-  background-color: #fb923c; /* accent color */
-  flex-shrink: 0;
+  text-align: left;
 }
 
 .hero-headline {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 400;
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-size: clamp(3rem, 8vw, 4.5rem);
   line-height: 0.95;
   color: #f8fafc;
-  margin: 0 0 1.25rem;
+  margin: 0;
 }
 
 .hero-headline-accent {
   color: #fb923c;
-}
-
-.hero-subtext {
-  font-family: 'Work Sans', system-ui, sans-serif;
-  font-size: 1.5rem;
-  line-height: 1.5;
-  color: #94a3b8; /* slate-400 — matches inner-page sub-text */
-  margin: 0 auto 2rem;
-}
-
-.hero-buttons {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
 /* Rule 1: pill-shaped (border-radius: 9999px). Rule 2: fill only, no border. */
@@ -268,26 +241,27 @@
 .inner-header {
   position: relative;
   background: #020617;
-  padding-bottom: 24px;
+  /* spacing below card lives in .hero-content padding-bottom (shared with hero variant) */
 }
 
 /* ─── Mobile overrides (< 640px) ─── */
 @media (max-width: 639px) {
-  /* Title card: smaller font needs smaller padding to avoid overflow */
+  /* Title card: tighter horizontal padding on narrow screens (h1 is white-space:nowrap) */
   .title-card {
     padding: 1.25rem 1.5rem;
   }
 
-  /* Strip center recalculated for shorter card (mobile padding):
-     card height ≈ 20+20+32+6+12px = 90px → center = 28 + 45 = 73px ≈ 74px */
+  /* Strip center for mobile card:
+     padding 20px, eyebrow 2 lines (32px), mb-4 16px, h1 2rem 32px,
+     mt-4 16px, subtitle 16px, padding 20px → height 152px → center = 24 + 76 = 100px */
   .strip-wrapper {
-    top: 74px;
+    top: 100px;
   }
 
   /* Tighter bottom padding — hero is proportionally smaller on mobile */
   .hero-text-inner {
     padding: 0 1.5rem 2.5rem;
-    text-align: center;
+    text-align: left;
   }
 }
 
@@ -295,6 +269,7 @@
 
 .site-nav {
   position: relative;
+  z-index: 20;
   padding: 8px 0;
 }
 
