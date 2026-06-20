@@ -154,37 +154,12 @@ function PersonCard({ person, onSelect }) {
   )
 }
 
-function PersonSheetBody({ person }) {
-  const hasMeta = person.alder || person.oppvokst || person.studerer
+function PersonBio({ bio }) {
   return (
-    <div>
-      {hasMeta && (
-        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 mb-5">
-          {person.alder && (
-            <>
-              <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest self-center">Alder</dt>
-              <dd className="font-sans text-sm text-slate-300">{person.alder}</dd>
-            </>
-          )}
-          {person.oppvokst && (
-            <>
-              <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest self-center">Oppvokst i</dt>
-              <dd className="font-sans text-sm text-slate-300">{person.oppvokst}</dd>
-            </>
-          )}
-          {person.studerer && (
-            <>
-              <dt className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest self-center">Studerer</dt>
-              <dd className="font-sans text-sm text-slate-300">{person.studerer}</dd>
-            </>
-          )}
-        </dl>
-      )}
-      <div className="space-y-3">
-        {person.bio.map((para, i) => (
-          <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty">{para}</p>
-        ))}
-      </div>
+    <div className="space-y-3">
+      {bio.map((para, i) => (
+        <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty">{para}</p>
+      ))}
     </div>
   )
 }
@@ -222,11 +197,16 @@ export default function OmOss() {
       >
         {selectedPerson && (
           <SheetContent
+            layout="profile"
             image={`${BASE}images/profiles/${selectedPerson.id}.jpg`}
-            imageMode="cover"
             title={selectedPerson.name}
             subtitle={selectedPerson.etapper.join(' · ')}
-            body={<PersonSheetBody person={selectedPerson} />}
+            meta={[
+              { label: 'Alder', value: selectedPerson.alder },
+              { label: 'Oppvokst i', value: selectedPerson.oppvokst },
+              { label: 'Studerer', value: selectedPerson.studerer },
+            ]}
+            body={<PersonBio bio={selectedPerson.bio} />}
           />
         )}
       </BottomSheet>

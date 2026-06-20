@@ -469,20 +469,37 @@ and Reiserute all consume this same pair.
 
 2. **SheetContent** (`src/components/SheetContent.jsx`) — layout template for the interior.
    - Designed for the Utstyr / Om Oss / Reiserute use cases; all props optional except `title`.
-   - **image** `string` — image src shown at the top of the sheet (h-48 / 192px).
-   - **imageMode** `'contain' | 'cover'` — how the image fills the container; default `'contain'`.
-     `'contain'`: dark `bg-slate-950` container, `object-contain` + px-6/py-4 padding — correct for
-     transparent-background product PNGs (Utstyr). `'cover'`: `object-cover` fills the container —
-     correct for portrait/landscape photos (Om Oss, Reiserute).
+   - **layout** `'header' | 'profile'` — controls the arrangement; default `'header'`.
+     - `'header'`: full-width image on top (h-48), then subtitle / title / meta / body stacked
+       below. Best for high-res product images (Utstyr) and large landscape/portrait photos.
+     - `'profile'`: for low-resolution thumbnail sources where stretching to full-width shows
+       upscaling artifacts. Circular image (w-20 / 80px) on the LEFT beside subtitle / title /
+       meta stacked in a right column; body text (bio) below the header row, separated by a
+       thin divider. Used by Om Oss; Reiserute per-etappe sheets may also use this if their
+       thumbnail sources have the same resolution constraint.
+   - **image** `string` — image src.
+     In `'header'` layout: full-width strip (h-48 / 192px); styled by `imageMode`.
+     In `'profile'` layout: circular (w-20 / 80px); `imageMode` is ignored; always `object-cover`
+     with `scale-[1.15]` to push baked-in white borders outside the circular clip.
+   - **imageMode** `'contain' | 'cover'` — (`'header'` layout only) how the image fills the strip.
+     `'contain'` (default): dark `bg-slate-950` container, `object-contain` + px-6/py-4 padding —
+     correct for transparent-background product PNGs (Utstyr). `'cover'`: `object-cover` fills
+     the strip edge-to-edge — correct for portrait/landscape photos.
    - **title** `string | ReactNode` — Fraunces 1.5rem, slate-50.
    - **subtitle** `string` — accent line above title, `.eyebrow` class (orange-400, uppercase).
+   - **meta** `Array<{ label: string, value: string }>` — optional label/value pairs (e.g. Alder,
+     Oppvokst i, Studerer). Entries with falsy value are silently skipped. In `'profile'` layout:
+     rendered in the right column below the title. In `'header'` layout: rendered below the title,
+     above body.
    - **body** `string | ReactNode` — prose text, Work Sans 1.125rem, slate-300, leading-normal.
    - **link** `{ href, label, external? }` — rendered as `.btn-outline` pill; `external` defaults
      to `true` (adds `target="_blank" rel="noopener noreferrer"`).
    - **gallery** `Array<string | { src, alt }>` — 3-column `aspect-[4/3]` thumbnail grid;
      omit or pass empty array to hide.
-   - Spacing: px-6 / pt-5 / pb-8 (all on 4/8pt grid). subtitle → title: mb-3. title → body: mb-4.
-     body → link/gallery: mt-6.
+   - Spacing (header): px-6 / pt-5 / pb-8. subtitle → title: mb-3. title → meta/body: mb-4/mb-5.
+   - Spacing (profile): header row px-6 pt-6 pb-4; body section px-6 pt-5 pb-8 (after thin divider).
+   - `MetaDl` and `BodyArea` extracted as internal sub-components (not exported) so both layouts
+     share the same dl and body rendering logic without duplication.
 
 **Accessibility implemented:**
 - `role="dialog"` + `aria-modal="true"` via Radix Dialog (vaul).
@@ -535,11 +552,11 @@ here as outstanding work, not shipped features.
   `sm:grid-cols-2 lg:grid-cols-3`). Card padding: `p-5 md:p-6` (20px mobile /
   24px desktop, was `p-6` both). Name: `text-[1.25rem] md:text-[1.5rem]` (was
   `text-base`). Expand-in-place mechanic removed; clicking any card opens shared
-  BottomSheet with SheetContent (`imageMode="cover"`, portrait photos).
-  Sheet: image / name (title) / etappe(s) joined with " · " (subtitle, eyebrow
-  orange-400) / metadata dl (alder, oppvokst, studerer) + bio paragraphs (body,
-  via `PersonSheetBody` ReactNode). `activeId` state removed; replaced with
-  `selectedPerson` state driving BottomSheet open/close.
+  BottomSheet with SheetContent (`layout="profile"`, see Bottom sheet component
+  section). Sheet: 80px circle photo + name/etappe subtitle/metadata right column,
+  bio below. `activeId` state → `selectedPerson` state. Refined same day:
+  initial `imageMode="cover"` (full-width 192px strip) replaced by `layout="profile"`
+  (80px circle) because 70×70px source JPGs look poor at 2.7× upscale.
 - [ ] **Mobile nav redesign** — current nav strip (space-evenly pill, 5 items) gets cramped
   on mobile, especially after font-size was already reduced to 0.75rem (12px, the type-scale
   floor) to fit 5 items. Needs a better mobile navigation solution than the current
@@ -1177,6 +1194,20 @@ here as outstanding work, not shipped features.
   background product PNGs render cleanly against the dark sheet. 'cover': `object-cover` fills
   the container edge-to-edge — appropriate for portrait and landscape photographs (Om Oss, Reiserute).
   Default changed from 'cover' to 'contain' to match the primary Utstyr use case.
+- 2026-06-21: SheetContent 'profile' layout added. Problem: Om Oss profile photos
+  are 70×70px source JPGs — rendering them as the default full-width h-48 strip
+  (192px) meant 2.7× upscaling with obvious blurriness. Solution: new `layout` prop
+  ('header' default, 'profile' new). 'profile' layout: circular image (w-20 / 80px,
+  near-native resolution for 70px sources after border-crop scale), beside a right
+  column with subtitle/title/meta; bio text below a thin divider. `imageMode` is
+  irrelevant in 'profile' (always circular object-cover + scale-[1.15] border crop).
+  New `meta` prop `Array<{label, value}>` extracted as first-class prop used in both
+  layouts (right column in 'profile', below title in 'header'). Om Oss updated to
+  `layout="profile"`, removed `imageMode="cover"`, passes `meta` with Alder/Oppvokst i/
+  Studerer, body is now bio-only ReactNode via `PersonBio` component. `PersonSheetBody`
+  (which mixed metadata + bio) removed. Reiserute per-etappe sheets may also use
+  'profile' if their thumbnail sources have the same resolution constraint. Utstyr
+  unaffected — uses default `layout="header"` implicitly.
 - 2026-06-21: Om Oss page redesign — card grid + BottomSheet integration.
   Grayscale filter removed from thumbnail images (was applied always-on via className, lifted
   only on the active card — now always full color). Circular thumbnail cropping: wrapper div
