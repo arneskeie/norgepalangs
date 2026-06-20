@@ -448,6 +448,14 @@ None currently open. Add new issues here as they're found, dated.
   removed from ReisebrevPost.jsx. See "Content inventory" for selected filenames.
   Homepage LATEST_REISEBREV.img updated from 0601 to 0602.
 - 2026-06-20: Hero background image switched from Velkommen.jpg to Velkommen.webp.
+- 2026-06-20: Version-switcher redesigned — segmented pill control. Outer dark pill
+  (#1e1e1e) floats on the page's own background (no background of its own). Inner
+  white pill on the active/current side; inactive side is a link with
+  rgba(255,255,255,0.1) hover tint, 0.15s ease transition. Labels: "Original nettside"
+  (left) / "Oppdatert nettside" (right). Wrapper: 20px vertical padding, flex
+  center. Font 14px Inter. Identical markup on both sites; only which side is
+  active differs. Applied via SiteFooter.jsx (03-modernized) and inline in all
+  16 HTML pages (02-restored-static).
 - 2026-06-20: Repo renamed norgepalangs-ny → norgepalangs. Vite base updated from
   /norgepalangs-ny/ to /norgepalangs/. Version-switcher added to SiteFooter pointing
   to arneskeie.github.io/norgepalangs-2009/ (restored site). Restored site repo renamed
