@@ -469,7 +469,11 @@ and Reiserute all consume this same pair.
 
 2. **SheetContent** (`src/components/SheetContent.jsx`) — layout template for the interior.
    - Designed for the Utstyr / Om Oss / Reiserute use cases; all props optional except `title`.
-   - **image** `string` — full-width hero image at top of sheet (h-48 / 192px, object-cover).
+   - **image** `string` — image src shown at the top of the sheet (h-48 / 192px).
+   - **imageMode** `'contain' | 'cover'` — how the image fills the container; default `'contain'`.
+     `'contain'`: dark `bg-slate-950` container, `object-contain` + px-6/py-4 padding — correct for
+     transparent-background product PNGs (Utstyr). `'cover'`: `object-cover` fills the container —
+     correct for portrait/landscape photos (Om Oss, Reiserute).
    - **title** `string | ReactNode` — Fraunces 1.5rem, slate-50.
    - **subtitle** `string` — accent line above title, `.eyebrow` class (orange-400, uppercase).
    - **body** `string | ReactNode` — prose text, Work Sans 1.125rem, slate-300, leading-normal.
@@ -490,9 +494,12 @@ and Reiserute all consume this same pair.
   recommended for the handle area itself — drag interaction, not a tap target).
 - `prefers-reduced-motion` CSS suppresses slide animation.
 
-**Demo:** A temporary "Test BottomSheet" button is wired in `src/pages/utstyr/Utstyr.jsx`
-(marked `// TEMP — remove when Utstyr wires BottomSheet for real`). Remove it when Utstyr is
-properly wired in the next batch.
+**Max-width centering:** `Drawer.Content` stays `left:0 right:0` (full-viewport) because vaul
+controls `transform` on that element for the `slideFromBottom` animation. Adding `translateX(-50%)`
+there would be overwritten by vaul's animation. Instead, an inner wrapper `div` with
+`mx-auto w-full max-w-content` constrains the visible dark panel to 960px centered — transparent
+outer container, styled inner container. This inner wrapper carries `bg-slate-900 rounded-t-xl
+overflow-hidden flex flex-col h-full`.
 
 ## Known open items / TO DO
 
@@ -506,11 +513,18 @@ here as outstanding work, not shipped features.
 - [ ] **Video gallery section** — to be added at the bottom of the Reiserute &
   Galleri page, sourced from `02-restored-static`'s video gallery tab.
 - [x] **Shared bottom-sheet component** — DONE 2026-06-20: BottomSheet + SheetContent built.
-  See "Bottom sheet component" section above. Demo wired in Utstyr (temporary).
-  Consumers (Utstyr, Om Oss, Reiserute) still need to be wired in separately.
-- [ ] **Utstyr page** — sub-task (b) still open:
-  Items made clickable into bottom sheets showing image / description / external link.
-  Sub-task (a) DONE: section-description split applied 2026-06-20.
+  See "Bottom sheet component" section above.
+  2026-06-21: BottomSheet updated with inner-wrapper max-width centering (960px on desktop,
+  full-width on mobile). SheetContent updated with `imageMode` prop ('contain'/'cover').
+- [x] **Utstyr page** — DONE 2026-06-21:
+  (a) section-description split applied 2026-06-20.
+  (b) All 58 items wired to BottomSheet + SheetContent. Data in `src/data/utstyr.js`.
+  56 product images copied from 02-restored-static to `public/images/utstyr/`
+  (2 renamed for URL safety: Magellan space-filename → magellanGPS.png,
+  BEVERPROGRIP+svart.png → beverprogrip_svart.png). All items clickable.
+  Fishing items (2) have no images (none existed in original source).
+  Descriptions in Norwegian (2–4 sentences), links to current brand/product pages.
+  Temp demo button and DEMO_ITEM const removed from Utstyr.jsx.
 - [ ] **Om Oss page** — color thumbnails with hover zoom (white border hidden in
   circular crop), two-column desktop layout, reduced mobile card padding, larger
   names, click-to-bottom-sheet instead of expand-in-place.
@@ -1109,6 +1123,38 @@ here as outstanding work, not shipped features.
   env(safe-area-inset-bottom) spacer handles iPhone notch. Temporary demo button
   wired in Utstyr.jsx (marked TEMP — remove when Utstyr wires it for real next batch).
   Build: 117 modules (up from 60 — vaul + Radix UI deps). 11 pages clean.
+- 2026-06-21: Utstyr page — BottomSheet fully wired. All 58 equipment items now clickable;
+  clicking opens a BottomSheet with SheetContent showing product image, Norwegian description,
+  and a link to the current brand/product page.
+  Product data extracted to `src/data/utstyr.js` (new file) — 58 items across 7 categories,
+  each with `{ name, image, body, link }`. Descriptions are 2–4 sentences in Norwegian (Bokmål),
+  based on web-verified factual product information. Links point to current brand or product pages;
+  all original product-specific URLs from 2009 are dead (confirmed via 02-restored-static dead-link
+  audit). Key sourcing notes: Optimus Nova+ → Katadyn Group (acquired Optimus). Ajungilak products
+  → Mammut (acquired Ajungilak/Fuglesangs Sønner in 2008). Bamse Extreme → Mammut/Ajungilak.
+  Sarek termos → Hammarplast. Tallrikslåda → Edvardson Sweden. ALLY kano → Bergans (distributor).
+  Fishing items (2) have no images (none existed in original source).
+  56 product PNGs copied from `02-restored-static/images/utstyr/` to `public/images/utstyr/`.
+  Two filenames sanitised on copy: "Magellan eXplorist 500LE Handheld GPS1-01.png"
+  → `magellanGPS.png` (space in filename causes URL issues); "BEVERPROGRIP+svart.png"
+  → `beverprogrip_svart.png` (+ is interpreted as space in URLs).
+  CategorySection now renders items as `<button>` elements (was plain `<li>` text); clicking
+  sets `selectedItem` state. Single `<BottomSheet>` at page root, keyed to `selectedItem`.
+  Temp "Test BottomSheet" demo button and `DEMO_ITEM` const removed from Utstyr.jsx.
+  Image path: `${import.meta.env.BASE_URL}images/utstyr/${item.image}` — handles /norgepalangs/
+  base URL in production and / in dev.
+- 2026-06-21: BottomSheet max-width centering. On desktop viewports wider than 960px, the sheet
+  panel now centers at `max-w-content` (960px) while staying full-width on mobile. Implementation:
+  inner wrapper div (`mx-auto w-full max-w-content`) inside `Drawer.Content`. Outer `Drawer.Content`
+  stays `left:0 right:0` (full-viewport, transparent) because vaul controls `transform` there for
+  the `slideFromBottom` animation — adding `translateX(-50%)` on the same element would be
+  overwritten by vaul's animation keyframes. The styled inner div (bg, rounded corners, flex layout)
+  slides up with the outer container while centering the visible panel horizontally.
+- 2026-06-21: SheetContent `imageMode` prop added ('contain' | 'cover', default 'contain').
+  'contain': dark `bg-slate-950` container, `object-contain` + px-6/py-4 padding — transparent-
+  background product PNGs render cleanly against the dark sheet. 'cover': `object-cover` fills
+  the container edge-to-edge — appropriate for portrait and landscape photographs (Om Oss, Reiserute).
+  Default changed from 'cover' to 'contain' to match the primary Utstyr use case.
 - 2026-06-20: BottomSheet bug fixes — desktop non-render + mobile too-short height.
   Bug 1 (desktop): vaul's snap-point offset math (`window.innerHeight - snapPoint ×
   window.innerHeight`) assumes the drawer is full-viewport-height tall. When content is

@@ -1,118 +1,17 @@
 import React, { useState } from 'react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
-// TEMP — remove when Utstyr wires BottomSheet for real (next batch)
 import BottomSheet from '../../components/BottomSheet.jsx'
 import SheetContent from '../../components/SheetContent.jsx'
+import { CATEGORIES } from '../../data/utstyr.js'
+
+const BASE = import.meta.env.BASE_URL
 
 // ─── Verbatim from 02-restored-static/utstyr.html ────────────────────────────
 const INTRO_DESC = 'For å kunne gjennomføre prosjektet kreves produkter som ikke svikter under kontinuerlig og hard bruk. Alle produktene vi bruker er vi helt avhengige av at fungerer som de skal, når de skal. Dette stiller store krav til de produktene og produsentene vi velger å stole på.'
 const INTRO_BODY = 'Alle produktene, med noen få unntak, har jeg mye personlig erfaring med. Gjennom deltidsjobben på XXL og tidligere jobb i Sport 1-butikk, samt en etter hvert betydelig porsjon turerfaring, har jeg en viss oversikt over hva som finnes på markedet og hva som fungerer. Dermed er lite overlatt til tilfeldighetene hva angår valg av utstyr.'
 
-const CATEGORIES = [
-  {
-    id: 'kjokken',
-    label: 'Kjøkkenhjørnet',
-    items: [
-      'Trangia Hard Anodized Ultralight 25-8 stormkjøkken',
-      'Optimus Nova+ brenner ladd med parafin',
-      'Trangia brenselsflaske 1L',
-      'Sarek termos',
-      'Tallrikslåda',
-      'Quechua alu. drikkeflaske',
-      'Nalgene Lexanflaske med thermocover',
-    ],
-  },
-  {
-    id: 'bekledning',
-    label: 'Bekledning',
-    items: [
-      'Lowe Alpine Multitasker Pro Balaclava',
-      'Norrøna Nansen Yttervotter',
-      'Innervotter Tovet (Irene Bakken)',
-      'Pelslue av Bisam',
-      'Helsport Fimbul Shell Jakke og Bukse',
-      'Helsport Fimbul Down Expedition',
-      'Norrøna Trollveggen Gore-Tex Gamasjer',
-      'Janus Ekstra',
-      'Janus IRIS',
-      'Janus Design Wool',
-      'Janus balaclava',
-      'Janus hals',
-      'Janus sokker',
-      'Sasta Ullsokker',
-      'Aclima Woolnet trøye og longs (netting)',
-    ],
-  },
-  {
-    id: 'bolig',
-    label: 'Bolig & Sovepose',
-    items: [
-      'Helsport Fjellheimen 3 Camp (sommer)',
-      'Helsport Svalbard (vinter)',
-      'Ajungilak Future Winter',
-      'Ajungilak Tyin 5-season',
-      'Bamse Extreme liggeunderlag',
-      'Therm-a-Rest Ridge Deluxe liggeunderlag',
-    ],
-  },
-  {
-    id: 'diverse',
-    label: 'Diverse',
-    items: [
-      'Norrøna Recon Pack 125 liter rammesekk',
-      'Sea to Summit kartmappe large',
-      'Sea to Summit Drybag 8L & 35L',
-      'ALLY 16,5′ DR kano',
-      'Silva Helios stormtenner',
-      'Ajungilak Bivouac Boots',
-      'Rottefella Snøspade',
-      'Ortovox 320 søkestang',
-      'Adidas Evil Eye Explorer L',
-      'ID2 goggles',
-      'Alfa Bever Pro Grip+',
-      'Buck Øks',
-      'Buck diamantbryne',
-      'Helle Fjellkniven',
-      'Petzl Tikka Plus hodelykt',
-      'Silva Expedition 15 kompass',
-      'Kart: 1 : 50 000 (M711)',
-    ],
-  },
-  {
-    id: 'fiske',
-    label: 'Fiske',
-    items: [
-      'Berkley Lightning IM6 8′ 3–15g stang med Cardinal 101F snelle med veske og 270m 0,12 Fireline',
-      'Fisker mest med spesialsluker (12 grams) eller mark',
-    ],
-  },
-  {
-    id: 'elektronikk',
-    label: 'Elektronikk',
-    items: [
-      'Fujifilm Finepix S 5600',
-      'Canon MD110 DV-Kamera',
-      'Magellan eXplorist 500 LE GPS',
-      'SILVA Solar II Solcelle',
-      'SPOT Satellite Personal Tracker',
-    ],
-  },
-  {
-    id: 'ski',
-    label: 'Skiutstyr',
-    items: [
-      'Åsnes Amundsen Fjellski med kortfellelås',
-      'Crispi Sydpolen 75mm Skistøvler',
-      'Rottefella Super Telemark m/wire, oppbygningsplater og hælløfter',
-      'Swix Extreme Composite skistaver',
-      'Åsnes Nansen 2-delt stav (sammenleggbare reservestaver)',
-      'Fjellpulken Ekspedisjon 168 med forsterket ekspedisjonsdrag og ekspedisjonssele',
-    ],
-  },
-]
-
-function CategorySection({ cat, isOpen, onToggle }) {
+function CategorySection({ cat, isOpen, onToggle, onItemClick }) {
   return (
     <div className="border-b border-white/[.06]">
       <button
@@ -126,11 +25,18 @@ function CategorySection({ cat, isOpen, onToggle }) {
         </span>
       </button>
       {isOpen && (
-        <ul className="pb-6 pl-2 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+        <ul className="pb-6 pl-2 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1">
           {cat.items.map((item) => (
-            <li key={item} className="flex items-start gap-3">
-              <span className="text-orange-400/60 mt-2 flex-shrink-0 text-xs">—</span>
-              <span className="font-sans text-sm text-slate-300 leading-relaxed">{item}</span>
+            <li key={item.name}>
+              <button
+                className="w-full flex items-start gap-3 text-left py-1 group"
+                onClick={() => onItemClick(item)}
+              >
+                <span className="text-orange-400/60 mt-[0.35rem] flex-shrink-0 text-xs">—</span>
+                <span className="font-sans text-sm text-slate-300 leading-relaxed group-hover:text-slate-100 transition-colors">
+                  {item.name}
+                </span>
+              </button>
             </li>
           ))}
         </ul>
@@ -139,18 +45,9 @@ function CategorySection({ cat, isOpen, onToggle }) {
   )
 }
 
-// TEMP — remove when Utstyr wires BottomSheet for real (next batch)
-const DEMO_ITEM = {
-  title: 'Trangia Hard Anodized Ultralight 25-8 stormkjøkken',
-  subtitle: 'Kjøkkenhjørnet',
-  body: 'Et av de mest pålitelige kokeapparatene for fjellturer. Hard anodized aluminiumfinish gir god varmeledning og lang holdbarhet under kontinuerlig bruk.',
-  link: { href: 'https://www.trangia.se', label: 'Trangia nettside' },
-}
-
 export default function Utstyr() {
   const [open, setOpen] = useState(new Set(['kjokken']))
-  // TEMP
-  const [demoOpen, setDemoOpen] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
 
   const toggle = (id) => {
     setOpen((prev) => {
@@ -181,10 +78,7 @@ export default function Utstyr() {
         <p className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty mb-4">{INTRO_BODY}</p>
 
         <div className="flex justify-end mb-6">
-          <button
-            onClick={toggleAll}
-            className="btn-outline"
-          >
+          <button onClick={toggleAll} className="btn-outline">
             {open.size === CATEGORIES.length ? 'Lukk alle' : 'Åpne alle'}
           </button>
         </div>
@@ -196,26 +90,27 @@ export default function Utstyr() {
               cat={cat}
               isOpen={open.has(cat.id)}
               onToggle={() => toggle(cat.id)}
+              onItemClick={setSelectedItem}
             />
           ))}
         </div>
 
       </main>
-      {/* TEMP — BottomSheet demo, remove next batch */}
-      <div className="fixed bottom-6 right-6 z-30">
-        <button onClick={() => setDemoOpen(true)} className="btn-solid text-sm px-4 py-2">
-          Test BottomSheet
-        </button>
-      </div>
-      <BottomSheet open={demoOpen} onOpenChange={setDemoOpen} ariaLabel={DEMO_ITEM.title}>
-        <SheetContent
-          title={DEMO_ITEM.title}
-          subtitle={DEMO_ITEM.subtitle}
-          body={DEMO_ITEM.body}
-          link={DEMO_ITEM.link}
-        />
+
+      <BottomSheet
+        open={selectedItem !== null}
+        onOpenChange={(isOpen) => { if (!isOpen) setSelectedItem(null) }}
+        ariaLabel={selectedItem?.name ?? 'Produkt'}
+      >
+        {selectedItem && (
+          <SheetContent
+            image={selectedItem.image ? `${BASE}images/utstyr/${selectedItem.image}` : undefined}
+            title={selectedItem.name}
+            body={selectedItem.body}
+            link={selectedItem.link}
+          />
+        )}
       </BottomSheet>
-      {/* END TEMP */}
 
       <SiteFooter />
     </div>

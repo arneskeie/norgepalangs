@@ -7,25 +7,35 @@ import React from 'react'
  * All props are optional except `title`.
  *
  * Props:
- *   image     string              — image src (full-width hero at top of sheet)
- *   title     string | ReactNode  — heading (Fraunces 1.5rem)
- *   subtitle  string              — optional accent line above title (.eyebrow styling)
- *   body      string | ReactNode  — description / details (Work Sans 1.125rem, slate-300)
- *   link      { href, label, external? }
- *                                 — optional CTA rendered as .btn-outline pill
- *                                   external defaults to true (opens in new tab)
- *   gallery   Array<string | { src, alt }>
- *                                 — optional thumbnail grid (3-col, aspect-[4/3])
- *                                   empty/omitted → grid not rendered
+ *   image      string              — image src
+ *   imageMode  'contain' | 'cover' — how the image fills its container.
+ *                                    'contain' (default): product images on dark bg with padding.
+ *                                    'cover': portrait/landscape photos cropped to fill.
+ *   title      string | ReactNode  — heading (Fraunces 1.5rem)
+ *   subtitle   string              — optional accent line above title (.eyebrow styling)
+ *   body       string | ReactNode  — description / details (Work Sans 1.125rem, slate-300)
+ *   link       { href, label, external? }
+ *                                  — optional CTA rendered as .btn-outline pill
+ *                                    external defaults to true (opens in new tab)
+ *   gallery    Array<string | { src, alt }>
+ *                                  — optional thumbnail grid (3-col, aspect-[4/3])
+ *                                    empty/omitted → grid not rendered
  */
-export default function SheetContent({ image, title, subtitle, body, link, gallery }) {
+export default function SheetContent({ image, imageMode = 'contain', title, subtitle, body, link, gallery }) {
   return (
     <div>
-      {/* Full-width hero image */}
+      {/* Hero image */}
       {image && (
-        <div className="w-full h-48 overflow-hidden">
-          <img src={image} alt="" className="w-full h-full object-cover" />
-        </div>
+        imageMode === 'cover' ? (
+          <div className="w-full h-48 overflow-hidden">
+            <img src={image} alt="" className="w-full h-full object-cover" />
+          </div>
+        ) : (
+          /* contain: dark bg so transparent PNGs render cleanly; px/py give breathing room */
+          <div className="w-full h-48 bg-slate-950 flex items-center justify-center px-6 py-4">
+            <img src={image} alt="" className="max-h-full max-w-full object-contain" />
+          </div>
+        )
       )}
 
       {/* Content area */}
