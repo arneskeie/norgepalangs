@@ -151,7 +151,7 @@ function EtappeRow({ etappe, base, activeSlug, onToggle }) {
 
       {isOpen && (
         <div className="pb-6 pl-14 pr-2">
-          <p className="font-sans text-sm text-slate-400 leading-relaxed mb-5">{etappe.note}</p>
+          <p className="font-sans text-sm text-slate-400 leading-relaxed mb-5 text-pretty">{etappe.note}</p>
           <div className="grid grid-cols-3 gap-2">
             {[0,1,2].map((i) => (
               <img
@@ -186,11 +186,11 @@ export default function Reiserute() {
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-6">
           71°10′N → 57°58′N
         </h1>
-        <p className="font-sans text-[1.5rem] text-slate-300 leading-normal max-w-[640px] mb-4">{INTRO}</p>
+        <p className="font-sans text-[1.5rem] text-slate-300 leading-normal max-w-[640px] mb-4 text-pretty">{INTRO}</p>
 
         {/* Route note */}
         <div className="border-l-2 border-orange-400/30 pl-5 mb-16 max-w-[640px]">
-          <p className="font-sans text-[1.125rem] text-slate-500 leading-normal italic">{NOTE}</p>
+          <p className="font-sans text-[1.125rem] text-slate-500 leading-normal italic text-pretty">{NOTE}</p>
         </div>
 
         {/* Oppvarmingstur */}
@@ -200,7 +200,7 @@ export default function Reiserute() {
             <span className="font-sans text-xs text-slate-600 w-8 flex-shrink-0 pt-1">—</span>
             <div className="flex-1">
               <p className="font-serif font-medium text-base text-slate-100">Nord-Finland (kanotur)</p>
-              <p className="font-sans text-sm text-slate-400 mt-1 leading-relaxed">{OPPVARMINGSTUR.note}</p>
+              <p className="font-sans text-sm text-slate-400 mt-1 leading-relaxed text-pretty">{OPPVARMINGSTUR.note}</p>
             </div>
             <div className="hidden sm:flex gap-2 flex-shrink-0">
               {[0,1,2].map((i) => (

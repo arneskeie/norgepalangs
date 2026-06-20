@@ -98,16 +98,16 @@ export default function Home() {
       {/* ── Om turen ────────────────────────────────────────────────────────── */}
       <section id="om-turen" className="pt-8 pb-14 md:pt-8 md:pb-24">
         <div className="max-w-content mx-auto px-6">
-          <p className="font-serif text-[1.5rem] text-slate-200 leading-normal mb-8">{INGRESS}</p>
+          <p className="font-serif text-[1.5rem] text-slate-200 leading-normal mb-8 text-pretty">{INGRESS}</p>
           <div className="space-y-5">
             {VELKOMMEN.slice(0, 3).map((para, i) => (
-              <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal">
+              <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty">
                 {para}
               </p>
             ))}
-            <p className="font-serif text-[1.5rem] text-slate-200 leading-normal">{FEATURED}</p>
+            <p className="font-serif text-[1.5rem] text-slate-200 leading-normal text-pretty">{FEATURED}</p>
             {VELKOMMEN.slice(3).map((para, i) => (
-              <p key={i + 3} className="font-sans text-[1.125rem] text-slate-300 leading-normal">
+              <p key={i + 3} className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty">
                 {para}
               </p>
             ))}
@@ -130,7 +130,7 @@ export default function Home() {
           <h2 className="font-serif text-[2.5rem] md:text-5xl leading-[0.95] text-slate-50 mb-6">
             15 etapper, <span className="text-orange-400">Nordkapp til Lindesnes.</span>
           </h2>
-          <p className="font-sans text-[1.5rem] text-slate-400 leading-normal mb-10">
+          <p className="section-description mb-10 text-pretty">
             Et halvt år til fots langs Norges ryggrad — fra Arctic Ocean-kapp til Skandinavias sydspiss.
             Gjennom vidder, skoger og fjell, i alle årstidene.
           </p>
@@ -179,7 +179,7 @@ export default function Home() {
               <p className="font-sans text-xs text-slate-500 tracking-wider mb-1">{LATEST_REISEBREV.date}</p>
               <p className="font-sans font-medium text-xs text-orange-400 uppercase tracking-widest mb-2">{LATEST_REISEBREV.label}</p>
               <h3 className="font-serif font-semibold text-2xl text-slate-100 mb-3">{LATEST_REISEBREV.title}</h3>
-              <p className="font-sans text-sm text-slate-400 leading-relaxed mb-4">
+              <p className="font-sans text-sm text-slate-400 leading-relaxed mb-4 text-pretty">
                 {LATEST_REISEBREV.excerpt}
               </p>
               <a
@@ -211,7 +211,7 @@ export default function Home() {
                 <img
                   src={`${base}images/sponsors/${file}`}
                   alt={name}
-                  className="max-h-full w-auto max-w-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"
+                  className="sponsor-logo max-h-full w-auto max-w-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"
                   style={{ mixBlendMode: 'screen' }}
                 />
               )

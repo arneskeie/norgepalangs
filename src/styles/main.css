@@ -12,11 +12,18 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     font-feature-settings: "kern" 1, "liga" 1;
+    scroll-behavior: smooth;
   }
 
   body {
     font-family: 'Work Sans', system-ui, sans-serif;
     font-size: 1rem;
+  }
+
+  /* All headings benefit from balanced line-breaks.
+     .title-card h1 { white-space: nowrap } makes this a no-op there. */
+  h1, h2, h3 {
+    text-wrap: balance;
   }
 }
 
@@ -27,6 +34,12 @@
 
   .eyebrow {
     @apply font-sans font-medium text-sm uppercase tracking-[0.2em] text-orange-400;
+  }
+
+  /* Section intro paragraph directly under a section h2 — function-based reuse.
+     Per-instance spacing (mb-*) and max-width stay in JSX. */
+  .section-description {
+    @apply font-sans text-[1.5rem] leading-normal text-slate-400;
   }
 }
 
@@ -357,4 +370,26 @@
   .nav-link {
     font-size: 0.875rem;
   }
+}
+
+/* ─── Hover-animated images — GPU acceleration hints ──────────────────────── */
+
+/* Sponsor logos: group-hover:scale-105 + group-hover:opacity-100 transition.
+   Pre-promotes to compositor layer to prevent first-hover jank.
+   Strip images are NOT included — will-change: transform on .strip-track
+   already handles the entire animated track as a single compositor layer;
+   per-image hints there would create 36+ unnecessary extra layers. */
+.sponsor-logo {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Reisebrev list cover images: hover:scale-105 transition-transform */
+.reisebrev-cover-img {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }

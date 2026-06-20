@@ -47,6 +47,31 @@ current session.
   introduced. Permanent documented exceptions: `.strip-wrapper` top/height
   (photo geometry, not spacing) and `SIZE_BUCKETS` in SiteHeader.jsx (aesthetic
   scrapbook size variety) — both confirmed in 2026-06-20 changelog. Do not re-audit.
+- **`text-wrap: balance` on all headings.** Applied globally via
+  `h1, h2, h3 { text-wrap: balance }` in `@layer base` in main.css.
+  Produces symmetrical line-breaks on multi-line headings. Progressive
+  enhancement — no visual change on single-line headings. The TitleCard
+  `h1 { white-space: nowrap }` rule already makes `text-wrap: balance`
+  a no-op there. Do not override per-element unless there's a specific reason.
+- **`text-wrap: pretty` on prose paragraphs.** Applied via Tailwind
+  `text-pretty` class on long-form paragraph elements site-wide (body
+  text, ingress, excerpts, bio, etappe notes). Prevents orphan words at
+  the end of the last line. Applied selectively in JSX — NOT on eyebrows,
+  metadata, labels, or short UI text.
+- **`scroll-behavior: smooth` on `<html>`.** Set globally in `html {}`
+  in @layer base. Used by in-page anchor links (e.g. reisebrev post pages
+  linking to homepage sections). Do not override on individual elements.
+- **Semantic CSS component classes — function-based reuse only.** Use
+  `@apply` in `@layer components` in main.css for clusters of utilities
+  that repeat across multiple components because they share a FUNCTION,
+  not just a coincidental style match. Identify new candidates by usage
+  pattern across components, not by guessing upfront. Current classes:
+  - `.eyebrow` — `font-sans font-medium text-sm uppercase tracking-[0.2em] text-orange-400`
+  - `.section-description` — `font-sans text-[1.5rem] leading-normal text-slate-400`
+    Applied to: #ruta description (Home), OmOss intro, Reisebrev intro,
+    Utstyr intro. Per-instance spacing (mb-*) and max-width stay in JSX.
+    NOT applied to Reiserute INTRO (uses slate-300, different visual role).
+    Future candidate: Sponsors section line (noted for a later batch).
 - Accent color: **orange-400** (`#fb923c`). Confirmed via real color
   analysis of 60 sampled trip photos — teal (the original logo color) was
   the weakest hue present in the actual photography; orange-400 matches
@@ -703,3 +728,28 @@ None currently open. Add new issues here as they're found, dated.
   on the om-turen section below, and the same approach as inner pages — normal
   flow, not absolute positioning). Desktop behavior (absolute bottom: 0)
   unchanged at sm and above.
+- 2026-06-20: Foundational text, scroll, semantic-class, and GPU hints batch.
+  1. scroll-behavior: smooth — added to `html {}` in @layer base. Used by
+     future in-page anchor links (e.g. reisebrev → homepage section).
+  2. text-wrap: balance — added globally via `h1, h2, h3 { text-wrap: balance }`
+     in @layer base. Progressive enhancement; no-op on single-line headings.
+     `.title-card h1 { white-space: nowrap }` already prevents balance from
+     having any effect on the TitleCard wordmark.
+  3. text-wrap: pretty — added via Tailwind `text-pretty` class to all
+     long-form prose paragraph elements site-wide (INGRESS, VELKOMMEN, FEATURED,
+     INTRO, NOTE, bio, etappe notes, excerpts, reisebrev post body). NOT applied
+     to eyebrows, metadata, or short UI text.
+  4. .section-description semantic class — established in @layer components.
+     `@apply font-sans text-[1.5rem] leading-normal text-slate-400`. Applied to
+     4 instances: Home #ruta, OmOss intro, Reisebrev intro, Utstyr intro.
+     Reiserute INTRO (slate-300) excluded — different visual role.
+  5. GPU acceleration on hover-animated images:
+     - .sponsor-logo: `will-change: transform, opacity; transform: translateZ(0);
+       backface-visibility: hidden` — applied to all 20 sponsor logo <img>
+       elements (group-hover:scale-105 + opacity transition).
+     - .reisebrev-cover-img: same properties except will-change: transform only
+       (opacity doesn't transition) — applied to 6 reisebrev list cover images
+       (hover:scale-105).
+     - Photo strip images: NOT given per-image hints. `.strip-track { will-change:
+       transform }` already handles the animated track as one compositor layer;
+       per-image hints would create 36+ unnecessary additional layers.

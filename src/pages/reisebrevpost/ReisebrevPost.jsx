@@ -48,7 +48,7 @@ export default function ReisebrevPost({ n }) {
         {/* Body text */}
         <div className="space-y-6 mb-12">
           {letter.body.map((para, i) => (
-            <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal">
+            <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty">
               {para}
             </p>
           ))}

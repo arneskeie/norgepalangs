@@ -15,7 +15,7 @@ export default function Reisebrev() {
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-4">
           Fra veien.
         </h1>
-        <p className="font-sans text-[1.5rem] text-slate-400 leading-normal max-w-[560px] mb-16">
+        <p className="section-description max-w-[560px] mb-16 text-pretty">
           Seks reisebrev ble skrevet underveis — ett etter hver etappe. Alle er skrevet av Marius Montarou fra felten.
         </p>
 
@@ -32,7 +32,7 @@ export default function Reisebrev() {
                 <img
                   src={`${base}images/reisebrev/${letter.img}`}
                   alt=""
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  className="reisebrev-cover-img w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
               </a>
               <div className="flex flex-col justify-center">
@@ -46,7 +46,7 @@ export default function Reisebrev() {
                     {letter.title}
                   </a>
                 </h2>
-                <p className="font-sans text-[1.125rem] text-slate-400 leading-normal mb-4 max-w-prose">{letter.excerpt}</p>
+                <p className="font-sans text-[1.125rem] text-slate-400 leading-normal mb-4 max-w-prose text-pretty">{letter.excerpt}</p>
                 <a
                   href={`${base}reisebrev${letter.n}.html`}
                   className="font-sans font-medium text-sm text-orange-400 hover:text-orange-300 transition-colors self-start"
