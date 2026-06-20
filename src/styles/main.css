@@ -380,7 +380,7 @@
    already handles the entire animated track as a single compositor layer;
    per-image hints there would create 36+ unnecessary extra layers. */
 .sponsor-logo {
-  will-change: transform, opacity;
+  will-change: transform;
   transform: translateZ(0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;

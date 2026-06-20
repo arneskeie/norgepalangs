@@ -14,10 +14,10 @@ export default function SiteFooter() {
       </footer>
 
       {/* Version switcher — modernized-site palette (02-restored-static keeps original black/white) */}
-      <style>{`.npls-link:hover{color:#f8fafc;}`}</style>
+      <style>{`.npls-link{color:rgba(148,163,184,0.9);transition:color 0.15s;}.npls-link:hover{color:#f8fafc;}`}</style>
       <div style={{display:'flex',justifyContent:'center',padding:'32px 16px',fontFamily:"'Work Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",fontSize:'14px'}}>
         <div style={{display:'inline-flex',alignItems:'center',background:'#1e293b',borderRadius:'9999px',padding:'4px'}}>
-          <a href="https://arneskeie.github.io/norgepalangs-2009/" className="npls-link" style={{color:'rgba(148,163,184,0.9)',textDecoration:'none',padding:'8px 18px',borderRadius:'9999px',whiteSpace:'nowrap',transition:'color 0.15s'}}>Original nettside</a>
+          <a href="https://arneskeie.github.io/norgepalangs-2009/" className="npls-link" style={{textDecoration:'none',padding:'8px 18px',borderRadius:'9999px',whiteSpace:'nowrap'}}>Original nettside</a>
           <span style={{background:'#f8fafc',color:'#0f172a',borderRadius:'9999px',padding:'8px 18px',fontWeight:500,whiteSpace:'nowrap'}}>Oppdatert nettside</span>
         </div>
       </div>

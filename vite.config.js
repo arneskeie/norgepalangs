@@ -12,6 +12,7 @@ export default defineConfig({
         omoss:       resolve(__dirname, 'omoss.html'),
         reiserute:   resolve(__dirname, 'reiserute.html'),
         utstyr:      resolve(__dirname, 'utstyr.html'),
+        sponsorer:   resolve(__dirname, 'sponsorer.html'),
         reisebrev1:  resolve(__dirname, 'reisebrev1.html'),
         reisebrev2:  resolve(__dirname, 'reisebrev2.html'),
         reisebrev3:  resolve(__dirname, 'reisebrev3.html'),

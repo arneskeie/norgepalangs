@@ -221,15 +221,17 @@ current session.
    pointing to `reisebrevN.html`. The old list page (reisebrev.html) is deleted.
 5. **Sponsor logos** — own dedicated section, NOT inside the footer.
    Logo grid, all 20 real sponsors (see Content inventory). Logos sit
-   directly on the dark background with `mix-blend-mode: screen` — JPGs
-   with black backgrounds: screen blend makes black pixels disappear,
-   leaving the logo in full color. No additional CSS filter applied.
-   Hover: opacity 70%→100% + scale-105. Section title uses h2/font-serif
-   treatment matching other sections ("Sponsorer."), NOT the small eyebrow
-   style. Description line sits between title and grid. Note: 5 logos
+   directly on the dark background with `mix-blend-mode: screen`. Default:
+   grayscale (`grayscale` Tailwind). Hover: full color (`group-hover:grayscale-0`) +
+   scale-105. No opacity treatment — logos are fully opaque at all times.
+   Section title h2/font-serif ("Sponsorer."). Description line below title
+   uses `.section-description` class. Grid: 4 columns mobile, 5 columns md+
+   (`grid-cols-4 md:grid-cols-5`). "Les mer om sponsorene" btn-outline below
+   grid links to `sponsorer.html`. `.sponsor-logo` GPU hint: `will-change: transform`
+   (opacity removed since opacity no longer transitions). Note: 5 logos
    (Helsport, MX Sport, Skaidi Hotel, Femund Fjellstue, Umbukta Fjellstue)
-   have non-black backgrounds — they will show their original bg color via
-   screen blend; acceptable for now, PNG conversion deferred.
+   have non-black backgrounds — they show their original bg color via screen blend;
+   acceptable, PNG conversion deferred.
 6. **Footer** — two-part layout within `max-w-content` container:
    LEFT: "NORGE på LANGS" wordmark at `text-[1.125rem]` via `<Wordmark>` component
    (same font/accent/tracking as TitleCard but footer-sized). RIGHT: credit text
@@ -243,8 +245,14 @@ current session.
    identically on both sites.
    **Hover behavior (both sites):** Text-color-only hover — the inactive link
    text brightens to full white on hover. No background pill/tint on hover.
-   CSS: `.npls-link:hover { color: #ffffff }` (02-restored-static) /
-   `color: #f8fafc` (03-modernized). Transition: `color 0.15s` (was `background`).
+   **Implementation:** Base color AND transition MUST be in the `<style>` CSS rule
+   (`.npls-link { color: ...; transition: color 0.15s; }`), NOT in the inline `style`
+   attribute. Reason: inline `style` has higher CSS specificity than any class selector
+   (including `:hover` pseudo-class), so `:hover` can never override an inline color.
+   CSS: `.npls-link { color: X; transition: color 0.15s; } .npls-link:hover { color: Y; }`
+   The inline `style` attribute on the `<a>` must NOT contain `color` or `transition`.
+   03-modernized: `X = rgba(148,163,184,0.9)`, `Y = #f8fafc`.
+   02-restored-static: `X = rgba(255,255,255,0.85)`, `Y = #ffffff`.
    The modernized site uses on-palette colors (differs from 02-restored-static):
    - Outer pill: `#1e293b` (slate-800)
    - Active side (Oppdatert nettside): bg `#f8fafc`, color `#0f172a`, fontWeight 500
@@ -367,9 +375,41 @@ presented directly in the homepage `#reisebrev` section.
 
 **Kadaver status table** appears only on entry 1 (Etappe 1), rendered as a CSS grid table with header row + 5 body rows (Føtter/Knær/Rygg/Skuldre/Moral × Marius/Emil).
 
-**Linking:** Back link (top) and "Alle reisebrev" button (bottom) on each post page both
-link to `${base}index.html#reisebrev` (smooth-scroll anchor on homepage). Homepage grid
-card links each go to `reisebrev${n}.html`.
+**Linking:** Back link (top) and button (bottom) on each post page both link to
+`${base}index.html#reisebrev`. Both are styled as `.btn-outline` pill buttons with
+caption "← Tilbake til Reisebrev". The top link is wrapped in `<div className="mb-10">`.
+Homepage grid card links each go to `reisebrev${n}.html`.
+
+**Hash-scroll on homepage load:** `Home.jsx` runs a `useEffect` on mount that checks
+`window.location.hash` and calls `el.scrollIntoView({ behavior: 'smooth' })` if a
+matching element exists. Required because cross-page navigation (full page reload) does
+not automatically scroll to the hash position — `scroll-behavior: smooth` only handles
+same-page anchor clicks. This makes `index.html#reisebrev` actually land at the section.
+
+## Sponsorer page
+
+`sponsorer.html` is a dedicated inner page listing all sponsors with logos and verbatim
+descriptions from `02-restored-static/sponsorer.html`. **Not in the primary nav** — only
+reachable via the "Les mer om sponsorene" btn-outline on the homepage sponsors section.
+
+**File structure:**
+- `src/pages/sponsorer/Sponsorer.jsx` — page component
+- `src/pages/sponsorer/main.jsx` — entry point
+- `sponsorer.html` — HTML shell at project root
+- Registered in `vite.config.js` as `sponsorer: resolve(__dirname, 'sponsorer.html')`
+
+**Content structure (all verbatim from 02-restored-static/sponsorer.html):**
+- Intro paragraph: "Uten støtte fra våre sponsorer..." (original text)
+- UTSTYR section (12 sponsors with logo + description): XXL, Janus, Sportsbua, Helsport,
+  Cappelen Damm, Alfa, Åsnes, Fjellpulken, Rottefella, Amfibi, Adidas Eyewear, MX Sport.
+- TJENESTER section (8 sponsors + Rui Fjellstoge): Skaidi Hotel, Breidablikk, Lundhøgda
+  Camping, Femund Fjellstue, Umbukta Fjellstue, Jule Ferie & Fritid, Dokka Camping,
+  Gudbrandsdal Hotell; plus Rui Fjellstoge (Haukeli) as a text-only entry (no logo in
+  the 20-logo set).
+- "Vi vil også rette en stor takk til" section: 26 personal helpers listed by name.
+- Logos rendered with `mix-blend-mode: screen` (same as homepage). No grayscale on this
+  page — logos shown at full color directly (they have enough context/description here).
+- `SiteHeader variant="compact"` with no currentPage (not in nav, never active).
 
 ## Known open issues
 
@@ -813,3 +853,33 @@ None currently open. Add new issues here as they're found, dated.
   span (inline line-height). Footer: Wordmark at text-[1.125rem], credit text
   font-sans text-xs text-slate-600 right-aligned (sm+). Mobile: flex-col centered.
   Desktop (sm+): flex-row justify-between. Version switcher remains below footer.
+- 2026-06-20: Version-switcher hover regression fixed on BOTH sites. Root cause: CSS
+  specificity — inline `style` attributes have higher specificity than any class selector
+  (including `:hover`). The previous batch put base `color` + `transition` in the inline
+  style, which permanently won over the `.npls-link:hover` CSS rule, making hover states
+  invisible. Fix: moved `color` and `transition` from inline `style` into the `<style>`
+  CSS block as `.npls-link { ... }`. Inline `style` on the `<a>` no longer contains
+  `color` or `transition`. Applied to SiteFooter.jsx and all 16 02-restored-static HTML pages.
+- 2026-06-20: Reisebrev post page back-links restyled. Both the top "back" link and
+  bottom "Alle reisebrev" button are now `.btn-outline` pill buttons with identical
+  caption "← Tilbake til Reisebrev". Previously the top was a text-link style and bottom
+  was already btn-outline with different text.
+- 2026-06-20: Homepage hash-scroll-on-load added. `Home.jsx` now runs a `useEffect`
+  on mount that checks `window.location.hash` and scrolls to the matching element via
+  `scrollIntoView({ behavior: 'smooth' })`. Cross-page hash navigation (e.g. clicking
+  "← Tilbake til Reisebrev" from a post page) now actually lands at the #reisebrev
+  section instead of the top of the page. `scroll-behavior: smooth` only fires for
+  same-page clicks; this useEffect handles the cross-page case.
+- 2026-06-20: Sponsors section updated. Grayscale→color hover replaces opacity-70→100
+  (logos now fully opaque at all times; filter: grayscale→none on hover instead).
+  Description line upgraded from `text-xs text-slate-500` to `.section-description`
+  class (matching Ruta and other sections). Grid: 3 mobile cols → 4 mobile cols
+  (`grid-cols-4 md:grid-cols-5`). "Les mer om sponsorene" btn-outline added below grid,
+  linking to sponsorer.html. `.sponsor-logo` will-change updated from
+  `transform, opacity` to `transform` only (opacity no longer animates).
+- 2026-06-20: New sponsorer.html inner page created. Content verbatim from
+  02-restored-static/sponsorer.html: two-section layout (Utstyr / Tjenester), each
+  sponsor shown with logo + name + description. Includes Rui Fjellstoge (Haukeli) as
+  a text-only entry (no logo in the 20-logo set). Personal thank-you list of 26 names.
+  Not in primary nav — only reachable via the homepage "Les mer om sponsorene" button.
+  Build now 11 pages (was 10).

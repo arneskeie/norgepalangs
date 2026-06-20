@@ -20,12 +20,9 @@ export default function ReisebrevPost({ n }) {
       <main className="max-w-content mx-auto px-6 py-12 md:py-20">
 
         {/* Back link */}
-        <a
-          href={`${base}index.html#reisebrev`}
-          className="font-sans text-sm text-slate-500 hover:text-slate-300 transition-colors inline-flex items-center gap-2 mb-10"
-        >
-          ← Alle reisebrev
-        </a>
+        <div className="mb-10">
+          <a href={`${base}index.html#reisebrev`} className="btn-outline">← Tilbake til Reisebrev</a>
+        </div>
 
         {/* Entry header */}
         <p className="eyebrow mb-4">{letter.etappe}</p>
@@ -116,7 +113,7 @@ export default function ReisebrevPost({ n }) {
           ) : <div />}
         </div>
 
-        <a href={`${base}index.html#reisebrev`} className="btn-outline">Alle reisebrev</a>
+        <a href={`${base}index.html#reisebrev`} className="btn-outline">← Tilbake til Reisebrev</a>
 
       </main>
       <SiteFooter />

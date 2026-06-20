@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
 import { LETTERS } from '../../data/reisebrev.js'
@@ -76,6 +76,14 @@ function RouteLine() {
 
 export default function Home() {
   const base = import.meta.env.BASE_URL
+
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash) {
+      const el = document.querySelector(hash)
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
@@ -188,16 +196,16 @@ export default function Home() {
           <h2 className="font-serif text-[2.5rem] md:text-5xl leading-[0.95] text-slate-50 mb-4">
             Sponsorer.
           </h2>
-          <p className="font-sans text-xs text-slate-500 mb-10">
+          <p className="section-description mb-10">
             Uten støtte fra sponsorene hadde ikke dette vært mulig.
           </p>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-6">
+          <div className="grid grid-cols-4 md:grid-cols-5 gap-6 mb-10">
             {SPONSORS.map(({ name, file, url }) => {
               const img = (
                 <img
                   src={`${base}images/sponsors/${file}`}
                   alt={name}
-                  className="sponsor-logo max-h-full w-auto max-w-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"
+                  className="sponsor-logo max-h-full w-auto max-w-full object-contain grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300"
                   style={{ mixBlendMode: 'screen' }}
                 />
               )
@@ -219,6 +227,7 @@ export default function Home() {
               )
             })}
           </div>
+          <a href={`${base}sponsorer.html`} className="btn-outline">Les mer om sponsorene</a>
         </div>
       </section>
 
