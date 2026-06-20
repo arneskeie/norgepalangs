@@ -10,10 +10,12 @@ export default function SiteFooter() {
           </p>
         </div>
       </footer>
-      <div style={{background:'#1a1a1a',borderTop:'1px solid rgba(255,255,255,0.08)',padding:'10px 16px',textAlign:'center',fontFamily:"Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",fontSize:'13px',lineHeight:'1.4',color:'#888'}}>
-        <a href="https://arneskeie.github.io/norgepalangs-2009/" style={{color:'#888',textDecoration:'none'}}>Original nettside (2009)</a>
-        <span style={{color:'#444'}}> · </span>
-        <span style={{color:'#555'}}>Oppdatert/responsiv nettside →</span>
+      <style>{`.npls-link:hover{background:rgba(255,255,255,0.1);}`}</style>
+      <div style={{display:'flex',justifyContent:'center',padding:'20px 16px',fontFamily:"Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",fontSize:'14px'}}>
+        <div style={{display:'inline-flex',alignItems:'center',background:'#1e1e1e',borderRadius:'9999px',padding:'4px'}}>
+          <a href="https://arneskeie.github.io/norgepalangs-2009/" className="npls-link" style={{color:'rgba(255,255,255,0.85)',textDecoration:'none',padding:'7px 18px',borderRadius:'9999px',whiteSpace:'nowrap',transition:'background 0.15s'}}>Original nettside</a>
+          <span style={{background:'#ffffff',color:'#1e1e1e',borderRadius:'9999px',padding:'7px 18px',fontWeight:500,whiteSpace:'nowrap'}}>Oppdatert nettside</span>
+        </div>
       </div>
     </>
   )
