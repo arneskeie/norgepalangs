@@ -18,8 +18,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
-        sans:  ['Inter', 'system-ui', 'sans-serif'],
+        serif:      ['Fraunces', 'Georgia', 'serif'],
+        sans:       ['"Work Sans"', 'system-ui', 'sans-serif'],
+        'dm-serif': ['"DM Serif Display"', 'Georgia', 'serif'],
       },
       maxWidth: {
         content: '960px',

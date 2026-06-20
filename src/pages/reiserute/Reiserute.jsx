@@ -126,7 +126,7 @@ function EtappeRow({ etappe, base, activeSlug, onToggle }) {
           {String(etappe.nr).replace('a','').replace('b','b')}
         </span>
         <div className="flex-1 min-w-0">
-          <p className="font-sans font-medium text-base text-slate-100">
+          <p className="font-serif font-medium text-base text-slate-100">
             {etappe.fra} <span className="text-slate-500 font-sans text-sm">→</span> {etappe.til}
           </p>
           <p className="font-sans text-xs text-slate-500 mt-1">
@@ -199,7 +199,7 @@ export default function Reiserute() {
           <div className="flex items-start gap-6 py-4 border-b border-white/[.06]">
             <span className="font-sans text-xs text-slate-600 w-8 flex-shrink-0 pt-1">—</span>
             <div className="flex-1">
-              <p className="font-sans font-medium text-base text-slate-100">Nord-Finland (kanotur)</p>
+              <p className="font-serif font-medium text-base text-slate-100">Nord-Finland (kanotur)</p>
               <p className="font-sans text-sm text-slate-400 mt-1 leading-relaxed">{OPPVARMINGSTUR.note}</p>
             </div>
             <div className="hidden sm:flex gap-1.5 flex-shrink-0">

@@ -30,13 +30,12 @@ current session.
 - Button labels render in **sentence case** — no `text-transform: uppercase`.
   Letter-spacing is `0.02em` (tuned for mixed-case at 18px, not all-caps).
 - Button padding is **`0.75rem 2rem`** (vertical × horizontal).
-- **Instrument Serif is never used below 40px.** If a design needs
-  serif below 40px, switch to Inter instead. The only permitted
-  exception is the TitleCard "NORGE på LANGS" logo mark, which is a
-  brand/typographic element rather than reading text and intentionally
-  stays smaller. At responsive mobile breakpoints, serif headings may
-  scale slightly below 40px; the rule applies to the intended
-  desktop/md reading size.
+- **No minimum size floor for Fraunces.** Fraunces may be used at any
+  size. Its optical-size axis (opsz 9–144) is activated automatically
+  via `font-optical-sizing: auto` (browser default — do not override
+  to `none`). At small sizes Fraunces auto-selects a cut with more
+  open spacing and taller x-height, resolving the readability issue
+  that the old Instrument Serif floor rule was compensating for.
 - Accent color: **orange-400** (`#fb923c`). Confirmed via real color
   analysis of 60 sampled trip photos — teal (the original logo color) was
   the weakest hue present in the actual photography; orange-400 matches
@@ -184,10 +183,11 @@ current session.
 
 **Design tokens:** background slate-950 (#020617), surface slate-900,
 text slate-50, muted slate-400, accent orange-400 (#fb923c). Fonts:
-Instrument Serif (display), Inter (body AND data/labels/eyebrows —
-Inter now serves both roles; JetBrains Mono was removed entirely).
-Label/eyebrow elements use `font-medium` (500) weight with `uppercase
-tracking-widest` to maintain visual distinction from body text.
+Fraunces (display/serif, variable font with opsz 9–144 and wght 100–900),
+Work Sans (body AND data/labels/eyebrows — serves both roles; JetBrains
+Mono and Inter removed entirely). Label/eyebrow elements use `font-medium`
+(500) weight with `uppercase tracking-widest` to maintain visual distinction
+from body text.
 Content max-width: **960px** (`max-w-content` in Tailwind,
 defined in `tailwind.config.js`) — applied to all section content
 wrappers and CSS header/nav inner containers. Exception: the full-bleed
@@ -345,6 +345,8 @@ None currently open. Add new issues here as they're found, dated.
   card (18px), etappe row titles in Reiserute (18px), oppvarmingstur
   title in Reiserute (18px), category accordion labels in Utstyr (20px).
   TitleCard "NORGE på LANGS" brand mark kept as documented exception.
+  [This rule and all Inter-for-floor-rule switches subsequently
+  reversed — see Fraunces/Work Sans swap entry below.]
 - 2026-06-19: Replaced JetBrains Mono with Inter throughout. Removed
   Google Fonts import for JetBrains Mono, removed `mono` from
   tailwind.config.js fontFamily, changed all `font-family: 'JetBrains
@@ -355,6 +357,7 @@ None currently open. Add new issues here as they're found, dated.
   text now that the inherent weight difference of a monospace font is
   gone. `font-weight: 500` also added to `.btn-solid`, `.btn-outline`,
   `.nav-link`, `.nav-mobile-link`, `.hero-eyebrow` CSS classes.
+  [Inter subsequently replaced by Work Sans — see swap entry below.]
 - 2026-06-19: Tried grayscale(100%) brightness(300%) threshold approach on
   sponsor logos (to produce white silhouettes via screen blend). Reverted —
   12 flat/black-bg logos would clip cleanly but 5 logos have non-black
@@ -463,6 +466,27 @@ None currently open. Add new issues here as they're found, dated.
   center. Font 14px Inter. Identical markup on both sites; only which side is
   active differs. Applied via SiteFooter.jsx (03-modernized) and inline in all
   16 HTML pages (02-restored-static).
+- 2026-06-20: Typography swap — Instrument Serif → Fraunces (display/serif
+  role), Inter → Work Sans (body/sans role), site-wide. Google Fonts import
+  updated; Instrument Serif and Inter removed entirely. tailwind.config.js:
+  font-serif now maps to Fraunces (variable, opsz 9–144, wght 100–900, italic),
+  font-sans now maps to Work Sans (wght 300;400;500;600). font-fraunces testing
+  utility removed (now redundant with font-serif); font-dm-serif retained for
+  visual comparison.
+  Reason for swap: Fraunces' built-in optical-size axis (opsz) natively handles
+  small-size readability — at small sizes the browser auto-selects a more
+  legible optical cut (more open spacing, taller x-height), which removes the
+  need for the minimum-size floor rule that existed for Instrument Serif. The
+  hard rule "Instrument Serif never below 40px" is now REMOVED.
+  All elements that had been switched FROM serif TO Inter specifically because
+  of the floor rule are reverted to font-serif (Fraunces): stat values on
+  homepage, latest-reisebrev preview title, person name in OmOss card, etappe
+  row titles in Reiserute, oppvarmingstur title in Reiserute, category accordion
+  labels in Utstyr. TitleCard wordmark also switched to Fraunces (previously a
+  documented exception that stayed Instrument Serif). Elements that were always
+  Inter in their original intended role (eyebrows, labels, body prose, nav,
+  buttons) are now Work Sans. font-optical-sizing: auto is in effect (browser
+  default — not overridden anywhere).
 - 2026-06-20: Repo renamed norgepalangs-ny → norgepalangs. Vite base updated from
   /norgepalangs-ny/ to /norgepalangs/. Version-switcher added to SiteFooter pointing
   to arneskeie.github.io/norgepalangs-2009/ (restored site). Restored site repo renamed

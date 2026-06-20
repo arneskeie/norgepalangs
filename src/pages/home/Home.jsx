@@ -160,7 +160,7 @@ export default function Home() {
               { value: '15',    unit: 'etapper'  },
             ].map(({ value, unit }) => (
               <div key={unit}>
-                <p className="font-sans text-[2rem] md:text-[2.5rem] text-slate-50 leading-none">{value}</p>
+                <p className="font-serif text-[2rem] md:text-[2.5rem] text-slate-50 leading-none">{value}</p>
                 <p className="font-sans text-xs text-orange-400 mt-1 tracking-wider">{unit}</p>
               </div>
             ))}
@@ -188,7 +188,7 @@ export default function Home() {
             <div className="flex flex-col justify-center">
               <p className="font-sans text-xs text-slate-500 tracking-wider mb-1">{LATEST_REISEBREV.date}</p>
               <p className="font-sans font-medium text-xs text-orange-400 uppercase tracking-widest mb-2">{LATEST_REISEBREV.label}</p>
-              <h3 className="font-sans font-semibold text-2xl text-slate-100 mb-3">{LATEST_REISEBREV.title}</h3>
+              <h3 className="font-serif font-semibold text-2xl text-slate-100 mb-3">{LATEST_REISEBREV.title}</h3>
               <p className="font-sans text-sm text-slate-400 leading-relaxed mb-4">
                 {LATEST_REISEBREV.excerpt}
               </p>

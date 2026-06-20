@@ -116,7 +116,7 @@ function CategorySection({ cat, isOpen, onToggle }) {
         onClick={onToggle}
         aria-expanded={isOpen}
       >
-        <span className="font-sans font-medium text-[1.5rem] text-slate-100">{cat.label}</span>
+        <span className="font-serif font-medium text-[1.5rem] text-slate-100">{cat.label}</span>
         <span className="font-sans text-xs text-slate-600">
           {cat.items.length} gjenstander {isOpen ? '↑' : '↓'}
         </span>
