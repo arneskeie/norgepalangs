@@ -121,6 +121,25 @@ const PEOPLE = [
   },
 ]
 
+// Splits "Etappe N[ del X]: Route" at the first colon.
+// Strings with no colon (e.g. "Hele turen") are returned fully as prefix.
+function parseEtappe(str) {
+  const colonIdx = str.indexOf(':')
+  if (colonIdx < 0) return { prefix: str, route: '' }
+  return { prefix: str.slice(0, colonIdx + 1), route: str.slice(colonIdx + 1) }
+}
+
+// Two-tone: "Etappe N:" prefix in orange-400, route in slate-500.
+function EtappeLabel({ text }) {
+  const { prefix, route } = parseEtappe(text)
+  return (
+    <>
+      <span className="text-orange-400">{prefix}</span>
+      {route && <span className="text-slate-500">{route}</span>}
+    </>
+  )
+}
+
 function PersonCard({ person, onSelect }) {
   return (
     <article
@@ -145,7 +164,9 @@ function PersonCard({ person, onSelect }) {
           </h3>
           <div className="mt-2 space-y-1">
             {person.etapper.map((e) => (
-              <p key={e} className="font-sans font-medium text-xs text-orange-400 uppercase tracking-widest">{e}</p>
+              <p key={e} className="font-sans font-medium text-xs uppercase tracking-widest">
+                <EtappeLabel text={e} />
+              </p>
             ))}
           </div>
         </div>
@@ -200,7 +221,18 @@ export default function OmOss() {
             layout="profile"
             image={`${BASE}images/profiles/${selectedPerson.id}.jpg`}
             title={selectedPerson.name}
-            subtitle={selectedPerson.etapper.join(' · ')}
+            subtitle={
+              /* tracking-[0.1em] overrides .eyebrow's tracking-[0.2em] (inherited).
+                 <br /> between etappes keeps all content inline-valid inside <p>. */
+              <span className="tracking-[0.1em]">
+                {selectedPerson.etapper.map((e, i) => (
+                  <React.Fragment key={e}>
+                    {i > 0 && <br />}
+                    <EtappeLabel text={e} />
+                  </React.Fragment>
+                ))}
+              </span>
+            }
             meta={[
               { label: 'Alder', value: selectedPerson.alder },
               { label: 'Oppvokst i', value: selectedPerson.oppvokst },

@@ -623,6 +623,40 @@ padded container, edge-to-edge) — no current consumer uses this.
 The profile layout header row has `gap-4 sm:gap-8` — 16px mobile (stacked), 32px desktop (side-by-side).
 The profile layout divider uses `mx-6 sm:mx-16`.
 
+## Etappe rendering (Om Oss)
+
+**Data shape:** `etapper` in the `PEOPLE` array is already an array of separate strings per person
+(e.g. `['Etappe 11 del I: Elgå – Ringebu', 'Etappe 11 del II: Ringebu – Fagernes', 'Etappe 12: Fagernes – Geilo']`).
+No data restructuring was needed — the data was already correct; only the rendering was updated.
+
+**Two-tone color pattern (both cards AND sheet):**
+Each etappe string is split at the first colon via `parseEtappe(str)`:
+- Prefix (`"Etappe N[ del X]:"`) → `text-orange-400`
+- Route (` "City – City"`) → `text-slate-500`
+
+Strings without a colon (e.g. `"Hele turen"`, `"Oppvarmingstur i Finland"`) are returned fully as prefix
+(all orange-400, no route span). Implemented as `EtappeLabel` + `parseEtappe` helper functions in
+`OmOss.jsx` — shared by both card and sheet rendering to keep the split-and-style logic in one place.
+
+**Card rendering:**
+Each etappe in a separate `<p key={e} className="font-sans font-medium text-xs uppercase tracking-widest">`.
+Multiple etappes stack with `space-y-1` (4px gap) on the wrapper div. `tracking-widest` = 0.1em.
+
+**BottomSheet subtitle rendering:**
+`subtitle` prop receives a ReactNode (not a string). The `.eyebrow` parent `<p>` in SheetContent
+provides `font-sans font-medium text-sm uppercase text-orange-400 tracking-[0.2em]`. A wrapper
+`<span className="tracking-[0.1em]">` overrides the inherited `tracking-[0.2em]` to 0.1em for
+the Om Oss etappe context only — scoped override, does not affect `.eyebrow` globally or any other
+consumer. Multiple etappes separated by `<br />` elements (keeps all content inline-valid inside `<p>`).
+`React.Fragment key={e}` used for the `{i > 0 && <br />}` + `<EtappeLabel>` pair.
+
+**Letter-spacing rationale:**
+`.eyebrow` class uses `tracking-[0.2em]` (the site-wide eyebrow standard). For the Om Oss sheet's
+etappe display, `0.1em` is used because: (1) `tracking-widest` on the cards is already `0.1em`
+(Tailwind default), so 0.1em is consistent across both surfaces; (2) multiple etappe labels at 0.2em
+read too wide for a multi-line compact label stack. The `.eyebrow` class is unchanged — override is
+scoped to the subtitle prop ReactNode only.
+
 ## Video gallery (Reiserute & Galleri page)
 
 Added as the last section of `src/pages/reiserute/Reiserute.jsx`, below the
@@ -779,6 +813,10 @@ here as outstanding work, not shipped features.
   bio below. `activeId` state → `selectedPerson` state. Refined same day:
   initial `imageMode="cover"` (full-width 192px strip) replaced by `layout="profile"`
   (80px circle) because 70×70px source JPGs look poor at 2.7× upscale.
+  **Etappe display (2026-06-21):** See "Etappe rendering" section below.
+  `etapper` data is already an array of separate strings — no restructuring needed.
+  Two-tone pattern on both cards and sheet (orange-400 prefix, slate-500 route).
+  Sheet eyebrow letter-spacing scoped to 0.1em (vs 0.2em site-wide).
 - [x] **Mobile nav redesign** — DONE 2026-06-21. Floating hamburger trigger (56px fixed circle,
   bottom-right) + full-screen overlay with all 5 links at 2rem. Desktop nav updated to centered
   gap-based cluster (gap: 2rem). Reverses the 2026-06-19 hamburger-removal decision. See Nav
@@ -1570,6 +1608,22 @@ here as outstanding work, not shipped features.
   keyboard :focus-visible. Keyboard users: Tab to button still shows orange ring; Tab to
   overlay links still shows browser default focus indicator. Pointer users: no ring after
   tap/click on either element.
+- 2026-06-21: Om Oss etappe display — multi-line, two-tone, scoped letter-spacing.
+  Previously: etapper joined as a single " · " string in the BottomSheet subtitle (one run-on line);
+  cards showed all etappe text in flat orange-400. Updated:
+  1. Multi-line: each etappe now renders on its own line. Cards: each etappe in its own `<p>` (was
+     already the case but now DRY via shared helper). Sheet: `<br />` separators between etappes
+     inside a single `<span>` wrapper (inline-valid inside the `.eyebrow` `<p>`).
+  2. Two-tone color: `parseEtappe(str)` splits at first colon → prefix `"Etappe N[ del X]:"` in
+     orange-400, route `" City – City"` in slate-500. Strings without a colon (e.g. "Hele turen",
+     "Oppvarmingstur i Finland") render fully in orange-400. Applied in both cards and sheet.
+  3. Letter-spacing override on sheet: `.eyebrow` class sets `tracking-[0.2em]` site-wide; the Om Oss
+     sheet subtitle overrides to `tracking-[0.1em]` via a wrapper `<span className="tracking-[0.1em]">`
+     passed as a ReactNode to the `subtitle` prop. Scoped to this element only — `.eyebrow` unchanged.
+     Cards use `tracking-widest` (Tailwind = 0.1em) — consistent with the sheet override.
+  4. Shared helpers: `parseEtappe(str)` and `EtappeLabel({ text })` in OmOss.jsx eliminate
+     duplication of the colon-split and two-tone rendering logic across card and sheet.
+  5. Data was already correct (arrays, not concatenated strings) — no data changes needed.
 - 2026-06-21: Footer — top alignment + wordmark subtitle.
   1. Desktop alignment changed from `sm:items-center` → `sm:items-start`. Both the wordmark
      column (left) and credit text column (right) now align to the top of the footer flex row
