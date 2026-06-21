@@ -3,7 +3,6 @@ import React from 'react'
 export const NAV_LINKS = [
   { label: 'Om oss',              href: 'omoss.html'     },
   { label: 'Reiserute & galleri', href: 'reiserute.html' },
-  { label: 'Reisebrev',           href: 'index.html#reisebrev' },
   { label: 'Utstyr',              href: 'utstyr.html'    },
   { label: 'Sponsorer',           href: 'sponsorer.html' },
 ]

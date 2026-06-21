@@ -333,7 +333,7 @@
   margin: 0;
   padding: 0;
   justify-content: center;
-  gap: 2rem; /* 32px — centered cluster, not stretch-to-fill */
+  gap: 3rem; /* 48px — centered cluster; increased from 2rem when nav went from 5→4 items */
 }
 
 .nav-link {

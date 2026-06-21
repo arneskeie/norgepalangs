@@ -105,16 +105,19 @@ current session.
 
 ## Site structure decisions
 
-- **Nav (5 items):** Om oss · Reiserute & galleri · Reisebrev · Utstyr · Sponsorer
-  "Reisebrev" nav link now points to `index.html#reisebrev` (homepage section anchor) —
-  no separate list page exists. It will never show as "active" since no page passes that
-  href as currentPage; this is acceptable and expected.
+- **Nav (4 items):** Om oss · Reiserute & galleri · Utstyr · Sponsorer
+  "Reisebrev" was removed from the nav (2026-06-21). The standalone reisebrev.html list
+  page was deleted earlier and replaced by the homepage #reisebrev grid section, but the
+  nav item was not removed at that time — now corrected. Reisebrev content is discoverable
+  via the homepage.
   `NAV_LINKS` is exported from `SiteNav.jsx` and imported by `MobileNav.jsx` — single
   source of truth for both the desktop nav and the mobile overlay.
 - **Desktop nav (≥ 768px):** Renders as a 912px-wide rounded pill. Items use
-  `justify-content: center; gap: 2rem` (32px) — centered cluster, items sit close together
-  rather than stretching across the full pill width. Font size: 16px (1rem). Letter-spacing:
-  0.02em. Sentence case. Active state: orange-400 2px `border-bottom` (border only, no fill).
+  `justify-content: center; gap: 3rem` (48px) — centered cluster, items sit close together
+  rather than stretching across the full pill width. Gap was 2rem when nav had 5 items;
+  increased to 3rem with 4 items to maintain ~53% cluster fill in the pill (vs. 47% at 2rem,
+  which was too sparse). Font size: 16px (1rem). Letter-spacing: 0.02em. Sentence case.
+  Active state: orange-400 2px `border-bottom` (border only, no fill).
   **This replaces the prior `space-evenly + width: 100%` layout** (see 2026-06-21 changelog).
 - **Mobile nav (< 768px) — floating hamburger + full-screen overlay:**
   The inline nav bar is **completely hidden** on mobile (`display: none`). Two new elements
@@ -125,7 +128,7 @@ current session.
     Tap target 56px ≥ 44px guideline. `aria-expanded`, `aria-haspopup="dialog"`. When overlay
     is open, `tabIndex={-1}` prevents keyboard Tab from landing on the trigger (focus stays inside overlay).
   - **Full-screen overlay:** `position: fixed; inset: 0; z-index: 90; background: #020617`.
-    Centered flex column. All 5 links at `font-size: 2rem` Work Sans, `font-weight: 500`,
+    Centered flex column. All 4 links at `font-size: 2rem` Work Sans, `font-weight: 500`,
     `color: rgba(148,163,184,0.80)` default, `#f8fafc` on hover, `#fb923c` when active. Tap
     target per link: ~56px (2rem line-height × 1.2 + 2 × 0.75rem padding).
   - **Accessibility:** `role="dialog" aria-modal="true" aria-label="Navigasjonsmeny"` on overlay.
@@ -1441,6 +1444,14 @@ here as outstanding work, not shipped features.
   created at public/ (served at /norgepalangs/ base). Key constraint: Vite does
   NOT inject base URL into meta content="" attributes — canonical and og: URLs
   must be full absolute https:// paths, not root-relative.
+- 2026-06-21: Reisebrev removed from primary nav (missed cleanup). When the standalone
+  reisebrev.html list page was deleted and its content moved to the homepage #reisebrev
+  section, the nav item was not removed. It was pointing to `index.html#reisebrev` (anchor
+  link, never showing as active) — that behavior was documented as acceptable but the item
+  itself was incorrect. Removed from `NAV_LINKS` in SiteNav.jsx; propagates automatically
+  to MobileNav.jsx (shared export). Nav is now 4 items: Om oss · Reiserute & galleri ·
+  Utstyr · Sponsorer. Desktop gap increased 2rem → 3rem (48px) to maintain proportional
+  cluster fill in the 912px pill after losing one item.
 - 2026-06-21: Nav redesign — desktop gap-based + mobile hamburger (REVERSAL of 2026-06-19 decision).
   Desktop: `.nav-links` changed from `justify-content: space-evenly; width: 100%` to
   `justify-content: center; gap: 2rem` (32px). Items now form a centered cluster rather than
