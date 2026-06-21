@@ -486,6 +486,14 @@
   color: #f8fafc;
 }
 
+/* Suppress default browser outline on pointer interactions (click/tap).
+   :focus:not(:focus-visible) matches pointer-initiated focus only — keyboard focus
+   (:focus-visible) is unaffected, preserving the ring for keyboard users.
+   This works for <a> elements; the trigger button is handled via onMouseDown.preventDefault(). */
+.mobile-nav-link:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* Active: orange accent color (no underline — color alone is legible at 2rem) */
 .mobile-nav-link--active {
   color: #fb923c;

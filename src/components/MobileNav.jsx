@@ -57,6 +57,7 @@ export default function MobileNav({ currentPage = '' }) {
       <button
         ref={triggerRef}
         onClick={() => setOpen((v) => !v)}
+        onMouseDown={(e) => e.preventDefault()}
         tabIndex={open ? -1 : 0}
         aria-label={open ? 'Lukk meny' : 'Åpne meny'}
         aria-expanded={open}

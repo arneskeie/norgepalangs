@@ -144,6 +144,17 @@ current session.
     Body scroll lock: `document.body.style.overflow = 'hidden'` while open, restored on close.
   - **Closing:** tap the X trigger button, press Escape, or tap any nav link (each link has
     `onClick={close}`, navigating away and dismissing the overlay simultaneously).
+  - **Focus ring behavior — `:focus-visible` only (never plain `:focus`):**
+    The trigger button uses `.mobile-nav-trigger:focus-visible` (not `:focus`) for the orange
+    outline ring, so keyboard users see a ring but pointer/touch interactions do not. Chrome 86+
+    applies `:focus-visible` to `<button>` clicks by policy — the trigger suppresses this via
+    `onMouseDown={(e) => e.preventDefault()}`, which prevents focus acquisition on pointer events
+    (the default action of mousedown = focus element) while leaving click, Tab, and Space/Enter
+    unaffected. Overlay links use CSS `.mobile-nav-link:focus:not(:focus-visible) { outline:none }`
+    to suppress browser-default rings on tap/click without touching keyboard-initiated `:focus-visible`.
+    **Do NOT change `:focus-visible` to plain `:focus`, do NOT remove `onMouseDown.preventDefault()`,
+    and do NOT add a blanket `outline: none` without the `:not(:focus-visible)` guard** — doing any of
+    these would break keyboard accessibility.
   - **This REVERSES the 2026-06-19 hamburger-removal decision** — deliberate, see 2026-06-21
     changelog entry.
 - **Nav two-layer structure (desktop):** `.nav-inner` is an invisible layout wrapper
@@ -278,7 +289,8 @@ current session.
 6. **Footer** — two-part layout within `max-w-content` container:
    LEFT: `<Wordmark>` at `text-[1.125rem]` + a subtitle line "med Montarou & co" directly
    below it, grouped in a `<div>`. Subtitle: `font-sans font-medium text-[8px] leading-4
-   uppercase tracking-[0.2em] text-slate-400 mt-1`. **8px is an explicit one-off exception**
+   uppercase tracking-[0.2em] text-slate-400` — no margin-top; sits flush below the wordmark
+   (spacing comes entirely from `leading-4`'s line-height). **8px is an explicit one-off exception**
    — below both the 0.75rem site-wide floor and the 0.625rem TitleCard-mobile exception.
    Scoped to this single element only; the floor rule is unchanged everywhere else.
    RIGHT: credit as a `<div>` with 3 separate `<p>` lines (no "|" separators),
@@ -1542,6 +1554,18 @@ here as outstanding work, not shipped features.
   subtitle = etapper joined with " · " (orange-400 eyebrow via .eyebrow class), body =
   `<PersonSheetBody>` ReactNode (metadata dl + bio paragraphs). The ReactNode body approach
   avoids duplicating SheetContent's font/size/color wrapper classes on each paragraph.
+- 2026-06-21: Mobile nav focus ring fix — pointer vs keyboard discrimination.
+  Root cause (two separate issues): (1) Chrome 86+ applies :focus-visible to <button> clicks
+  by policy, so the explicit orange .mobile-nav-trigger:focus-visible ring appeared after
+  tapping the trigger. (2) <a> overlay links could show browser-default focus rings on tap
+  in Firefox/Safari. The :focus-visible selector in the CSS was already correct (not plain :focus).
+  Fix: (1) Added onMouseDown={(e) => e.preventDefault()} to the trigger <button> — prevents
+  focus acquisition on pointer events (mousedown's default action), leaving click/Tab/Space/Enter
+  unaffected. (2) Added .mobile-nav-link:focus:not(:focus-visible) { outline: none } in main.css
+  — suppresses browser default rings for pointer-initiated link focus without touching
+  keyboard :focus-visible. Keyboard users: Tab to button still shows orange ring; Tab to
+  overlay links still shows browser default focus indicator. Pointer users: no ring after
+  tap/click on either element.
 - 2026-06-21: Footer — top alignment + wordmark subtitle.
   1. Desktop alignment changed from `sm:items-center` → `sm:items-start`. Both the wordmark
      column (left) and credit text column (right) now align to the top of the footer flex row
@@ -1551,8 +1575,9 @@ here as outstanding work, not shipped features.
      subtitle treatment (Work Sans, font-medium, uppercase, tracking-[0.2em], slate-400) but
      left-aligned and at `font-size: 8px` (0.5rem). 8px is an explicit one-off exception —
      below both the 0.75rem site-wide floor and the 0.625rem TitleCard-mobile exception.
-     Scoped to this single footer element only. `mt-1` (4px) gap above it. `leading-4`
-     matches TitleCard subtitle treatment. Wordmark + subtitle wrapped in a `<div>`.
+     Scoped to this single footer element only. No margin-top — sits flush below wordmark.
+     `leading-4` matches TitleCard subtitle treatment. Wordmark + subtitle wrapped in a `<div>`.
+     (`mt-1` removed in subsequent fix — subtitle now flush against wordmark.)
 - 2026-06-21: BottomSheet desktop minimum height added.
   Added `sm:min-h-[70vh]` to the inner wrapper div. On desktop (≥640px), the panel never
   shrinks below 70% of viewport height — short-content sheets (e.g. Om Oss entry with a
