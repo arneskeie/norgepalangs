@@ -5,6 +5,7 @@ export default function MobileNav({ currentPage = '' }) {
   const [open, setOpen] = useState(false)
   const triggerRef = useRef(null)
   const overlayRef = useRef(null)
+  const closedByEscapeRef = useRef(false)
   const base = import.meta.env.BASE_URL
 
   const close = useCallback(() => setOpen(false), [])
@@ -15,22 +16,35 @@ export default function MobileNav({ currentPage = '' }) {
     return () => { document.body.style.overflow = '' }
   }, [open])
 
-  // Escape key
+  // Escape key — mark close as keyboard-initiated so focus is restored with ring visible
   useEffect(() => {
     if (!open) return
-    const onKey = (e) => { if (e.key === 'Escape') close() }
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        closedByEscapeRef.current = true
+        close()
+      }
+    }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [open, close])
 
-  // Focus management: first link on open, trigger on close
+  // Focus management: first link on open, trigger on close (keyboard only).
+  // Pointer closes skip the programmatic focus() call — onMouseDown.preventDefault()
+  // already prevents the button from receiving focus on click, and programmatic focus()
+  // in Chrome shows :focus-visible even for click-triggered closes (it treats any
+  // element.focus() call as keyboard-like), producing the unwanted orange ring.
+  // Only restoring focus for Escape key preserves the ARIA pattern (keyboard users
+  // get focus back on the trigger) without showing a ring for pointer interactions.
   useEffect(() => {
     if (open) {
       const firstLink = overlayRef.current?.querySelector('a')
       firstLink?.focus()
       return () => {
-        // Runs when open goes false — return focus to trigger
-        setTimeout(() => triggerRef.current?.focus(), 10)
+        if (closedByEscapeRef.current) {
+          setTimeout(() => triggerRef.current?.focus(), 10)
+        }
+        closedByEscapeRef.current = false
       }
     }
   }, [open])

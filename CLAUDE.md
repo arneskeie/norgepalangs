@@ -146,15 +146,24 @@ current session.
     `onClick={close}`, navigating away and dismissing the overlay simultaneously).
   - **Focus ring behavior — `:focus-visible` only (never plain `:focus`):**
     The trigger button uses `.mobile-nav-trigger:focus-visible` (not `:focus`) for the orange
-    outline ring, so keyboard users see a ring but pointer/touch interactions do not. Chrome 86+
-    applies `:focus-visible` to `<button>` clicks by policy — the trigger suppresses this via
-    `onMouseDown={(e) => e.preventDefault()}`, which prevents focus acquisition on pointer events
-    (the default action of mousedown = focus element) while leaving click, Tab, and Space/Enter
-    unaffected. Overlay links use CSS `.mobile-nav-link:focus:not(:focus-visible) { outline:none }`
-    to suppress browser-default rings on tap/click without touching keyboard-initiated `:focus-visible`.
+    outline ring. Two separate mechanisms prevent the ring from showing for pointer interactions:
+    1. **`onMouseDown={(e) => e.preventDefault()}`** on the button — prevents focus acquisition
+       on mousedown when OPENING the overlay. Chrome 86+ applies `:focus-visible` to `<button>`
+       clicks by policy; cancelling the mousedown default action avoids this.
+    2. **`closedByEscapeRef`** in the focus-management `useEffect` — programmatic `element.focus()`
+       in Chrome also shows `:focus-visible` (it treats any `.focus()` call as keyboard-like). The
+       useEffect cleanup previously called `triggerRef.current?.focus()` unconditionally after every
+       close, producing the orange ring after click-to-close. Fixed: focus is only restored
+       programmatically when the close was triggered by pressing Escape (`closedByEscapeRef.current`).
+       Pointer closes (button click, nav link click) skip the `focus()` call entirely —
+       `onMouseDown.preventDefault()` already prevented the button from receiving focus on the
+       click, so no ring appears without the explicit `focus()` call.
+    Overlay links use CSS `.mobile-nav-link:focus:not(:focus-visible) { outline:none }` to suppress
+    browser-default rings on tap/click without touching keyboard-initiated `:focus-visible`.
     **Do NOT change `:focus-visible` to plain `:focus`, do NOT remove `onMouseDown.preventDefault()`,
-    and do NOT add a blanket `outline: none` without the `:not(:focus-visible)` guard** — doing any of
-    these would break keyboard accessibility.
+    do NOT remove the `closedByEscapeRef` guard in the useEffect cleanup, and do NOT add a blanket
+    `outline: none` without the `:not(:focus-visible)` guard** — doing any of these would break
+    keyboard accessibility or re-introduce the pointer-click ring.
   - **This REVERSES the 2026-06-19 hamburger-removal decision** — deliberate, see 2026-06-21
     changelog entry.
 - **Nav two-layer structure (desktop):** `.nav-inner` is an invisible layout wrapper
@@ -1596,18 +1605,26 @@ here as outstanding work, not shipped features.
   subtitle = etapper joined with " · " (orange-400 eyebrow via .eyebrow class), body =
   `<PersonSheetBody>` ReactNode (metadata dl + bio paragraphs). The ReactNode body approach
   avoids duplicating SheetContent's font/size/color wrapper classes on each paragraph.
-- 2026-06-21: Mobile nav focus ring fix — pointer vs keyboard discrimination.
-  Root cause (two separate issues): (1) Chrome 86+ applies :focus-visible to <button> clicks
-  by policy, so the explicit orange .mobile-nav-trigger:focus-visible ring appeared after
-  tapping the trigger. (2) <a> overlay links could show browser-default focus rings on tap
-  in Firefox/Safari. The :focus-visible selector in the CSS was already correct (not plain :focus).
-  Fix: (1) Added onMouseDown={(e) => e.preventDefault()} to the trigger <button> — prevents
-  focus acquisition on pointer events (mousedown's default action), leaving click/Tab/Space/Enter
-  unaffected. (2) Added .mobile-nav-link:focus:not(:focus-visible) { outline: none } in main.css
-  — suppresses browser default rings for pointer-initiated link focus without touching
-  keyboard :focus-visible. Keyboard users: Tab to button still shows orange ring; Tab to
-  overlay links still shows browser default focus indicator. Pointer users: no ring after
-  tap/click on either element.
+- 2026-06-21: Mobile nav focus ring fix (first attempt, incomplete).
+  Fix 1: Added onMouseDown={(e) => e.preventDefault()} to the trigger <button> — prevents
+  focus acquisition on OPENING click (Chrome 86+ policy: :focus-visible fires on button clicks).
+  Fix 2: Added .mobile-nav-link:focus:not(:focus-visible) { outline: none } in main.css —
+  suppresses browser default rings for pointer-initiated link focus.
+  These fixes were incomplete — the ring still appeared after click-to-CLOSE. See next entry.
+- 2026-06-21: Mobile nav focus ring fix — complete (second pass, actual root cause).
+  The remaining ring after click-to-close was caused by the focus-management useEffect cleanup:
+  `setTimeout(() => triggerRef.current?.focus(), 10)` ran unconditionally whenever the overlay
+  closed, programmatically restoring focus to the trigger. Programmatic element.focus() in
+  Chrome also triggers :focus-visible (Chrome treats any .focus() call as keyboard-like), so
+  the orange ring appeared 10ms after every close — including pointer-triggered closes where
+  onMouseDown.preventDefault() had already prevented the INITIAL focus from the click.
+  Fix: added `closedByEscapeRef` (useRef, default false). The Escape key handler sets it to
+  true before calling close(). The useEffect cleanup now only calls triggerRef.current?.focus()
+  when closedByEscapeRef.current is true, then resets it to false. Pointer closes (button click,
+  link click) skip the focus() call entirely — no programmatic focus, no ring.
+  Keyboard accessibility preserved: Tab to trigger → ring (browser-native); Escape to close →
+  ring on trigger (programmatic focus, now only for keyboard-triggered close). Pointer users:
+  no ring after click/tap on either open or close.
 - 2026-06-21: Om Oss etappe display — multi-line, two-tone, scoped letter-spacing.
   Previously: etapper joined as a single " · " string in the BottomSheet subtitle (one run-on line);
   cards showed all etappe text in flat orange-400. Updated:
