@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
+import { PEOPLE } from '../../data/people.js'
 
 // ─── Text from 01-original-php/Reiserute.php (authoritative) ─────────────────
 // 02-restored-static/reiserute.html has severely truncated notes (Wayback capture);
 // the full etappe notes were restored from the PHP source in Batch 1 (2026-06-21).
+
 const INTRO = 'Turen starter fra Nordkapp 1. september og følger en variert rute sørover, fordelt på ca 15 etapper. Vi planlegger å nå Mo i Rana før vi unner oss en pust i bakken ved juletider. Turen fortsetter videre mot Lindesnes på vårparten.'
 
 const NOTE = 'Som tidligere antatt er Saltfjellet slukt av vinteren tidlig i november. Vi har av erfaring (over Skjomenfjellene) lært at det ikke har noen hensikt å jobbe mot naturen. For å kunne fortsette til fots dro vi sørover til Hegra og gikk den siste høstetappen til Gressli. Når vi begynner på igjen med ski under beina i februar, vil vi starte nøyaktig der vi slapp i Nord-Norge, nærmere bestemt Lønsdal.'
@@ -124,70 +126,142 @@ const VIDEOS = [
   { id: '3JrKnijl7wA', title: 'Status dag 7', subtitle: 'Truls presenterer ukesrapport' },
 ]
 
-function EtappeRow({ etappe, base, activeSlug, onToggle }) {
-  const isOpen = activeSlug === etappe.slug + etappe.nr
+// ─── Participant cross-reference ──────────────────────────────────────────────
+
+function canonicalLabel(e) {
+  if (e.nr === '11a') return `Etappe 11 del I: ${e.fra} – ${e.til}`
+  if (e.nr === '11b') return `Etappe 11 del II: ${e.fra} – ${e.til}`
+  return `Etappe ${e.nr}: ${e.fra} – ${e.til}`
+}
+
+function getParticipants(etappe) {
+  const canonical = canonicalLabel(etappe)
+  const nr = typeof etappe.nr === 'number' ? etappe.nr : null
+  return PEOPLE.filter((person) =>
+    person.etapper.some((e) => {
+      if (e === 'Hele turen') return true
+      // Emil walked E1-4 as a range
+      if (e === 'Etappe 1–4: Nordkapp – Fauske' && nr !== null && nr >= 1 && nr <= 4) return true
+      return e === canonical
+    })
+  )
+}
+
+function getOppParticipants() {
+  return PEOPLE.filter((p) => p.etapper.some((e) => e === 'Oppvarmingstur i Finland'))
+}
+
+// ─── Timeline components ──────────────────────────────────────────────────────
+
+function ParticipantList({ people, base }) {
+  if (!people.length) return null
+  return (
+    <div className="flex flex-wrap gap-3 mt-4">
+      {people.map((p) => (
+        <div key={p.id} className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+            <img
+              src={`${base}images/profiles/${p.id}.jpg`}
+              alt={p.name}
+              className="w-full h-full object-cover scale-[1.15]"
+            />
+          </div>
+          <span className="font-sans text-xs text-slate-500">
+            {p.name.split(' ')[p.name.split(' ').length - 1]}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function EtappeContent({ etappe, participants, base, isOpp = false }) {
+  const statParts = []
+  if (!isOpp) {
+    if (etappe.dager) statParts.push(`${etappe.dager} dager`)
+    if (etappe.hvile > 0) statParts.push(`${etappe.hvile} hvile`)
+    if (etappe.km) statParts.push(`${etappe.km} km`)
+  }
+
+  const label = isOpp
+    ? 'Nord-Finland (kanotur)'
+    : `${etappe.fra} – ${etappe.til}`
+
+  const eyebrow = isOpp
+    ? 'Oppvarmingstur'
+    : (etappe.nr === '11a' ? 'Etappe 11 del I'
+      : etappe.nr === '11b' ? 'Etappe 11 del II'
+      : `Etappe ${etappe.nr}`)
 
   return (
-    <div className="border-b border-white/[.06] last:border-0">
-      <button
-        className="w-full flex items-start gap-6 py-5 text-left hover:bg-white/[.02] transition-colors px-2 -mx-2 rounded"
-        onClick={() => onToggle(etappe.slug + etappe.nr)}
-        aria-expanded={isOpen}
-      >
-        <span className="font-sans text-xs text-slate-600 w-8 flex-shrink-0 pt-1">
-          {String(etappe.nr).replace('a','').replace('b','b')}
-        </span>
-        <div className="flex-1 min-w-0">
-          <p className="font-serif font-medium text-base text-slate-100">
-            {etappe.fra} <span className="text-slate-500 font-sans text-sm">→</span> {etappe.til}
-          </p>
-          <p className="font-sans text-xs text-slate-500 mt-1">
-            {etappe.dager} dager
-            {etappe.hvile > 0 && ` · ${etappe.hvile} hvile`}
-            {etappe.km && ` · ${etappe.km} km`}
-          </p>
-        </div>
-
-        {/* Gallery thumbnails — hidden on small screens where they'd crowd the route name */}
-        <div className="hidden sm:flex gap-2 flex-shrink-0">
-          {[0,1,2].map((i) => (
-            <img
-              key={i}
-              src={`${base}strip/${etappe.slug}_${i}.jpg`}
-              alt=""
-              className="w-12 h-9 object-cover rounded opacity-60"
-            />
-          ))}
-        </div>
-      </button>
-
-      {isOpen && (
-        <div className="pb-6 pl-14 pr-2">
-          <p className="font-sans text-sm text-slate-400 leading-relaxed mb-5 text-pretty">{etappe.note}</p>
-          <div className="grid grid-cols-3 gap-2">
-            {[0,1,2].map((i) => (
-              <img
-                key={i}
-                src={`${base}strip/${etappe.slug}_${i}.jpg`}
-                alt=""
-                className="w-full aspect-[4/3] object-cover rounded border border-white/10"
-              />
-            ))}
-          </div>
-        </div>
+    <div className="pl-7 pb-10">
+      <p className="font-sans font-medium text-xs uppercase tracking-widest text-orange-400 mb-1">
+        {eyebrow}
+      </p>
+      <h3 className="font-serif font-medium text-[1.125rem] text-slate-100 leading-snug mb-1">
+        {label}
+      </h3>
+      {statParts.length > 0 && (
+        <p className="font-sans text-xs text-slate-600 mb-3">
+          {statParts.join(' · ')}
+        </p>
       )}
+      <p className="font-sans text-sm text-slate-400 leading-relaxed text-pretty">
+        {etappe.note}
+      </p>
+      <ParticipantList people={participants} base={base} />
+    </div>
+  )
+}
+
+// Waypoint dot + town label (shown between etappes).
+// The dot is absolutely positioned at left-3 (12px) and centered via -translate-x-1/2.
+// Container uses pl-7 (28px) so content starts 16px to the right of the line.
+function Waypoint({ name, isStart = false, isEnd = false, isResumption = false, coords = null }) {
+  return (
+    <div className="relative flex items-center gap-3 mb-6 pl-7">
+      <div
+        className={`absolute left-3 top-1/2 -translate-x-1/2 -translate-y-1/2 flex-shrink-0 rounded-full ring-2 ring-slate-950 z-10 ${
+          isStart || isEnd
+            ? 'w-5 h-5 bg-orange-400'
+            : isResumption
+            ? 'w-4 h-4 bg-orange-400/60'
+            : 'w-3 h-3 bg-orange-400/40'
+        }`}
+      />
+      <div>
+        <span className={`font-sans text-xs uppercase tracking-widest ${
+          isStart || isEnd ? 'text-slate-300' : 'text-slate-500'
+        }`}>
+          {name}
+          {coords && <span className="text-slate-600 ml-2">{coords}</span>}
+        </span>
+        {isResumption && (
+          <span className="ml-3 font-sans text-xs text-orange-400/60 italic">
+            — oppstart vår-etapper
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Season divider / label
+function SeasonDivider({ label }) {
+  return (
+    <div className="mb-8 pl-7">
+      <p className="eyebrow text-slate-600">{label}</p>
     </div>
   )
 }
 
 export default function Reiserute() {
   const base = import.meta.env.BASE_URL
-  const [activeSlug, setActiveSlug] = useState(null)
-
-  const toggle = (key) => setActiveSlug(activeSlug === key ? null : key)
 
   const hostEtapper = ETAPPER.filter((e) => e.sesong === 'høst')
   const varEtapper  = ETAPPER.filter((e) => e.sesong === 'vår')
+
+  const oppParticipants = getOppParticipants()
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
@@ -195,53 +269,93 @@ export default function Reiserute() {
       <main className="max-w-content mx-auto px-6 py-12 md:py-20">
 
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-6">
-          Reiserute & galleri
+          Reiserute
         </h1>
-        <p className="section-description mb-4 text-pretty">{INTRO}</p>
 
-        {/* Route note */}
-        <div className="border-l-2 border-orange-400/30 pl-5 mb-16 max-w-[640px]">
-          <p className="font-sans text-[1.125rem] text-slate-500 leading-normal italic text-pretty">{NOTE}</p>
-        </div>
-
-        {/* Oppvarmingstur */}
-        <div className="mb-12">
-          <p className="eyebrow mb-6">Oppvarmingstur</p>
-          <div className="flex items-start gap-6 py-4 border-b border-white/[.06]">
-            <span className="font-sans text-xs text-slate-600 w-8 flex-shrink-0 pt-1">—</span>
-            <div className="flex-1">
-              <p className="font-serif font-medium text-base text-slate-100">Nord-Finland (kanotur)</p>
-              <p className="font-sans text-sm text-slate-400 mt-1 leading-relaxed text-pretty">{OPPVARMINGSTUR.note}</p>
-            </div>
-            <div className="hidden sm:flex gap-2 flex-shrink-0">
-              {[0,1,2].map((i) => (
-                <img key={i} src={`${base}strip/opp_${i}.jpg`} alt="" className="w-12 h-9 object-cover rounded opacity-60" />
-              ))}
+        {/* Intro + Norway map: side by side on desktop, stacked on mobile */}
+        <div className="flex flex-col sm:flex-row gap-8 sm:gap-12 items-start mb-16">
+          <div className="flex-1 min-w-0">
+            <p className="section-description mb-4 text-pretty">{INTRO}</p>
+            <div className="border-l-2 border-orange-400/30 pl-5 max-w-[560px]">
+              <p className="font-sans text-[1.125rem] text-slate-500 leading-normal italic text-pretty">{NOTE}</p>
             </div>
           </div>
-        </div>
-
-        {/* Høst */}
-        <div className="mb-12">
-          <p className="eyebrow mb-6">Høst-etapper</p>
-          <div>
-            {hostEtapper.map((e) => (
-              <EtappeRow key={e.slug + e.nr} etappe={e} base={base} activeSlug={activeSlug} onToggle={toggle} />
-            ))}
+          {/* Illustrative Norway map — static ambient silhouette (Batch 3) */}
+          <div className="flex-shrink-0 w-32 sm:w-36 md:w-44 self-start sm:sticky sm:top-8">
+            <img
+              src={`${base}norway-map.svg`}
+              alt="Illustrativ kart over Norge — Nordkapp til Lindesnes"
+              className="w-full opacity-60"
+              aria-hidden="true"
+            />
           </div>
         </div>
 
-        {/* Vår */}
-        <div>
-          <p className="eyebrow mb-6">Vår-etapper</p>
-          <div>
-            {varEtapper.map((e) => (
-              <EtappeRow key={e.slug + e.nr} etappe={e} base={base} activeSlug={activeSlug} onToggle={toggle} />
-            ))}
-          </div>
+        {/* ─── Vertical timeline ───────────────────────────────────────────────── */}
+        {/* Container pl-7 (28px). Line at left-3 (12px). Dots centered on line via
+            absolute left-3 + -translate-x-1/2 = center at 12px regardless of dot size. */}
+        <div className="relative">
+          {/* Continuous vertical line */}
+          <div className="absolute left-3 top-0 bottom-0 w-[1.5px] bg-orange-400/15" aria-hidden="true" />
+
+          {/* Oppvarmingstur — above the main høst/vår timeline */}
+          <SeasonDivider label="Oppvarmingstur" />
+          <Waypoint name="Nord-Finland" />
+          <EtappeContent
+            etappe={OPPVARMINGSTUR}
+            participants={oppParticipants}
+            base={base}
+            isOpp
+          />
+
+          {/* Høst-etapper */}
+          <SeasonDivider label="Høst-etapper 2008" />
+          <Waypoint name="Nordkapp" coords="71°10′N" isStart />
+
+          {hostEtapper.map((e, idx) => {
+            const participants = getParticipants(e)
+            // After E5 (Lønsdal), insert the Saltfjellet pause before E6
+            const isLastBeforePause = e.nr === 5
+            return (
+              <React.Fragment key={e.slug + e.nr}>
+                <EtappeContent etappe={e} participants={participants} base={base} />
+                {isLastBeforePause ? (
+                  <Waypoint name={e.til} />
+                ) : (
+                  <Waypoint name={e.til} />
+                )}
+                {isLastBeforePause && (
+                  <div className="pl-7 mb-8 max-w-[560px]">
+                    <p className="font-sans text-xs text-slate-600 italic leading-relaxed text-pretty">
+                      Her stanset høstetappene. Saltfjellet var allerede stengt av vinteren.
+                      Vi dro sørover til Hegra for å fullføre den siste høstetappen.
+                    </p>
+                  </div>
+                )}
+              </React.Fragment>
+            )
+          })}
+
+          {/* Vår-etapper — resume from Lønsdal */}
+          <SeasonDivider label="Vår-etapper 2009" />
+          <Waypoint name="Lønsdal" isResumption />
+
+          {varEtapper.map((e) => {
+            const participants = getParticipants(e)
+            return (
+              <React.Fragment key={e.slug + e.nr}>
+                <EtappeContent etappe={e} participants={participants} base={base} />
+                {e.nr === 15 ? (
+                  <Waypoint name="Lindesnes" coords="57°58′N" isEnd />
+                ) : (
+                  <Waypoint name={e.til} />
+                )}
+              </React.Fragment>
+            )
+          })}
         </div>
 
-        {/* Video gallery */}
+        {/* Video gallery — to be migrated to Galleri page in Batch 5 */}
         <div className="mt-20 pt-16 border-t border-white/[.06]">
           <p className="eyebrow mb-6">Video</p>
           <h2 className="font-serif text-[2rem] md:text-[2.5rem] text-slate-50 leading-tight mb-10">

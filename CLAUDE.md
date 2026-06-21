@@ -903,12 +903,17 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
    etappe-naming mismatches fixed (Jarle E7, Rasmus E8, Anders E9, Vegard E5, Truls E10).
    Emil's range 'Etappe 1–4' flagged (not yet expanded to individual entries).
    Build confirmed clean. TEMPORARY section deleted from CLAUDE.md.
-2. **Vertical etappe timeline** — build the homepage-Ruta-style dot-line as a reusable
-   vertical variant; wire in restored text, stats, and participants per etappe directly
-   inline. Replaces the old "map integration + BottomSheet" batches.
-3. **Illustrative SVG map** — static placeholder first (Norway silhouette, positioned per
-   layout above); animated route-draw as a follow-up refinement once the static version is
-   confirmed working.
+2. ✅ **Vertical etappe timeline** — DONE 2026-06-21. Accordion (EtappeRow) fully replaced
+   by a vertical dot-and-line timeline. Dots at left-3 centered via -translate-x-1/2.
+   Each entry: season label, etappe eyebrow/title, stats, restored note, participants
+   (via getParticipants() cross-referencing people.js). Saltfjellet pause callout inserted
+   after E5. Oppvarmingstur as top entry. h1 updated to "Reiserute" (nav rename = Batch 5).
+3. ✅ **Illustrative SVG map** — DONE 2026-06-21. Static Norway silhouette created as
+   public/norway-map.svg (derived from favicon.svg: orange rect removed, class="st0"
+   replaced with fill="#475569" = slate-600, defs/style block stripped). Referenced as
+   <img> in Reiserute.jsx, positioned beside intro text on desktop (sticky sm:top-8),
+   below on mobile. 70.3 KB, 97 paths, 180×180 viewBox, opacity-60. Animated route-draw
+   deferred as a future enhancement (static version is sufficient for launch).
 4. **New Galleri page** — image pipeline (WebP conversion for all 983 photos, organized per
    etappe) + gallery UI + lightbox. [Unchanged from original plan.]
 5. **Video gallery migration + nav update** — move video gallery from Reiserute to Galleri;
