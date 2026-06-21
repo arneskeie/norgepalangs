@@ -34,6 +34,10 @@ import React from 'react'
  *   link       { href, label, external? }
  *                                  — optional CTA rendered as .btn-outline pill
  *                                    external defaults to true (opens in new tab)
+ *   imageHeight string             — (header layout only) Tailwind height class(es) for the image
+ *                                    container. Default: 'h-48' (192px). Pass multiple classes for
+ *                                    responsive sizing (e.g. 'h-48 sm:h-64'). Ignored in 'profile'
+ *                                    layout. Opt-in per consumer — default preserves existing behavior.
  *   gallery    Array<string | { src, alt }>
  *                                  — optional thumbnail grid (3-col, aspect-[4/3])
  *                                    empty/omitted → grid not rendered
@@ -100,6 +104,7 @@ export default function SheetContent({
   layout = 'header',
   image,
   imageMode = 'contain',
+  imageHeight = 'h-48',
   title,
   subtitle,
   meta,
@@ -113,7 +118,7 @@ export default function SheetContent({
       <div>
         {/* Profile header row: mobile → image centered above text (stacked);
             desktop (sm+) → circular photo left, identity stack right. */}
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start px-6 sm:px-16 pt-6 pb-4">
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start px-6 sm:px-16 pt-6 sm:pt-16 pb-4">
           {image && (
             /* w-20 mobile / w-36 desktop (144px = 9rem). Source JPGs are 70×70px so
                80px is near-native (≈1.15× upscale after border crop); 144px on desktop
@@ -145,7 +150,7 @@ export default function SheetContent({
         {hasBody && (
           <>
             <div className="border-t border-white/[.06] mx-6 sm:mx-16" />
-            <div className="px-6 sm:px-16 pt-5 pb-8">
+            <div className="px-6 sm:px-16 pt-5 pb-8 sm:pb-24">
               <BodyArea body={body} link={link} gallery={gallery} />
             </div>
           </>
@@ -160,19 +165,19 @@ export default function SheetContent({
       {/* Hero image */}
       {image && (
         imageMode === 'cover' ? (
-          <div className="w-full h-48 overflow-hidden">
+          <div className={`w-full ${imageHeight} overflow-hidden`}>
             <img src={image} alt="" className="w-full h-full object-cover" />
           </div>
         ) : (
           /* contain: image renders on the sheet's own bg (slate-900); px/py give breathing room */
-          <div className="w-full h-48 flex items-center justify-center px-6 py-4">
+          <div className={`w-full ${imageHeight} flex items-center justify-center px-6 py-4`}>
             <img src={image} alt="" className="max-h-full max-w-full object-contain" />
           </div>
         )
       )}
 
-      {/* Content area — 4rem horizontal padding on desktop */}
-      <div className="px-6 sm:px-16 pt-5 pb-8">
+      {/* Content area — 4rem left/right + 4rem top + 6rem bottom on desktop */}
+      <div className="px-6 sm:px-16 pt-5 sm:pt-16 pb-8 sm:pb-24">
 
         {/* Accent subtitle — eyebrow style */}
         {subtitle && (

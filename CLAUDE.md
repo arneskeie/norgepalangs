@@ -483,6 +483,13 @@ and Reiserute all consume this same pair.
      In `'profile'` layout: circular; `imageMode` is ignored; always `object-cover` with
      `scale-[1.15]` to push baked-in white borders outside the circular clip.
      Size: **w-20 h-20 (80px) on mobile / w-36 h-36 (144px = 9rem) on desktop (sm+)**.
+   - **imageHeight** `string` — (`'header'` layout only) one or more Tailwind height class(es)
+     applied to the image container. Default: `'h-48'` (192px) — preserves existing behavior for
+     all consumers that don't pass this prop. Pass multiple classes for responsive sizing, e.g.
+     `'h-48 sm:h-64'`. Opt-in per consumer. Currently only Utstyr overrides this:
+     `imageHeight="h-48 sm:h-64"` (192px mobile / 256px = 16rem desktop). Ignored in `'profile'`
+     layout. Do not change the default; any new consumer that needs a different size should pass
+     the prop explicitly.
    - **imageMode** `'contain' | 'cover'` — (`'header'` layout only) how the image fills the strip.
      `'contain'` (default): `object-contain` + px-6/py-4 padding, renders on the sheet's own
      `bg-slate-900` background — correct for transparent-background product PNGs (Utstyr). The
@@ -499,8 +506,14 @@ and Reiserute all consume this same pair.
      to `true` (adds `target="_blank" rel="noopener noreferrer"`).
    - **gallery** `Array<string | { src, alt }>` — 3-column `aspect-[4/3]` thumbnail grid;
      omit or pass empty array to hide.
-   - Spacing (header): px-6 / pt-5 / pb-8. subtitle → title: mb-3. title → meta/body: mb-4/mb-5.
-   - Spacing (profile): header row px-6 pt-6 pb-4; body section px-6 pt-5 pb-8 (after thin divider).
+   - Spacing (header content area):
+     Mobile: px-6 / pt-5 (20px) / pb-8 (32px).
+     Desktop (sm+): px-16 (4rem) / pt-16 (4rem) / pb-24 (6rem).
+     subtitle → title: mb-3. title → meta/body: mb-4/mb-5.
+   - Spacing (profile):
+     Header row — mobile: px-6 pt-6 pb-4. Desktop (sm+): px-16 pt-16 pb-4.
+     Body section — mobile: px-6 pt-5 pb-8. Desktop (sm+): px-16 pt-5 pb-24 (6rem).
+     Divider: mx-6 sm:mx-16.
    - `MetaDl` and `BodyArea` extracted as internal sub-components (not exported) so both layouts
      share the same dl and body rendering logic without duplication.
 
@@ -535,9 +548,14 @@ e.stopPropagation()}` to prevent content clicks from bubbling up. The above-pane
 be handled by `Drawer.Overlay`. This pattern is safe with vaul drag gestures: a drag release fires
 a `pointermove + pointerup`, not a `click`, so the dismiss handler is not triggered on drag.
 
-**Desktop content padding:** All text/body content areas in SheetContent use `px-6 sm:px-16`
-(24px mobile / 64px desktop). The image area at the top of the `'header'` layout keeps its own
-padding. The profile layout divider uses `mx-6 sm:mx-16` to match.
+**Desktop content padding:** All text/body content areas in SheetContent use:
+- Left/right: `px-6 sm:px-16` (24px mobile / 64px = 4rem desktop)
+- Top: `pt-5 sm:pt-16` (20px mobile / 64px = 4rem desktop) — `'header'` content area and
+  `'profile'` header row
+- Bottom: `pb-8 sm:pb-24` (32px mobile / 96px = 6rem desktop) — `'header'` content area and
+  `'profile'` body section
+The image area at the top of the `'header'` layout is not affected by content padding.
+The profile layout divider uses `mx-6 sm:mx-16`.
 
 ## Video gallery (Reiserute & Galleri page)
 
@@ -1334,6 +1352,15 @@ here as outstanding work, not shipped features.
   background product PNGs render cleanly against the dark sheet. 'cover': `object-cover` fills
   the container edge-to-edge — appropriate for portrait and landscape photographs (Om Oss, Reiserute).
   Default changed from 'cover' to 'contain' to match the primary Utstyr use case.
+- 2026-06-21: SheetContent desktop padding and Utstyr image height.
+  1. Desktop content padding fully specified: left/right 4rem (px-16), top 4rem (pt-16),
+     bottom 6rem (pb-24). Applied via sm: breakpoint overrides — mobile values (pt-5/pb-8)
+     unchanged. Applied to 'header' content area, 'profile' header row (top only), and
+     'profile' body section (bottom only).
+  2. SheetContent `imageHeight` prop added ('header' layout only). Default 'h-48' (192px)
+     preserves behavior for all existing and future consumers. Utstyr now passes
+     imageHeight="h-48 sm:h-64" — 192px mobile / 256px (16rem) desktop. Other consumers
+     (Om Oss uses 'profile' layout, Reiserute not yet wired) are unaffected.
 - 2026-06-21: BottomSheet + SheetContent overhaul batch.
   1. BottomSheet max-width reduced 960px → 720px (inner wrapper max-w-[720px]).
   2. BottomSheet height changed from fixed h-[93dvh] to auto-height with max-h-[93dvh]
