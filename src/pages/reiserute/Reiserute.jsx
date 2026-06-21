@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
 
-// ─── Verbatim from 02-restored-static/reiserute.html ─────────────────────────
+// ─── Text from 01-original-php/Reiserute.php (authoritative) ─────────────────
+// 02-restored-static/reiserute.html has severely truncated notes (Wayback capture);
+// the full etappe notes were restored from the PHP source in Batch 1 (2026-06-21).
 const INTRO = 'Turen starter fra Nordkapp 1. september og følger en variert rute sørover, fordelt på ca 15 etapper. Vi planlegger å nå Mo i Rana før vi unner oss en pust i bakken ved juletider. Turen fortsetter videre mot Lindesnes på vårparten.'
 
 const NOTE = 'Som tidligere antatt er Saltfjellet slukt av vinteren tidlig i november. Vi har av erfaring (over Skjomenfjellene) lært at det ikke har noen hensikt å jobbe mot naturen. For å kunne fortsette til fots dro vi sørover til Hegra og gikk den siste høstetappen til Gressli. Når vi begynner på igjen med ski under beina i februar, vil vi starte nøyaktig der vi slapp i Nord-Norge, nærmere bestemt Lønsdal.'
@@ -18,7 +20,7 @@ const ETAPPER = [
     nr: 2, slug: 'e02', sesong: 'høst',
     fra: 'Skaidi', til: 'Kautokeino',
     dager: 12, hvile: 2, km: 220,
-    note: 'Her må vi sette opp farten litt, komme skikkelig i gang med kilometerslukingen.',
+    note: 'Her må vi sette opp farten litt, komme skikkelig i gang med kilometerslukingen. Rutinene bør være på plass på denne etappen.',
   },
   {
     nr: 3, slug: 'e03', sesong: 'høst',
@@ -30,61 +32,61 @@ const ETAPPER = [
     nr: 4, slug: 'e04', sesong: 'høst',
     fra: 'Narvik', til: 'Fauske / Sulitjelma',
     dager: 14, hvile: 2, km: 230,
-    note: 'Ved Fauske venter resten av kartene ned til Meråker, samt et lass med Drytech-poser.',
+    note: 'Ved Fauske venter resten av kartene ned til Meråker, samt et lass med Drytech-poser. Det siste depotet, evt de to siste, sendes ut fra Fauske. De neste etappene er gjenstand for diskusjon.',
   },
   {
     nr: 5, slug: 'e05', sesong: 'høst',
     fra: 'Sulitjelma', til: 'Lønsdal',
     dager: 8, hvile: 1, km: 90,
-    note: 'Deilig etappe!',
+    note: 'Deilig etappe! Ikke like stort forflytningspress på denne etappen.',
   },
   {
     nr: 6, slug: 'e06', sesong: 'høst',
     fra: 'Hegra', til: 'Gressli',
     dager: 6, hvile: 1, km: 80,
-    note: 'Vi drar sørover for å kunne fortsette ferden til fots. Meget naturskjønn og fin etappe.',
+    note: 'Vi drar sørover for å kunne fortsette ferden til fots. Meget naturskjønn og fin etappe. Vi avslutter høsten med ekstra store frokostrasjoner og ekstra sjokolade!',
   },
   {
     nr: 7, slug: 'e07', sesong: 'vår',
     fra: 'Lønsdal', til: 'Umbukta',
     dager: 10, hvile: 2, km: 220,
-    note: 'Fra Kjemåvatnet videre til Saltfjellstua gjennom steindalen.',
+    note: 'Fra Kjemåvatnet videre til Saltfjellstua gjennom steindalen. Sørover, krysser E6 litt øst for Bjølånes. Sørover mot Kallvatnet. Kanskje innom Sauvasshytta. Videre mot Umbukta Fjellstue. Gressvasshytta. Sørover øst for Oksskolten mot Stekvasselv gjestegård og N-å-enden av Røssvatnet. Langs Røssvatnet helt til sørenden. Herfra inn til Hattfjelldal. Dette er startetappen og vi har litt dårlig tid på denne. Det er langt! Vær og føre avgjør om det går bra.',
   },
   {
     nr: 8, slug: 'e08', sesong: 'vår',
     fra: 'Umbukta', til: 'Nordli',
     dager: 7, hvile: 1, km: 140,
-    note: 'Ned Susendalen gjennom Børgefjell.',
+    note: 'Ned Susendalen gjennom Børgefjell (kanskje via Bøttjønnhytta). Ned i Viermadalen og Namsvatnet. Mot Røyrvik. Følger Limingen sørover. Passerer øst for Havdalsvatnet. Mot Nordli. Buss fra Nordli til Sørli.',
   },
   {
     nr: 9, slug: 'e09', sesong: 'vår',
     fra: 'Sørli', til: 'Meråker',
     dager: 10, hvile: 2, km: 180,
-    note: 'Mot Gressmøen, kanskje innom Holden.',
+    note: 'Mot Gressmøen, kanskje innom Holden, Bringsenhytta, Innstua, Ferslia, Angeltjønnhytta, Kopperå.',
   },
   {
     nr: 10, slug: 'e10', sesong: 'vår',
     fra: 'Tydal (Gressli)', til: 'Elgå',
     dager: 7, hvile: 1, km: 120,
-    note: 'Fra Tydal mot Kjølihytta, videre vest for eller over Aursunden.',
+    note: 'Fra Tydal mot Kjølihytta, videre vest for eller over Aursunden. Sørover vest for Feragen. Mot nordenden av Femunden, langs østsiden ned til Elgå.',
   },
   {
     nr: '11a', slug: 'e11', sesong: 'vår',
     fra: 'Elgå', til: 'Ringebu',
     dager: 8, hvile: 1, km: 140,
-    note: 'Sør-vestover mot Otnes nord for Sølensjøen.',
+    note: 'Sør-vestover mot Otnes nord for Sølensjøen. Krysser Rv 30 ved Søre Hårset. Videre mot Atna, krysse E3 her. Mot Ringebu, passerer sør for Skjerdingen Høyfjellshotell.',
   },
   {
     nr: '11b', slug: 'e11', sesong: 'vår',
     fra: 'Ringebu', til: 'Fagernes',
     dager: 4, hvile: 0, km: 90,
-    note: 'Fra Ringebu mot Fagerhøi.',
+    note: 'Fra Ringebu mot Fagerhøi, kanskje innom Fagerhøi leirskole. Krysser Rv 255 ved Svatsum. Videre innom Svarthamarhytta. Ned til Fagernes.',
   },
   {
     nr: 12, slug: 'e12', sesong: 'vår',
     fra: 'Fagernes', til: 'Geilo',
     dager: 5, hvile: 0, km: 120,
-    note: 'Fra Fagernes mot Tisleia.',
+    note: 'Fra Fagernes mot Tisleia, kanskje innom Golsfjell fjellstue. Passerer nordvest for Vassfjorden ned til Hol. Muligens langs veien herfra til Geilo.',
   },
   {
     nr: 13, slug: 'e13', sesong: 'vår',
@@ -96,13 +98,13 @@ const ETAPPER = [
     nr: 14, slug: 'e14', sesong: 'vår',
     fra: 'Haukeliseter', til: 'Ljosland',
     dager: 10, hvile: 2, km: 170,
-    note: 'Haukeliseter – Holmavasshytta – via Sloaros – Bossbu – Svartenut – Øyuvsbu – Gaukhei – Ljosland.',
+    note: 'Haukeliseter – Holmavasshytta – via Sloaros – sørover øst for store Førsvatn og Ormsavatnet. Ned til Vassdalstjønn, via Hovatn mot Kringlevatn. Bossbu – Svartenut – Øyuvsbu – Gaukhei – Ljosland. Dersom det er tidlig vårløsning, kan man kanskje gå til fots på østsiden av Setesdalen. Naturen bestemmer. Hvis føret tillater det, blir ruta lagt mer direkte nord – sør.',
   },
   {
     nr: 15, slug: 'e15', sesong: 'vår',
     fra: 'Ljosland', til: 'Lindesnes',
     dager: '5–6', hvile: 0, km: 140,
-    note: 'Med kano fra Ljosland fjellstue, langs Monn, mot Øseral og Ørevatnet. Går til fots fra hhv Vigeland eller Mandal ut til fyret på Lindesnes.',
+    note: 'Med kano fra Ljosland fjellstue, langs Monn, mot Øseral og Ørevatnet. Sørover i enten Audna eller Mandalselva, vannforhold avgjør. Går til fots fra hhv Vigeland eller Mandal ut til fyret på Lindesnes. Tror jeg vil ha denne etappen alene. Denne koseetappen går jeg forhåpentligvis i slutten av mai. Viktig å ikke stresse på denne etappen!',
   },
 ]
 

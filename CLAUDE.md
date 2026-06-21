@@ -830,9 +830,91 @@ All items below are **NOT YET STARTED** unless explicitly marked otherwise.
 A future session (or fresh instance with no chat history) should treat everything
 here as outstanding work, not shipped features.
 
-- [ ] **Reiserute & Galleri full rebuild** — real Norway map with route overlay,
-  per-etappe hover/click interaction, eventually animated SVG route.
-  Explicitly deferred to last, after all other work is done.
+- [ ] **Reiserute & Galleri rebuild** — **Batch 1 DONE 2026-06-21.** Batches 2–5 in progress. Full architecture plan below.
+
+### Reiserute & Galleri rebuild — architecture plan (2026-06-21, finalized)
+
+**Decision: split into two pages.**
+- **Reiserute** (existing page, to be rebuilt) — route map + vertical etappe timeline
+  with inline content. No photos, no video.
+- **Galleri** (new page) — all photo galleries per etappe (983 photos total across
+  16 etapper/Oppvarmingstur, ~234MB original size, needs WebP conversion) + the video
+  gallery section (migrated from Reiserute). Becomes a 5th primary nav item.
+
+**Content audit findings (already completed, see audit report 2026-06-21):**
+- `02-restored-static/reiserute.html` has truncated etappe notes for 11 of 15 etapper
+  (3 severely: Etappe 7, 8, 14). `01-original-php/Reiserute.php` contains the FULL
+  original text — this is the authoritative source for the rebuild. Even at full length,
+  every etappe is short (longest is Etappe 7 at 68 words/12 sentences, most are 1–3
+  sentences) — full text renders directly inline on the page; no BottomSheet needed.
+- Oppvarmingstur's current description in Reiserute.jsx ("En måneds kanotur i Nord-Finland
+  — innledning til livet i villmarken.") has NO source in either original file. Flagged as
+  unsourced, but decision made to KEEP IT AS-IS (documented exception to the "never invent
+  text content" rule, explicitly approved 2026-06-21).
+- Map assets exist but are NOT used in the new design: `02-restored-static/images/
+  kartfotogalleri/norgekart.png` + 15 per-etappe overlay PNGs. The new illustrative SVG
+  map uses the same simplified path geometry sourced for the favicon instead.
+- Participant data already exists in OmOss.jsx's PEOPLE array — reusable, needs
+  extraction to a shared `src/data/people.js`. Two etappe-naming mismatches between
+  OmOss and Reiserute data need reconciling:
+  - "Lønsdal – Hattfjelldal" (OmOss) vs "Lønsdal – Umbukta" (Reiserute) — Etappe 7
+  - "Nordli – Meråker" (OmOss) vs "Sørli – Meråker" (Reiserute) — Etappe 9
+- 983 gallery photos exist in `02-restored-static/Galleri/Etappe{1-15}/images/` (raw
+  Fuji camera filenames), NOT yet copied into `03-modernized`. Will need the same
+  thumbnail-optimization treatment applied to the homepage photo strip (originals stay
+  untouched in `02-restored-static/`; optimized WebP copies used on-site).
+
+### Reiserute page — finalized structure (2026-06-21)
+
+**No BottomSheet on this page.** All content renders directly, always visible — no
+click-to-reveal interaction needed, since the source text (even at full restored length)
+is short enough to display inline.
+
+**Page structure, top to bottom:**
+1. Existing TitleCard/header (unchanged).
+2. Section description / intro paragraph (existing, `.section-description` already applied).
+3. **Illustrative map** — small/medium SVG, positioned beside the intro text on desktop,
+   below it on mobile. Dark grey silhouette of Norway (reuse the same simplified path
+   geometry sourced for the favicon — do NOT re-derive from scratch). On page load, a short
+   animation draws the route + town/waypoint markers from north to south (Nordkapp →
+   Lindesnes). This map is PURELY illustrative/ambient — no hover, no click, no interaction,
+   not synced to anything else on the page. A static (non-animated) version is an acceptable
+   first-pass placeholder while the rest of the page is built; animation can be added once
+   the page structure is confirmed working.
+4. **Vertical etappe timeline** — a vertical version of the homepage Ruta section's
+   dot-and-line visual element (reuse that existing visual language and styling). Dots run
+   down the LEFT edge, one dot per town/waypoint, with line segments between them
+   representing each etappe. To the RIGHT of each dot/line, inline (not hidden, not behind
+   a click): etappe title (e.g. "Etappe 7: Lønsdal – Umbukta"), stats (days/km, e.g.
+   "10 dager, hvorav 2 hvile, 220 km"), the FULL restored text (sourced from
+   `01-original-php/Reiserute.php` per the audit, NOT the truncated static version), and
+   participants for that leg (cross-referenced from shared people data, accounting for the
+   two naming reconciliations already identified). No hover effects, no interactive labels
+   on the line — keep it simple.
+5. Existing accordion sections (Oppvarmingstur, etc.) — review whether these are superseded
+   by the new vertical timeline or coexist; to be clarified when implementation starts.
+
+**Galleri page** remains a separate, new page (5th nav item) as previously planned —
+photo galleries per etappe + migrated video gallery. Unaffected by this update.
+
+**Batch sequence:**
+1. ✅ **Text restoration + data extraction** — DONE 2026-06-21. All 15 etappe notes
+   restored from PHP source. PEOPLE array extracted to `src/data/people.js`. Five
+   etappe-naming mismatches fixed (Jarle E7, Rasmus E8, Anders E9, Vegard E5, Truls E10).
+   Emil's range 'Etappe 1–4' flagged (not yet expanded to individual entries).
+   Build confirmed clean. TEMPORARY section deleted from CLAUDE.md.
+2. **Vertical etappe timeline** — build the homepage-Ruta-style dot-line as a reusable
+   vertical variant; wire in restored text, stats, and participants per etappe directly
+   inline. Replaces the old "map integration + BottomSheet" batches.
+3. **Illustrative SVG map** — static placeholder first (Norway silhouette, positioned per
+   layout above); animated route-draw as a follow-up refinement once the static version is
+   confirmed working.
+4. **New Galleri page** — image pipeline (WebP conversion for all 983 photos, organized per
+   etappe) + gallery UI + lightbox. [Unchanged from original plan.]
+5. **Video gallery migration + nav update** — move video gallery from Reiserute to Galleri;
+   add Galleri as 5th primary nav item; rename "Reiserute & galleri" nav entry to
+   "Reiserute"; final cleanup and cross-link verification. [Unchanged from original plan.]
+
 - [x] **Video gallery section** — DONE 2026-06-21. Added at the bottom of
   Reiserute.jsx, after the Vår-etapper accordion section. See "Video gallery"
   section below for full documentation.
@@ -1751,6 +1833,16 @@ here as outstanding work, not shipped features.
   / "Video" section eyebrows; Sponsorer keeps its "Utstyr" / "Tjenester & overnatting" /
   "Vi vil også rette en stor takk til" section eyebrows. The TitleCard eyebrow
   ("2008 — 2009 · Nordkapp → Lindesnes") on the shared header is completely unaffected.
+- 2026-06-21: Reiserute & Galleri rebuild Batch 1 complete — text restoration + data extraction.
+  All 15 etappe notes in `Reiserute.jsx` restored from PHP source (11 had been truncated by the
+  Wayback Machine capture; 3 severely: E7, E8, E14). PEOPLE array extracted from `OmOss.jsx`
+  to new shared `src/data/people.js`. Five etappe-name mismatches corrected in people.js
+  (canonical values now match Reiserute ETAPPER `fra`/`til` fields): Jarle E7 Hattfjelldal→
+  Umbukta, Rasmus E8 Hattfjelldal→Umbukta (start), Anders E9 Nordli→Sørli (start), Vegard E5
+  'Fauske (Sulitjelma)'→'Sulitjelma', Truls E10 'Tydal'→'Tydal (Gressli)'. Emil's range
+  'Etappe 1–4: Nordkapp – Fauske' flagged but not changed (display-string decision deferred).
+  Source comment in Reiserute.jsx updated to reference PHP as authoritative source.
+  TEMPORARY section deleted from this file. Build confirmed clean.
 - 2026-06-21: Two regressions from the inner-page TitleCard mobile compact batch fixed.
   Bug 1 — Hero text block near top: The mobile `position: relative` override (added in the
   mobile-nav redesign) placed `.hero-text-block` in flex flow immediately after `.hero-content`
@@ -1778,3 +1870,4 @@ here as outstanding work, not shipped features.
   height-independent. Added `h-[93dvh]` to Drawer.Content — explicit near-full height,
   7% gap at top, `dvh` accounts for mobile browser UI. The snapshot/animation approach
   is now the same on desktop and mobile. `useState(snap)` and `useEffect` removed.
+
