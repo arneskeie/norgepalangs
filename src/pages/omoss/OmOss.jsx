@@ -192,9 +192,8 @@ export default function OmOss() {
     <div className="min-h-screen bg-slate-950 text-slate-50">
       <SiteHeader variant="compact" currentPage="omoss.html" />
       <main className="max-w-content mx-auto px-6 py-12 md:py-20">
-        <p className="eyebrow mb-4">Om oss</p>
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-4">
-          Folka bak turen.
+          Om oss
         </h1>
         <p className="section-description mb-14 text-pretty">
           Norge på langs ble gått av én person, men aldri alene. Ti personer bidro til eventyret — som turledsagere, venner og motivatorer.

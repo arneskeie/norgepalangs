@@ -70,9 +70,8 @@ export default function Utstyr() {
       <SiteHeader variant="compact" currentPage="utstyr.html" />
       <main className="max-w-content mx-auto px-6 py-12 md:py-20">
 
-        <p className="eyebrow mb-4">Utstyr</p>
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-6">
-          Det vi stolte på.
+          Utstyr
         </h1>
         <p className="section-description mb-4 text-pretty">{INTRO_DESC}</p>
         <p className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty mb-4">{INTRO_BODY}</p>

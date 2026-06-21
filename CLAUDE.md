@@ -1661,6 +1661,22 @@ here as outstanding work, not shipped features.
   short content → 70vh floor, medium content → auto-height, long content → 93dvh cap with
   internal scrolling via `flex-1 overflow-y-auto`. vaul's `translateY(100%→0)` animation
   still works correctly — it slides by the panel's actual height (now at least 70vh on desktop).
+- 2026-06-21: Inner-page eyebrow/h1 simplified to single h1 title on all 4 inner pages.
+  Before: each page showed an eyebrow paragraph + a separate h1 (both below the TitleCard).
+  After: single h1 only, using the former eyebrow text as the page title. The old h1 texts
+  ("Folka bak turen.", "71°10′N → 57°58′N", "Det vi stolte på.", "Uten dem, ingen tur.") are
+  deleted — all were generated/invented copy, not sourced content. New h1 texts:
+  - Om Oss: "Om oss" (was eyebrow; h1 was "Folka bak turen.")
+  - Reiserute & Galleri: "Reiserute & galleri" (was eyebrow; h1 was "71°10′N → 57°58′N")
+  - Utstyr: "Utstyr" (was eyebrow; h1 was "Det vi stolte på.")
+  - Sponsorer: "Sponsorer" (was eyebrow; h1 was "Uten dem, ingen tur.")
+  All 4 new h1s use the same styling as before: `font-serif text-[2.5rem] md:text-[4.5rem]
+  text-slate-50 leading-[0.95]`. The mb-* on each h1 is unchanged (spacing to the following
+  section-description paragraph is preserved). Section eyebrows deeper within each page are
+  completely unaffected: Reiserute keeps its "Oppvarmingstur" / "Høst-etapper" / "Vår-etapper"
+  / "Video" section eyebrows; Sponsorer keeps its "Utstyr" / "Tjenester & overnatting" /
+  "Vi vil også rette en stor takk til" section eyebrows. The TitleCard eyebrow
+  ("2008 — 2009 · Nordkapp → Lindesnes") on the shared header is completely unaffected.
 - 2026-06-20: BottomSheet bug fixes — desktop non-render + mobile too-short height.
   Bug 1 (desktop): vaul's snap-point offset math (`window.innerHeight - snapPoint ×
   window.innerHeight`) assumes the drawer is full-viewport-height tall. When content is

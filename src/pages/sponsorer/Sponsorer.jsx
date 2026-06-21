@@ -200,9 +200,8 @@ export default function Sponsorer() {
       <SiteHeader variant="compact" />
 
       <main className="max-w-content mx-auto px-6 py-12 md:py-20">
-        <p className="eyebrow mb-4">Sponsorer</p>
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-4">
-          Uten dem, ingen tur.
+          Sponsorer
         </h1>
         <p className="section-description mb-14 text-pretty">
           {INTRO}
