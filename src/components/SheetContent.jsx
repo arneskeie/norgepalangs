@@ -111,12 +111,14 @@ export default function SheetContent({
     const hasBody = body != null || link || (gallery && gallery.length > 0)
     return (
       <div>
-        {/* Profile header row: circular photo left, identity stack right */}
-        <div className="flex items-start gap-4 px-6 pt-6 pb-4">
+        {/* Profile header row: mobile → image centered above text (stacked);
+            desktop (sm+) → circular photo left, identity stack right. */}
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start px-6 sm:px-16 pt-6 pb-4">
           {image && (
-            /* w-20 (80px) circle: source JPGs are 70×70px so this is near-native
-               resolution (≈1.15× upscale of actual photo content after border crop). */
-            <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
+            /* w-20 mobile / w-36 desktop (144px = 9rem). Source JPGs are 70×70px so
+               80px is near-native (≈1.15× upscale after border crop); 144px on desktop
+               gives a larger, more impactful portrait at wider viewports. */
+            <div className="w-20 h-20 sm:w-36 sm:h-36 rounded-full overflow-hidden flex-shrink-0">
               <img
                 src={image}
                 alt=""
@@ -126,7 +128,7 @@ export default function SheetContent({
               />
             </div>
           )}
-          <div className="min-w-0 pt-1">
+          <div className="min-w-0 w-full sm:w-auto sm:pt-1">
             {subtitle && <p className="eyebrow mb-2">{subtitle}</p>}
             <h3 className="font-serif text-[1.5rem] leading-tight text-slate-50 text-pretty">
               {title}
@@ -142,8 +144,8 @@ export default function SheetContent({
         {/* Bio body — full-width, below the header row */}
         {hasBody && (
           <>
-            <div className="border-t border-white/[.06] mx-6" />
-            <div className="px-6 pt-5 pb-8">
+            <div className="border-t border-white/[.06] mx-6 sm:mx-16" />
+            <div className="px-6 sm:px-16 pt-5 pb-8">
               <BodyArea body={body} link={link} gallery={gallery} />
             </div>
           </>
@@ -162,15 +164,15 @@ export default function SheetContent({
             <img src={image} alt="" className="w-full h-full object-cover" />
           </div>
         ) : (
-          /* contain: dark bg so transparent PNGs render cleanly; px/py give breathing room */
-          <div className="w-full h-48 bg-slate-950 flex items-center justify-center px-6 py-4">
+          /* contain: image renders on the sheet's own bg (slate-900); px/py give breathing room */
+          <div className="w-full h-48 flex items-center justify-center px-6 py-4">
             <img src={image} alt="" className="max-h-full max-w-full object-contain" />
           </div>
         )
       )}
 
-      {/* Content area */}
-      <div className="px-6 pt-5 pb-8">
+      {/* Content area — 4rem horizontal padding on desktop */}
+      <div className="px-6 sm:px-16 pt-5 pb-8">
 
         {/* Accent subtitle — eyebrow style */}
         {subtitle && (

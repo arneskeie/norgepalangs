@@ -286,7 +286,7 @@ current session.
 **Real sponsor list (20) with verified URLs (checked 2026-06-19):**
 - XXL → http://www.xxl.no/ ✓
 - Janus → http://www.janus.no/ ✓
-- Sportsbua → http://www.sportsbua.no/ ✓
+- Sportsbua → (no link) — dead (connection refused, re-verified 2026-06-21); logo rendered unlinked
 - Helsport → http://www.helsport.no/ ✓
 - Cappelen → http://www.cappelendamm.no/ ✓
 - Alfasko → https://www.alfa.no/ ✓ (rebranded to Alfa; old alfasko.no gone)
@@ -299,7 +299,7 @@ current session.
 - Skaidi → http://www.skaidihotel.no/ ✓
 - Breidablikk → http://www.breidablikk.no/ ✓
 - Lundhogda → http://www.lundhogdacamping.no/ ✓
-- Femund Fjellstue → http://www.femundfjellstue.no/ ✓
+- Femund Fjellstue → (no link) — dead (suspended account, re-verified 2026-06-21); logo rendered unlinked
 - Umbukta Fjellstue → http://www.umbuktafjellstue.no/ ✓
 - Jule Ferie & Fritid → (no link) — no current website exists; rendered
   as unlinked logo by design, not an oversight
@@ -473,18 +473,21 @@ and Reiserute all consume this same pair.
      - `'header'`: full-width image on top (h-48), then subtitle / title / meta / body stacked
        below. Best for high-res product images (Utstyr) and large landscape/portrait photos.
      - `'profile'`: for low-resolution thumbnail sources where stretching to full-width shows
-       upscaling artifacts. Circular image (w-20 / 80px) on the LEFT beside subtitle / title /
-       meta stacked in a right column; body text (bio) below the header row, separated by a
-       thin divider. Used by Om Oss; Reiserute per-etappe sheets may also use this if their
+       upscaling artifacts. Circular image on the left beside subtitle / title / meta stacked
+       in a right column (desktop); on mobile the image is centered above all text (stacked layout).
+       Image size: 80px mobile / 144px desktop. Body text (bio) below the header row, separated by
+       a thin divider. Used by Om Oss; Reiserute per-etappe sheets may also use this if their
        thumbnail sources have the same resolution constraint.
    - **image** `string` — image src.
      In `'header'` layout: full-width strip (h-48 / 192px); styled by `imageMode`.
-     In `'profile'` layout: circular (w-20 / 80px); `imageMode` is ignored; always `object-cover`
-     with `scale-[1.15]` to push baked-in white borders outside the circular clip.
+     In `'profile'` layout: circular; `imageMode` is ignored; always `object-cover` with
+     `scale-[1.15]` to push baked-in white borders outside the circular clip.
+     Size: **w-20 h-20 (80px) on mobile / w-36 h-36 (144px = 9rem) on desktop (sm+)**.
    - **imageMode** `'contain' | 'cover'` — (`'header'` layout only) how the image fills the strip.
-     `'contain'` (default): dark `bg-slate-950` container, `object-contain` + px-6/py-4 padding —
-     correct for transparent-background product PNGs (Utstyr). `'cover'`: `object-cover` fills
-     the strip edge-to-edge — correct for portrait/landscape photos.
+     `'contain'` (default): `object-contain` + px-6/py-4 padding, renders on the sheet's own
+     `bg-slate-900` background — correct for transparent-background product PNGs (Utstyr). The
+     previous `bg-slate-950` dark box has been removed (2026-06-21). `'cover'`: `object-cover`
+     fills the strip edge-to-edge — correct for portrait/landscape photos.
    - **title** `string | ReactNode` — Fraunces 1.5rem, slate-50.
    - **subtitle** `string` — accent line above title, `.eyebrow` class (orange-400, uppercase).
    - **meta** `Array<{ label: string, value: string }>` — optional label/value pairs (e.g. Alder,
@@ -514,9 +517,27 @@ and Reiserute all consume this same pair.
 **Max-width centering:** `Drawer.Content` stays `left:0 right:0` (full-viewport) because vaul
 controls `transform` on that element for the `slideFromBottom` animation. Adding `translateX(-50%)`
 there would be overwritten by vaul's animation. Instead, an inner wrapper `div` with
-`mx-auto w-full max-w-content` constrains the visible dark panel to 960px centered — transparent
+`mx-auto w-full max-w-[720px]` constrains the visible dark panel to **720px** centered — transparent
 outer container, styled inner container. This inner wrapper carries `bg-slate-900 rounded-t-xl
-overflow-hidden flex flex-col h-full`.
+overflow-hidden flex flex-col max-h-[93dvh]` (was 960px / `h-full` / no max-h — changed 2026-06-21).
+
+**Height (auto-sizing):** The inner wrapper uses `max-h-[93dvh]` and `flex flex-col` — short
+content sizes the panel down to fit naturally; long content hits the 93dvh cap and the scrollable
+`flex-1 overflow-y-auto` area handles internal scrolling. The outer `Drawer.Content` has **no
+explicit height** (removed `h-[93dvh]`), so vaul's `translateY(100%→0)` slides by the panel's
+actual height, not a fixed 93dvh. This eliminates the large empty space below short-content sheets
+without reintroducing snap points.
+
+**Desktop dismiss zones:** `Drawer.Content` (the full-viewport-width transparent outer container)
+has an `onClick={() => onOpenChange(false)}` handler — clicking the transparent areas left or right
+of the 720px panel now dismisses the sheet. The inner styled panel has `onClick={(e) =>
+e.stopPropagation()}` to prevent content clicks from bubbling up. The above-panel area continues to
+be handled by `Drawer.Overlay`. This pattern is safe with vaul drag gestures: a drag release fires
+a `pointermove + pointerup`, not a `click`, so the dismiss handler is not triggered on drag.
+
+**Desktop content padding:** All text/body content areas in SheetContent use `px-6 sm:px-16`
+(24px mobile / 64px desktop). The image area at the top of the `'header'` layout keeps its own
+padding. The profile layout divider uses `mx-6 sm:mx-16` to match.
 
 ## Video gallery (Reiserute & Galleri page)
 
@@ -601,18 +622,16 @@ No instances of bare `target="_blank"` without `rel="noopener noreferrer"` found
 - `grep` of all `src/` files for API keys, secrets, tokens, passwords, credentials: no results
 - Only env var used anywhere is `import.meta.env.BASE_URL` (injected by Vite at build, not secret) ✓
 
-**Dead/unsafe URL equivalence check (vs 02-restored-static audit):**
-Two sponsor URLs in `03-modernized` were flagged as dead/suspended in the
-`02-restored-static` audit (performed 2026-06-20):
-- `http://www.sportsbua.no/` — "connection refused" in 02-restored-static audit;
-  marked ✓ in 03-modernized content inventory (checked 2026-06-19, one day earlier).
-  Present in Home.jsx (sponsor logo) and Sponsorer.jsx.
-- `http://www.femundfjellstue.no/` — "suspended account" in 02-restored-static audit;
-  marked ✓ in 03-modernized content inventory.
-  Present in Home.jsx and Sponsorer.jsx.
-Interpretation: sponsor website availability fluctuates; both sites may be intermittently
-down. URLs are accurate (both are the real businesses). No action taken — links kept live.
-Re-verify if doing another URL audit pass.
+**Dead/unsafe URL re-verification (2026-06-21):**
+Both previously-flagged sponsor URLs re-verified live on 2026-06-21:
+- `http://www.sportsbua.no/` — curl: 000 (connection refused). Confirmed dead.
+- `http://www.femundfjellstue.no/` — curl: 200 but redirects to `/cgi-sys/suspendedpage.cgi`.
+  Confirmed dead (suspended hosting account).
+**Resolution:** Both sponsors unlinked in 03-modernized — `url: null` set in Home.jsx and
+Sponsorer.jsx SPONSORS/TJENESTER arrays (same pattern as Jule Ferie & Fritid). Logos still
+rendered; text/description retained on Sponsorer page. Content inventory updated accordingly.
+02-restored-static: both were already unlinked in the static HTML output files from the
+2026-06-20 audit; no changes needed there.
 
 All other dead/unsafe URLs from the 02-restored-static audit were either:
 - Already corrected in 03-modernized (alfasko.no → alfa.no; mx-sport.no subpath → root;
@@ -1315,6 +1334,30 @@ here as outstanding work, not shipped features.
   background product PNGs render cleanly against the dark sheet. 'cover': `object-cover` fills
   the container edge-to-edge — appropriate for portrait and landscape photographs (Om Oss, Reiserute).
   Default changed from 'cover' to 'contain' to match the primary Utstyr use case.
+- 2026-06-21: BottomSheet + SheetContent overhaul batch.
+  1. BottomSheet max-width reduced 960px → 720px (inner wrapper max-w-[720px]).
+  2. BottomSheet height changed from fixed h-[93dvh] to auto-height with max-h-[93dvh]
+     on the inner wrapper. Short content now sizes the panel to fit (no large empty space);
+     long content still scrolls. Drawer.Content has no explicit height — vaul's
+     translateY(100%→0) correctly slides by the panel's actual height in both cases.
+  3. Desktop dismiss zones fixed: Drawer.Content gets onClick dismiss handler; inner wrapper
+     gets stopPropagation. Clicks on the transparent left/right backdrop areas beside the 720px
+     panel now correctly dismiss the sheet (previously those clicks were captured by Drawer.Content
+     above Drawer.Overlay in z-order without triggering a dismiss).
+  4. Desktop content padding increased to 4rem (px-16) on sm+ breakpoint, from 24px (px-6)
+     on all sizes. Applied in SheetContent to all text/body areas in both 'header' and 'profile'
+     layouts. Image area at top of 'header' layout unaffected.
+  5. SheetContent 'contain' imageMode: removed bg-slate-950 dark box behind product images.
+     Transparent PNGs now render on the sheet's own bg-slate-900 background instead.
+  6. SheetContent 'profile' layout — mobile stacking: flex-col items-center on mobile
+     (image centered above text), sm:flex-row sm:items-start on desktop (side-by-side).
+  7. SheetContent 'profile' layout — desktop image size: w-36 h-36 (144px = 9rem) on sm+,
+     up from flat w-20 h-20 (80px) at all sizes. Mobile stays 80px.
+- 2026-06-21: Dead sponsor links removed from 03-modernized.
+  Sportsbua (sportsbua.no) and Femund Fjellstue (femundfjellstue.no) confirmed dead on
+  re-verification (curl 000 / suspendedpage.cgi). Both set to url: null in Home.jsx and
+  Sponsorer.jsx. Logos still rendered unlinked. Content inventory and Security hardening
+  sections updated. 02-restored-static was already unlinked from the June 20 audit.
 - 2026-06-21: SheetContent 'profile' layout added. Problem: Om Oss profile photos
   are 70×70px source JPGs — rendering them as the default full-width h-48 strip
   (192px) meant 2.7× upscaling with obvious blurriness. Solution: new `layout` prop

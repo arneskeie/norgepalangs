@@ -22,7 +22,7 @@ const UTSTYR = [
   {
     name: 'Sportsbua',
     file: 'sportsbua.jpg',
-    url: 'http://www.sportsbua.no/',
+    url: null, // dead — connection refused (re-verified 2026-06-21)
     desc: 'Sportsbua åpnet første gang for 27 år siden som en liten bruktbutikk. De har siden det utviklet seg til å bli en av midt-norges ledende nisjebutikker innen sport- og friluftsutstyr. Sportsbua har sponset meg med den svært viktige SPOT Satellite Personal Tracker! Tusen takk for dette viktige bidraget.',
   },
   {
@@ -103,7 +103,7 @@ const TJENESTER = [
   {
     name: 'Femund Fjellstue',
     file: 'Femund.jpg',
-    url: 'http://www.femundfjellstue.no/',
+    url: null, // dead — suspended account (re-verified 2026-06-21)
     desc: 'Femund Fjellstue ligger ved enden av vei 221 i Elgå ved bredden av innsjøen Femund, nær grensen til Sverige. Her får vi mat og opphold mot et innblikk i vår turhverdag gjennom et foredrag for fjellstuens påskegjester. De passer også godt på vår depotpakke. Tusen takk for støtten!',
   },
   {

@@ -22,7 +22,7 @@ const FEATURED = 'Vi legger bort vekkerklokka, timeplanen og de andre heftelsene
 const SPONSORS = [
   { name: 'XXL',                 file: 'XXL.jpg',           url: 'http://www.xxl.no/'                    },
   { name: 'Janus',               file: 'Janus.jpg',         url: 'http://www.janus.no/'                  },
-  { name: 'Sportsbua',           file: 'sportsbua.jpg',     url: 'http://www.sportsbua.no/'              },
+  { name: 'Sportsbua',           file: 'sportsbua.jpg',     url: null                                    }, // dead — connection refused (re-verified 2026-06-21)
   { name: 'Helsport',            file: 'Helsport.jpg',      url: 'http://www.helsport.no/'               },
   { name: 'Cappelen',            file: 'Cappelen.jpg',      url: 'http://www.cappelendamm.no/'           },
   { name: 'Alfasko',             file: 'Alfasko.jpg',       url: 'https://www.alfa.no/'                  }, // rebranded to Alfa, new domain
@@ -35,7 +35,7 @@ const SPONSORS = [
   { name: 'Skaidi',              file: 'Skaidi.jpg',        url: 'http://www.skaidihotel.no/'            },
   { name: 'Breidablikk',         file: 'Breidablikk.jpg',   url: 'http://www.breidablikk.no/'            },
   { name: 'Lundhogda',           file: 'Lundhogda.jpg',     url: 'http://www.lundhogdacamping.no/'       },
-  { name: 'Femund Fjellstue',    file: 'Femund.jpg',        url: 'http://www.femundfjellstue.no/'        },
+  { name: 'Femund Fjellstue',    file: 'Femund.jpg',        url: null                                    }, // dead — suspended account (re-verified 2026-06-21)
   { name: 'Umbukta Fjellstue',   file: 'Umbukta.jpg',       url: 'http://www.umbuktafjellstue.no/'       },
   { name: 'Jule Ferie & Fritid', file: 'Jule.jpg',          url: null                                    }, // no current website — intentionally no link
   { name: 'Dokka Camping',       file: 'Dokkacamping.jpg',  url: 'http://www.dokkacamping.no/'           },
