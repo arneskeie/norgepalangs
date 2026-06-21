@@ -13,6 +13,7 @@ export default defineConfig({
         reiserute:   resolve(__dirname, 'reiserute.html'),
         utstyr:      resolve(__dirname, 'utstyr.html'),
         sponsorer:   resolve(__dirname, 'sponsorer.html'),
+        galleri:     resolve(__dirname, 'galleri.html'),
         reisebrev1:  resolve(__dirname, 'reisebrev1.html'),
         reisebrev2:  resolve(__dirname, 'reisebrev2.html'),
         reisebrev3:  resolve(__dirname, 'reisebrev3.html'),

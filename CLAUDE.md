@@ -914,8 +914,13 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
    <img> in Reiserute.jsx, positioned beside intro text on desktop (sticky sm:top-8),
    below on mobile. 70.3 KB, 97 paths, 180×180 viewBox, opacity-60. Animated route-draw
    deferred as a future enhancement (static version is sufficient for launch).
-4. **New Galleri page** — image pipeline (WebP conversion for all 983 photos, organized per
-   etappe) + gallery UI + lightbox. [Unchanged from original plan.]
+4. ✅ **New Galleri page** — DONE 2026-06-21. 944 images from 02-restored-static/Galleri/
+   converted to WebP (q80, max 900px) with cwebp 1.6.0 → 70MB (avg 74KB/image).
+   Stored in public/images/galleri/{oppvarmingstur,etappe1-15}/. Filenames with spaces
+   renamed to underscores. Manifest at src/data/galleri.js (16 sections, 944 total).
+   Gallery UI: grid 3/4/5/6 cols responsive, lazy loading. Lightbox: full-size WebP,
+   next/prev navigation, Escape/X/backdrop close, scroll lock, focus trap. New page:
+   src/pages/galleri/Galleri.jsx + main.jsx + galleri.html. Registered in vite.config.js.
 5. **Video gallery migration + nav update** — move video gallery from Reiserute to Galleri;
    add Galleri as 5th primary nav item; rename "Reiserute & galleri" nav entry to
    "Reiserute"; final cleanup and cross-link verification. [Unchanged from original plan.]
