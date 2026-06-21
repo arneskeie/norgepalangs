@@ -2,7 +2,8 @@ import React from 'react'
 
 export const NAV_LINKS = [
   { label: 'Om oss',              href: 'omoss.html'     },
-  { label: 'Reiserute & galleri', href: 'reiserute.html' },
+  { label: 'Reiserute',           href: 'reiserute.html' },
+  { label: 'Galleri',             href: 'galleri.html'   },
   { label: 'Utstyr',              href: 'utstyr.html'    },
   { label: 'Sponsorer',           href: 'sponsorer.html' },
 ]

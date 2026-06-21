@@ -105,7 +105,9 @@ current session.
 
 ## Site structure decisions
 
-- **Nav (4 items):** Om oss · Reiserute & galleri · Utstyr · Sponsorer
+- **Nav (5 items):** Om oss · Reiserute · Galleri · Utstyr · Sponsorer
+  Updated in Batch 5 (2026-06-21): "Reiserute & galleri" split into "Reiserute" and
+  "Galleri" as separate nav items, now that they are separate pages.
   "Reisebrev" was removed from the nav (2026-06-21). The standalone reisebrev.html list
   page was deleted earlier and replaced by the homepage #reisebrev grid section, but the
   nav item was not removed at that time — now corrected. Reisebrev content is discoverable
@@ -113,10 +115,10 @@ current session.
   `NAV_LINKS` is exported from `SiteNav.jsx` and imported by `MobileNav.jsx` — single
   source of truth for both the desktop nav and the mobile overlay.
 - **Desktop nav (≥ 768px):** Renders as a 912px-wide rounded pill. Items use
-  `justify-content: center; gap: 3rem` (48px) — centered cluster, items sit close together
-  rather than stretching across the full pill width. Gap was 2rem when nav had 5 items;
-  increased to 3rem with 4 items to maintain ~53% cluster fill in the pill (vs. 47% at 2rem,
-  which was too sparse). Font size: 16px (1rem). Letter-spacing: 0.02em. Sentence case.
+  `justify-content: center; gap: 2rem` (32px) — centered cluster, items sit close together
+  rather than stretching across the full pill width. Gap was 3rem with 4 items (after Reisebrev
+  removal); reduced back to 2rem with 5 items (Batch 5) for proportional fit.
+  Font size: 16px (1rem). Letter-spacing: 0.02em. Sentence case.
   Active state: orange-400 2px `border-bottom` (border only, no fill).
   **This replaces the prior `space-evenly + width: 100%` layout** (see 2026-06-21 changelog).
 - **Mobile nav (< 768px) — floating hamburger + full-screen overlay:**
@@ -921,9 +923,13 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
    Gallery UI: grid 3/4/5/6 cols responsive, lazy loading. Lightbox: full-size WebP,
    next/prev navigation, Escape/X/backdrop close, scroll lock, focus trap. New page:
    src/pages/galleri/Galleri.jsx + main.jsx + galleri.html. Registered in vite.config.js.
-5. **Video gallery migration + nav update** — move video gallery from Reiserute to Galleri;
-   add Galleri as 5th primary nav item; rename "Reiserute & galleri" nav entry to
-   "Reiserute"; final cleanup and cross-link verification. [Unchanged from original plan.]
+5. ✅ **Video gallery migration + nav update** — DONE 2026-06-21. VIDEOS const and
+   video gallery section moved from Reiserute.jsx to bottom of Galleri.jsx (below photo
+   galleries, separated by border-t). SiteNav.jsx NAV_LINKS updated: "Reiserute & galleri"
+   → "Reiserute", "Galleri" added as 3rd item (galleri.html). Final nav: Om oss · Reiserute ·
+   Galleri · Utstyr · Sponsorer (5 items). Desktop nav gap reduced 3rem → 2rem (was increased
+   when nav had 4 items). Sponsorer.jsx: added currentPage="sponsorer.html" (was missing).
+   MobileNav automatically reflects the new NAV_LINKS (shared export). Build clean.
 
 - [x] **Video gallery section** — DONE 2026-06-21. Added at the bottom of
   Reiserute.jsx, after the Vår-etapper accordion section. See "Video gallery"

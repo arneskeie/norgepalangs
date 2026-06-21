@@ -197,7 +197,7 @@ export default function Sponsorer() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
-      <SiteHeader variant="compact" />
+      <SiteHeader variant="compact" currentPage="sponsorer.html" />
 
       <main className="max-w-content mx-auto px-6 py-12 md:py-20">
         <h1 className="font-serif text-[2.5rem] md:text-[4.5rem] text-slate-50 leading-[0.95] mb-4">
