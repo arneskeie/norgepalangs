@@ -289,8 +289,12 @@ current session.
 6. **Footer** — two-part layout within `max-w-content` container:
    LEFT: `<Wordmark>` at `text-[1.125rem]` + a subtitle line "med Montarou & co" directly
    below it, grouped in a `<div>`. Subtitle: `font-sans font-medium text-[8px] leading-4
-   uppercase tracking-[0.2em] text-slate-400` — no margin-top; sits flush below the wordmark
-   (spacing comes entirely from `leading-4`'s line-height). **8px is an explicit one-off exception**
+   uppercase tracking-[0.2em] text-slate-400 text-center sm:text-left` — no margin-top; sits
+   flush below the wordmark (spacing comes entirely from `leading-4`'s line-height).
+   Alignment is responsive: **centered on mobile** (matching the Wordmark's mobile centering
+   via the parent's `flex-col items-center`), **left-aligned on desktop** (`sm:text-left`,
+   matching its position as the footer's left column). Mirrors the right credit column's
+   `text-center sm:text-right` pattern. **8px is an explicit one-off exception**
    — below both the 0.75rem site-wide floor and the 0.625rem TitleCard-mobile exception.
    Scoped to this single element only; the floor rule is unchanged everywhere else.
    RIGHT: credit as a `<div>` with 3 separate `<p>` lines (no "|" separators),
