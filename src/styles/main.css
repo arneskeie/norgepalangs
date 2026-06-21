@@ -305,19 +305,23 @@
     font-size: 8px;
     margin-top: 0;
   }
-  .inner-header .strip-wrapper {
+  /* Bug fix: use header.inner-header selector (specificity 0,2,1) instead of
+     .inner-header alone (0,2,0) — PostCSS was not reliably honoring (0,2,0) over
+     the .strip-wrapper { top: 98px } rule (0,1,0) in the same media query. */
+  header.inner-header .strip-wrapper {
     top: 61px;
     height: 122px;
   }
 
-  /* Hero text block: flows in flex column on mobile rather than absolute-anchoring at bottom.
-     Originally added to prevent overlap with the inline nav bar (now hidden on mobile).
-     Kept because at 480px min-height, absolute bottom:0 leaves only ~6px clearance below
-     the card — too tight to be reliable across all devices. Flow positioning expands the
-     hero to fit its content and keeps the layout stable. */
+  /* Hero text block: stays in flex flow on mobile (position:relative, not absolute)
+     to avoid overlap with any in-flow content. margin-top:auto pushes it to the
+     bottom of the flex column, restoring the same visual bottom-anchoring that
+     position:absolute;bottom:0 gave on desktop — without the fragility of absolute
+     positioning in a flex container when content height varies. */
   .hero-text-block {
     position: relative;
     bottom: auto;
+    margin-top: auto;
   }
 
   .hero-text-inner {

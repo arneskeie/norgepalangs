@@ -286,7 +286,8 @@ current session.
    b. Nav strip (`<SiteNav />` rendered inside `<header className="hero-header">`,
       directly below the card — hero bg/overlay extend behind it). `.site-nav`
       has `z-index: 20` to stay above the photo strip layer (z-index 5).
-   c. Bottom-anchored text block (`.hero-text-block`, absolute bottom:0):
+   c. Bottom-anchored text block (`.hero-text-block`, `absolute bottom:0` desktop /
+      `position:relative; margin-top:auto` mobile — flex pushes it to the hero's bottom):
       eyebrow "Velkommen" (`.eyebrow mb-4`) + headline "Norge skal krysses fra
       nord til sør <span class='hero-headline-accent'>— veien er målet.</span>"
       (`hero-headline` clamp(3rem, 8vw, 4.5rem) Fraunces). No subtext paragraph.
@@ -1587,10 +1588,10 @@ here as outstanding work, not shipped features.
   focus trap, Escape key, body scroll lock, focus return to trigger on close. Implementation:
   `src/components/MobileNav.jsx` (new); `NAV_LINKS` exported from `SiteNav.jsx` for shared use.
   Hero mobile spacing updated: `.hero-text-inner` padding increased from 32px to 48px (3rem)
-  top — nav bar's 64px vertical space is gone from the flow, so the gap between the title card
-  and the "Velkommen" text block needed to be re-established. `.hero-text-block` stays
-  `position: relative` on mobile (originally for nav overlap prevention; kept because at 480px
-  min-height, absolute bottom:0 leaves too little clearance above the card).
+  top — nav bar's 64px vertical space is gone from the flow. `.hero-text-block` stays
+  `position: relative` on mobile (originally for nav overlap prevention). `margin-top: auto`
+  added (2026-06-21 bug fix) to push the block to the bottom of the flex column — restoring
+  the visual bottom-anchoring that `absolute bottom:0` gave on desktop, via flex instead.
 - 2026-06-21: SheetContent 'header' layout image positioning fixed. Bug: the image was rendered
   OUTSIDE the padded content container, so `pt-5 sm:pt-16` landed between the image and the text
   (64px unwanted gap on desktop) while the image touched the very top of the sheet with no padding
@@ -1715,7 +1716,9 @@ here as outstanding work, not shipped features.
   top = 24 + 74/2 = 61px. Strip height reduced to 122px (= 2×61) to exactly fill
   the 122px inner-header (24+74+24) with no overflow above or below. All photos fit.
   Previous `.strip-wrapper { top: 98px }` in the media query applies to hero only;
-  `.inner-header .strip-wrapper { top: 61px; height: 122px }` overrides for inner pages.
+  `header.inner-header .strip-wrapper { top: 61px; height: 122px }` overrides for inner pages.
+  (Selector uses `header.inner-header` — specificity 0,2,1 — rather than `.inner-header` alone
+  (0,2,0) because PostCSS was not reliably applying the lower-specificity form. See 2026-06-21 bug fix.)
 - 2026-06-21: Mobile nav focus ring fix — open path (third and final mechanism).
   After the close-path fix (closedByEscapeRef), a blue ring was still visible on the first
   nav link ("Om oss") each time the overlay opened via pointer click. Root cause: the focus-
@@ -1748,6 +1751,18 @@ here as outstanding work, not shipped features.
   / "Video" section eyebrows; Sponsorer keeps its "Utstyr" / "Tjenester & overnatting" /
   "Vi vil også rette en stor takk til" section eyebrows. The TitleCard eyebrow
   ("2008 — 2009 · Nordkapp → Lindesnes") on the shared header is completely unaffected.
+- 2026-06-21: Two regressions from the inner-page TitleCard mobile compact batch fixed.
+  Bug 1 — Hero text block near top: The mobile `position: relative` override (added in the
+  mobile-nav redesign) placed `.hero-text-block` in flex flow immediately after `.hero-content`
+  (~196px from hero top in a 480px hero), with no force pushing it down. Fix: added
+  `margin-top: auto` to the mobile `.hero-text-block` rule — pushes the block to the bottom of
+  the flex column, restoring the visual bottom-anchoring without reverting to `position: absolute`.
+  Bug 2 — Inner-page strip not scaled: The CSS rule `.inner-header .strip-wrapper { top: 61px;
+  height: 122px }` (specificity 0,2,0) was not reliably overriding `.strip-wrapper { top: 98px }`
+  (0,1,0) in the same @media block — Tailwind's PostCSS pipeline did not honor the cascade in this
+  specific case despite the higher specificity. Fix: selector upgraded to `header.inner-header
+  .strip-wrapper` (adds the `header` element type → specificity 0,2,1), which is definitively
+  unambiguous and not affected by any PostCSS reordering. Values unchanged: top: 61px, height: 122px.
 - 2026-06-20: BottomSheet bug fixes — desktop non-render + mobile too-short height.
   Bug 1 (desktop): vaul's snap-point offset math (`window.innerHeight - snapPoint ×
   window.innerHeight`) assumes the drawer is full-viewport-height tall. When content is
