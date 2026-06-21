@@ -271,7 +271,7 @@
   /* TitleCard mobile typography exception (permanent, TitleCard-only):
      eyebrow/subtitle drop to 0.625rem (below 0.75rem floor — documented exception).
      h1 drops to 1.75rem (set in JSX: text-[1.75rem] sm:text-[3rem]).
-     Strip center for mobile card:
+     Strip center for mobile card (HERO variant):
      padding 20px, eyebrow 2 lines (32px), mb-4 16px, h1 1.75rem=28px,
      mt-4 16px, subtitle 16px, padding 20px → height 148px → center = 24 + 74 = 98px */
   .title-card .eyebrow {
@@ -280,6 +280,34 @@
 
   .strip-wrapper {
     top: 98px;
+  }
+
+  /* Inner-page TitleCard mobile — compact sizing matching footer wordmark/subtitle treatment.
+     Scoped to .inner-header so the hero variant (homepage) is pixel-identical to before.
+     Values mirror the footer: Wordmark at 1.125rem, eyebrow/subtitle at 8px, no margins.
+     New card height math:
+       padding 12px + eyebrow 16px (lh) + mb 0 + h1 18px (leading-none) + mt 0
+       + subtitle 16px (lh) + padding 12px = 74px
+     Strip center: hero-content padding-top(24) + card-height/2(37) = 61px
+     Strip height 122px (= 2×61): no overflow above or below the 122px inner-header.
+     Photos (max 102px + 8px padding each side = 118px track) fit within 122px ✓ */
+  .inner-header .title-card {
+    padding: 0.75rem 1.5rem;
+  }
+  .inner-header .title-card .eyebrow {
+    font-size: 8px;
+    margin-bottom: 0;
+  }
+  .inner-header .title-card h1 {
+    font-size: 1.125rem;
+  }
+  .inner-header .title-card p:last-child {
+    font-size: 8px;
+    margin-top: 0;
+  }
+  .inner-header .strip-wrapper {
+    top: 61px;
+    height: 122px;
   }
 
   /* Hero text block: flows in flex column on mobile rather than absolute-anchoring at bottom.

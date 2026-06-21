@@ -219,14 +219,39 @@ current session.
     mt-4` (desktop 0.75rem / 12px; mobile 0.625rem / 10px; line-height 1rem
     = 16px at both sizes). Matches eyebrow treatment exactly except color
     (slate-400, not orange-400).
-  - **Mobile-only TitleCard typography exception (permanent):** eyebrow and
+  - **Mobile-only TitleCard typography exception — HERO (permanent):** eyebrow and
     subtitle both drop to 0.625rem (10px) on mobile (< 640px). This is below
     the site-wide 0.75rem type-scale floor. Exception is TitleCard-only and
     mobile-only — the floor rule still applies everywhere else. h1 drops to
     1.75rem on mobile (vs 3rem desktop). All three values are set in the
     CSS/JSX mobile breakpoint, not changing the base/desktop rules.
-  - Card padding: **1.5rem 3rem** (desktop); mobile override **1.25rem 1.5rem**
-    to prevent h1 overflow on narrow screens.
+    **Hero-only strip centering (mobile):** padding 20px, eyebrow 2 lines (32px),
+    mb-4 16px, h1 28px, mt-4 16px, subtitle 16px, padding 20px → card height
+    148px → strip top = 24 + 74 = 98px. (`.strip-wrapper { top: 98px }` in media query.)
+  - **Mobile-only TitleCard compact variant — INNER PAGES ONLY:** The inner-page
+    TitleCard uses significantly smaller sizing on mobile only (< 640px). Implemented
+    via `.inner-header .title-card` overrides in the mobile media query — the hero
+    variant (homepage) is completely unaffected. All values match the footer's
+    wordmark/subtitle treatment exactly:
+    - Card padding: **0.75rem 1.5rem** (12px top/bottom, 24px left/right)
+    - Eyebrow "2008 — 2009": **8px** (same as footer subtitle), `line-height: 1rem`
+      (inherited from `.title-card .eyebrow`), **margin-bottom: 0** (footer has no
+      gap between wordmark and "med Montarou & co")
+    - h1 "NORGE på LANGS": **1.125rem / 18px** (same as footer wordmark)
+    - Subtitle "med Montarou & co": **8px**, `leading-4` = 16px, **margin-top: 0**
+    - **Strip centering math:** padding 12px + eyebrow 16px (lh) + mb 0 + h1 18px
+      (leading-none) + mt 0 + subtitle 16px (lh) + padding 12px = **card height 74px**.
+      Strip top = hero-content padding-top(24) + card-height/2(37) = **61px**.
+      Strip height reduced to **122px** (= 2×61) so the strip exactly fills the
+      inner-header (total header height = 24+74+24 = 122px) with zero overflow above
+      or below. All photos fit: max photo 102px + 8px track padding each side =
+      118px track height < 122px wrapper ✓.
+    - CSS selector for subtitle override: `.inner-header .title-card p:last-child` —
+      the subtitle `<p>` is always the last child of `.title-card`; specificity
+      (0,3,1) wins over Tailwind's `mt-4` utility (0,1,0). The `<p>` eyebrow uses
+      `.inner-header .title-card .eyebrow` (0,3,0) which wins over `mb-4` (0,1,0).
+  - Card padding (desktop, both variants): **1.5rem 3rem** (unchanged).
+  - Card padding (mobile hero): **1.25rem 1.5rem** (unchanged).
   - Card border-radius: **4px**.
   - All content is centered: `text-align: center` on `.title-card` in CSS.
   - Card/nav spacing: `.hero-content` has `padding-bottom: 24px` — this is the
@@ -243,7 +268,8 @@ current session.
   - **`SiteHeader` default export:** `variant="compact"` → `InnerHeader`;
     `variant="hero"` → `HeroHeader`. All inner pages use `variant="compact"`.
   - **No compact-card / compact-header CSS.** That separate small-card variant
-    was removed. Inner pages now use the same full-size `.title-card`.
+    was removed. Inner pages use the same full-size `.title-card` on desktop,
+    but now have their own mobile-only compact sizing via `.inner-header` scoping.
 - **Title card shadow:** `.clip-path` was removed from `.title-card`.
   `box-shadow` now works. Final value:
   ```
@@ -1676,6 +1702,20 @@ here as outstanding work, not shipped features.
   short content → 70vh floor, medium content → auto-height, long content → 93dvh cap with
   internal scrolling via `flex-1 overflow-y-auto`. vaul's `translateY(100%→0)` animation
   still works correctly — it slides by the panel's actual height (now at least 70vh on desktop).
+- 2026-06-21: Inner-page TitleCard mobile compact variant added.
+  On mobile (< 640px), inner-page TitleCards now use compact sizing matching the footer's
+  wordmark/subtitle treatment. Hero variant (homepage) is pixel-identical to before.
+  Implementation: `.inner-header .title-card` scoped overrides in the mobile media query.
+  No JSX changes — pure CSS. Values:
+  - Card padding: 0.75rem 1.5rem (was 1.25rem 1.5rem for all mobile)
+  - Eyebrow font-size: 8px (was 0.625rem / 10px); margin-bottom: 0 (was mb-4 / 16px)
+  - h1 font-size: 1.125rem / 18px (was 1.75rem / 28px) — matches footer wordmark
+  - Subtitle font-size: 8px (was 0.625rem / 10px); margin-top: 0 (was mt-4 / 16px)
+  Card height drops from 148px → 74px. Strip centering recalculated:
+  top = 24 + 74/2 = 61px. Strip height reduced to 122px (= 2×61) to exactly fill
+  the 122px inner-header (24+74+24) with no overflow above or below. All photos fit.
+  Previous `.strip-wrapper { top: 98px }` in the media query applies to hero only;
+  `.inner-header .strip-wrapper { top: 61px; height: 122px }` overrides for inner pages.
 - 2026-06-21: Mobile nav focus ring fix — open path (third and final mechanism).
   After the close-path fix (closedByEscapeRef), a blue ring was still visible on the first
   nav link ("Om oss") each time the overlay opened via pointer click. Root cause: the focus-
