@@ -146,24 +146,39 @@ current session.
     `onClick={close}`, navigating away and dismissing the overlay simultaneously).
   - **Focus ring behavior — `:focus-visible` only (never plain `:focus`):**
     The trigger button uses `.mobile-nav-trigger:focus-visible` (not `:focus`) for the orange
-    outline ring. Two separate mechanisms prevent the ring from showing for pointer interactions:
-    1. **`onMouseDown={(e) => e.preventDefault()}`** on the button — prevents focus acquisition
-       on mousedown when OPENING the overlay. Chrome 86+ applies `:focus-visible` to `<button>`
-       clicks by policy; cancelling the mousedown default action avoids this.
-    2. **`closedByEscapeRef`** in the focus-management `useEffect` — programmatic `element.focus()`
-       in Chrome also shows `:focus-visible` (it treats any `.focus()` call as keyboard-like). The
-       useEffect cleanup previously called `triggerRef.current?.focus()` unconditionally after every
-       close, producing the orange ring after click-to-close. Fixed: focus is only restored
-       programmatically when the close was triggered by pressing Escape (`closedByEscapeRef.current`).
-       Pointer closes (button click, nav link click) skip the `focus()` call entirely —
-       `onMouseDown.preventDefault()` already prevented the button from receiving focus on the
-       click, so no ring appears without the explicit `focus()` call.
-    Overlay links use CSS `.mobile-nav-link:focus:not(:focus-visible) { outline:none }` to suppress
-    browser-default rings on tap/click without touching keyboard-initiated `:focus-visible`.
+    outline ring. The overlay links show their browser-default focus ring on `:focus-visible` only.
+    The core problem: Chrome treats any programmatic `element.focus()` call as keyboard-like and
+    shows `:focus-visible`, regardless of whether the interaction that triggered it was a pointer
+    or keyboard event. Three separate mechanisms are required across the open AND close paths:
+    1. **`onMouseDown={(e) => e.preventDefault()}`** on the trigger button — prevents the button
+       itself from acquiring focus on mousedown (pointer click to open). Chrome 86+ applies
+       `:focus-visible` to `<button>` clicks by policy; cancelling the mousedown default avoids
+       this for the button's own ring. Does NOT help with the ring on the first link (see #2).
+    2. **`openedByKeyboardRef`** (open path, first link ring) — when the overlay opens, the
+       focus-management `useEffect` previously called `firstLink?.focus()` unconditionally,
+       showing a blue ring on "Om oss" after every pointer-click open (programmatic `.focus()`
+       triggers `:focus-visible` in Chrome). Fixed: `openedByKeyboardRef = useRef(false)` is set
+       to `true` by `onKeyDown` on the trigger button when Enter or Space is pressed. The useEffect
+       only calls `firstLink?.focus()` when `openedByKeyboardRef.current` is true, then resets
+       it to false. Pointer opens (click/tap): `onKeyDown` never fires → ref stays false →
+       no `focus()` call → no ring. Keyboard opens (Enter/Space on focused trigger): ref is true
+       → first link focused with ring showing ✓ (correct — user is keyboard-navigating).
+    3. **`closedByEscapeRef`** (close path, trigger button ring) — programmatic `.focus()` on
+       the trigger in the useEffect cleanup also shows `:focus-visible`. The cleanup previously
+       called `triggerRef.current?.focus()` unconditionally, showing the orange button ring after
+       every pointer-triggered close. Fixed: `closedByEscapeRef = useRef(false)` is set by the
+       Escape key handler. Cleanup only calls `triggerRef.current?.focus()` when it is true, then
+       resets it. Pointer closes skip the `focus()` call entirely — `onMouseDown.preventDefault()`
+       already prevented the button from receiving focus on click, so no ring appears.
+    Overlay links also use CSS `.mobile-nav-link:focus:not(:focus-visible) { outline:none }` —
+    suppresses browser-default rings on direct tap/click of links (pointer-initiated focus).
+    Focus trap `handleOverlayKeyDown` calls `.focus()` programmatically during Tab-wrapping; Chrome
+    correctly shows `:focus-visible` there because the last user interaction was a Tab keypress.
     **Do NOT change `:focus-visible` to plain `:focus`, do NOT remove `onMouseDown.preventDefault()`,
-    do NOT remove the `closedByEscapeRef` guard in the useEffect cleanup, and do NOT add a blanket
-    `outline: none` without the `:not(:focus-visible)` guard** — doing any of these would break
-    keyboard accessibility or re-introduce the pointer-click ring.
+    do NOT remove the `openedByKeyboardRef` guard in the useEffect open path, do NOT remove the
+    `closedByEscapeRef` guard in the useEffect close path, and do NOT add a blanket `outline: none`
+    without the `:not(:focus-visible)` guard** — doing any of these would break keyboard
+    accessibility or re-introduce pointer-click rings on the button or the first link.
   - **This REVERSES the 2026-06-19 hamburger-removal decision** — deliberate, see 2026-06-21
     changelog entry.
 - **Nav two-layer structure (desktop):** `.nav-inner` is an invisible layout wrapper
@@ -1661,6 +1676,22 @@ here as outstanding work, not shipped features.
   short content → 70vh floor, medium content → auto-height, long content → 93dvh cap with
   internal scrolling via `flex-1 overflow-y-auto`. vaul's `translateY(100%→0)` animation
   still works correctly — it slides by the panel's actual height (now at least 70vh on desktop).
+- 2026-06-21: Mobile nav focus ring fix — open path (third and final mechanism).
+  After the close-path fix (closedByEscapeRef), a blue ring was still visible on the first
+  nav link ("Om oss") each time the overlay opened via pointer click. Root cause: the focus-
+  management useEffect called `firstLink?.focus()` unconditionally when `open` became true —
+  same underlying problem as the close-path ring. Chrome treats any `element.focus()` call
+  as keyboard-like and shows `:focus-visible`.
+  Fix: added `openedByKeyboardRef = useRef(false)`. The trigger button's `onKeyDown` handler
+  sets it to true when Enter or Space is pressed (the two keys that activate a button). The
+  useEffect only calls `firstLink?.focus()` when the ref is true, then resets it to false.
+  Pointer opens: `onKeyDown` never fires → ref stays false → no `.focus()` call → no ring.
+  Keyboard opens (Enter/Space): ref is true → first link focused with ring visible — correct,
+  the user is keyboard-navigating.
+  Focus trap `handleOverlayKeyDown` (Tab-wrapping) was audited and requires no change —
+  its `.focus()` calls fire in response to keyboard Tab events, so Chrome correctly shows
+  `:focus-visible` for them.
+  All three mechanisms now documented together in the "Focus ring behavior" section above.
 - 2026-06-21: Inner-page eyebrow/h1 simplified to single h1 title on all 4 inner pages.
   Before: each page showed an eyebrow paragraph + a separate h1 (both below the TitleCard).
   After: single h1 only, using the former eyebrow text as the page title. The old h1 texts

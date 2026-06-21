@@ -6,6 +6,7 @@ export default function MobileNav({ currentPage = '' }) {
   const triggerRef = useRef(null)
   const overlayRef = useRef(null)
   const closedByEscapeRef = useRef(false)
+  const openedByKeyboardRef = useRef(false)
   const base = import.meta.env.BASE_URL
 
   const close = useCallback(() => setOpen(false), [])
@@ -29,17 +30,20 @@ export default function MobileNav({ currentPage = '' }) {
     return () => document.removeEventListener('keydown', onKey)
   }, [open, close])
 
-  // Focus management: first link on open, trigger on close (keyboard only).
-  // Pointer closes skip the programmatic focus() call — onMouseDown.preventDefault()
-  // already prevents the button from receiving focus on click, and programmatic focus()
-  // in Chrome shows :focus-visible even for click-triggered closes (it treats any
-  // element.focus() call as keyboard-like), producing the unwanted orange ring.
-  // Only restoring focus for Escape key preserves the ARIA pattern (keyboard users
-  // get focus back on the trigger) without showing a ring for pointer interactions.
+  // Focus management: first link on open (keyboard-triggered only), trigger on close
+  // (keyboard-triggered only). Both use the same principle: programmatic element.focus()
+  // in Chrome triggers :focus-visible regardless of how the open/close was initiated
+  // (Chrome treats any .focus() call as keyboard-like). Gating on openedByKeyboardRef /
+  // closedByEscapeRef means the ring only appears when the user is actually keyboard-navigating.
+  // Open path: openedByKeyboardRef is set by the trigger button's onKeyDown (Enter/Space).
+  // Close path: closedByEscapeRef is set by the Escape key handler above.
   useEffect(() => {
     if (open) {
-      const firstLink = overlayRef.current?.querySelector('a')
-      firstLink?.focus()
+      if (openedByKeyboardRef.current) {
+        const firstLink = overlayRef.current?.querySelector('a')
+        firstLink?.focus()
+      }
+      openedByKeyboardRef.current = false
       return () => {
         if (closedByEscapeRef.current) {
           setTimeout(() => triggerRef.current?.focus(), 10)
@@ -72,6 +76,7 @@ export default function MobileNav({ currentPage = '' }) {
         ref={triggerRef}
         onClick={() => setOpen((v) => !v)}
         onMouseDown={(e) => e.preventDefault()}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') openedByKeyboardRef.current = true }}
         tabIndex={open ? -1 : 0}
         aria-label={open ? 'Lukk meny' : 'Åpne meny'}
         aria-expanded={open}
