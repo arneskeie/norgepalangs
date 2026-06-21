@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import SiteNav from './SiteNav.jsx'
+import MobileNav from './MobileNav.jsx'
 
 // Full pool — one entry per image copied to public/strip/
 const PHOTO_POOL = [
@@ -183,7 +184,12 @@ export function InnerHeader({ base, currentPage = '' }) {
 
 export default function SiteHeader({ variant = 'hero', currentPage = '' }) {
   const base = import.meta.env.BASE_URL
-  return variant === 'compact'
-    ? <InnerHeader base={base} currentPage={currentPage} />
-    : <HeroHeader base={base} />
+  return (
+    <>
+      {variant === 'compact'
+        ? <InnerHeader base={base} currentPage={currentPage} />
+        : <HeroHeader base={base} />}
+      <MobileNav currentPage={currentPage} />
+    </>
+  )
 }

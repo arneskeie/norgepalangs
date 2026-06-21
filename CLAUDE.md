@@ -109,21 +109,40 @@ current session.
   "Reisebrev" nav link now points to `index.html#reisebrev` (homepage section anchor) —
   no separate list page exists. It will never show as "active" since no page passes that
   href as currentPage; this is acceptable and expected.
-- **Nav layout:** No hamburger menu. Desktop (≥ 768px): nav renders
-  as a 912px-wide rounded pill. Mobile (< 768px): full-bleed strip (no
-  pill shape, no max-width). Items use `justify-content: space-evenly`
-  and `width: 100%` at ALL screen sizes. Nav items are **sentence case**
-  (no uppercase). Font size: 16px desktop / 12px mobile (reduced from 14px
-  when 5th item was added — 5 items at 14px is too cramped on 375px screens).
-  Letter-spacing: 0.02em.
-- **Nav two-layer structure:** `.nav-inner` is an invisible layout wrapper
-  (`max-width: 960px; margin: 0 auto; padding: 0 1.5rem` — no
-  background, no border-radius). Inside it sits `.nav-pill`, which gets
-  the background and border-radius. Since `.nav-pill` fills `.nav-inner`'s
-  content area, it naturally renders at 912px (960 − 2 × 24px), exactly
+  `NAV_LINKS` is exported from `SiteNav.jsx` and imported by `MobileNav.jsx` — single
+  source of truth for both the desktop nav and the mobile overlay.
+- **Desktop nav (≥ 768px):** Renders as a 912px-wide rounded pill. Items use
+  `justify-content: center; gap: 2rem` (32px) — centered cluster, items sit close together
+  rather than stretching across the full pill width. Font size: 16px (1rem). Letter-spacing:
+  0.02em. Sentence case. Active state: orange-400 2px `border-bottom` (border only, no fill).
+  **This replaces the prior `space-evenly + width: 100%` layout** (see 2026-06-21 changelog).
+- **Mobile nav (< 768px) — floating hamburger + full-screen overlay:**
+  The inline nav bar is **completely hidden** on mobile (`display: none`). Two new elements
+  implemented in `src/components/MobileNav.jsx`, rendered by `SiteHeader` default export:
+  - **Floating trigger button:** `position: fixed; bottom: 24px; right: 24px; z-index: 100`.
+    56px circle, `background: #0f172a` (slate-900, matches nav-pill), `color: #f8fafc`, box-shadow.
+    Always visible while scrolling. Hamburger icon (☰) when closed, X when overlay is open.
+    Tap target 56px ≥ 44px guideline. `aria-expanded`, `aria-haspopup="dialog"`. When overlay
+    is open, `tabIndex={-1}` prevents keyboard Tab from landing on the trigger (focus stays inside overlay).
+  - **Full-screen overlay:** `position: fixed; inset: 0; z-index: 90; background: #020617`.
+    Centered flex column. All 5 links at `font-size: 2rem` Work Sans, `font-weight: 500`,
+    `color: rgba(148,163,184,0.80)` default, `#f8fafc` on hover, `#fb923c` when active. Tap
+    target per link: ~56px (2rem line-height × 1.2 + 2 × 0.75rem padding).
+  - **Accessibility:** `role="dialog" aria-modal="true" aria-label="Navigasjonsmeny"` on overlay.
+    Focus moves to first nav link on open; focus returns to trigger on close (via `useEffect`
+    cleanup). Escape key closes overlay (`document.addEventListener('keydown', …)`). Focus trap:
+    `onKeyDown` on overlay div intercepts Tab/Shift+Tab and cycles within overlay focusables.
+    Body scroll lock: `document.body.style.overflow = 'hidden'` while open, restored on close.
+  - **Closing:** tap the X trigger button, press Escape, or tap any nav link (each link has
+    `onClick={close}`, navigating away and dismissing the overlay simultaneously).
+  - **This REVERSES the 2026-06-19 hamburger-removal decision** — deliberate, see 2026-06-21
+    changelog entry.
+- **Nav two-layer structure (desktop):** `.nav-inner` is an invisible layout wrapper
+  (`max-width: 960px; margin: 0 auto; padding: 0 1.5rem` — no background, no border-radius).
+  Inside it sits `.nav-pill`, which gets the background and border-radius. Since `.nav-pill`
+  fills `.nav-inner`'s content area, it naturally renders at 912px (960 − 2 × 24px), exactly
   matching content sections that use `max-w-content mx-auto px-6`.
-  Do NOT put background or border-radius on `.nav-inner` — that would make
-  the pill 960px (the full wrapper width, wider than text content areas).
+  Do NOT put background or border-radius on `.nav-inner` — that would make the pill 960px.
 - **No Turlogg page or nav item.** Reisebrev is the de facto "log" of the
   trip now.
 - **No Gjestebok page, nav item, or footer/contact link anywhere.**
@@ -723,11 +742,10 @@ here as outstanding work, not shipped features.
   bio below. `activeId` state → `selectedPerson` state. Refined same day:
   initial `imageMode="cover"` (full-width 192px strip) replaced by `layout="profile"`
   (80px circle) because 70×70px source JPGs look poor at 2.7× upscale.
-- [ ] **Mobile nav redesign** — current nav strip (space-evenly pill, 5 items) gets cramped
-  on mobile, especially after font-size was already reduced to 0.75rem (12px, the type-scale
-  floor) to fit 5 items. Needs a better mobile navigation solution than the current
-  squeeze-to-fit approach. Alternatives to consider when picked up: abbreviated labels, a
-  different layout pattern, icon-based nav, or similar — not yet decided.
+- [x] **Mobile nav redesign** — DONE 2026-06-21. Floating hamburger trigger (56px fixed circle,
+  bottom-right) + full-screen overlay with all 5 links at 2rem. Desktop nav updated to centered
+  gap-based cluster (gap: 2rem). Reverses the 2026-06-19 hamburger-removal decision. See Nav
+  section and 2026-06-21 changelog for full spec.
 - [ ] **Desktop nav refinement** — current desktop nav has too much spacing between items and
   could use visual refinement. Consider adding a drop-shadow on the homepage/hero variant
   specifically, for depth against the hero background image. Explicitly deferred: revisit once
@@ -1423,6 +1441,23 @@ here as outstanding work, not shipped features.
   created at public/ (served at /norgepalangs/ base). Key constraint: Vite does
   NOT inject base URL into meta content="" attributes — canonical and og: URLs
   must be full absolute https:// paths, not root-relative.
+- 2026-06-21: Nav redesign — desktop gap-based + mobile hamburger (REVERSAL of 2026-06-19 decision).
+  Desktop: `.nav-links` changed from `justify-content: space-evenly; width: 100%` to
+  `justify-content: center; gap: 2rem` (32px). Items now form a centered cluster rather than
+  stretching across the full 912px pill, eliminating the excessive spacing between short labels.
+  Mobile: DELIBERATELY reverses the "hamburger removal" decision from 2026-06-19. Reason: with 5
+  items and "Reiserute & galleri" as the longest label, the inline strip approach had already
+  been reduced to 12px (type-scale floor) and was still cramped on narrow screens. No further
+  reduction was possible, and abbreviated labels were undesirable. A floating hamburger trigger
+  (56px fixed circle, bottom-right, z-index 100) + full-screen overlay (z-index 90, centered,
+  2rem links) gives ample space and a comfortable tap target for all 5 items. Accessibility:
+  focus trap, Escape key, body scroll lock, focus return to trigger on close. Implementation:
+  `src/components/MobileNav.jsx` (new); `NAV_LINKS` exported from `SiteNav.jsx` for shared use.
+  Hero mobile spacing updated: `.hero-text-inner` padding increased from 32px to 48px (3rem)
+  top — nav bar's 64px vertical space is gone from the flow, so the gap between the title card
+  and the "Velkommen" text block needed to be re-established. `.hero-text-block` stays
+  `position: relative` on mobile (originally for nav overlap prevention; kept because at 480px
+  min-height, absolute bottom:0 leaves too little clearance above the card).
 - 2026-06-21: SheetContent 'header' layout image positioning fixed. Bug: the image was rendered
   OUTSIDE the padded content container, so `pt-5 sm:pt-16` landed between the image and the text
   (64px unwanted gap on desktop) while the image touched the very top of the sheet with no padding

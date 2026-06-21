@@ -1,6 +1,6 @@
 import React from 'react'
 
-const NAV_LINKS = [
+export const NAV_LINKS = [
   { label: 'Om oss',              href: 'omoss.html'     },
   { label: 'Reiserute & galleri', href: 'reiserute.html' },
   { label: 'Reisebrev',           href: 'index.html#reisebrev' },

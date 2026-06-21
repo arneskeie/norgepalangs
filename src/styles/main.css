@@ -282,16 +282,18 @@
     top: 98px;
   }
 
-  /* Hero text block: flow element on mobile to prevent overlap with nav.
-     position:absolute;bottom:0 is removed — block follows nav in flex column.
-     padding-top: 32px matches pt-8 (inner-page section top spacing) — shared value. */
+  /* Hero text block: flows in flex column on mobile rather than absolute-anchoring at bottom.
+     Originally added to prevent overlap with the inline nav bar (now hidden on mobile).
+     Kept because at 480px min-height, absolute bottom:0 leaves only ~6px clearance below
+     the card — too tight to be reliable across all devices. Flow positioning expands the
+     hero to fit its content and keeps the layout stable. */
   .hero-text-block {
     position: relative;
     bottom: auto;
   }
 
   .hero-text-inner {
-    padding: 32px 1.5rem 2.5rem;
+    padding: 48px 1.5rem 3rem;
     text-align: left;
   }
 }
@@ -330,9 +332,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  width: 100%;
-  justify-content: space-evenly;
-  gap: 0;
+  justify-content: center;
+  gap: 2rem; /* 32px — centered cluster, not stretch-to-fill */
 }
 
 .nav-link {
@@ -357,20 +358,10 @@
   border-bottom-color: #fb923c;
 }
 
-/* Mobile: full-bleed strip */
+/* Mobile: hide the inline nav bar entirely — floating hamburger handles mobile nav */
 @media (max-width: 767px) {
   .site-nav {
-    padding: 0;
-  }
-  .nav-inner {
-    max-width: 100%;
-    padding: 0;
-  }
-  .nav-pill {
-    border-radius: 0;
-  }
-  .nav-link {
-    font-size: 0.75rem;
+    display: none;
   }
 }
 
@@ -407,4 +398,90 @@
   transform: translateZ(0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+}
+
+/* ─── Mobile nav (floating hamburger + full-screen overlay) ──────────────────── */
+
+/* Fixed circular trigger button — hidden on desktop, shown on mobile via media query.
+   56px diameter meets touch-target guidance; z-index 100 keeps it above all content
+   including the version-switcher bar (z-index not set, defaults to auto). */
+.mobile-nav-trigger {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  border: none;
+  background: #0f172a; /* slate-900 — matches nav-pill */
+  color: #f8fafc;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 4px 16px rgba(2, 6, 23, 0.80),
+    0 1px 4px rgba(2, 6, 23, 0.60);
+  transition: background 0.15s;
+}
+
+.mobile-nav-trigger:hover {
+  background: #1e293b; /* slate-800 */
+}
+
+.mobile-nav-trigger:focus-visible {
+  outline: 2px solid #fb923c;
+  outline-offset: 3px;
+}
+
+/* Full-screen overlay — covers the entire viewport, centered flex column */
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: #020617; /* slate-950 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-nav-link {
+  font-family: 'Work Sans', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: rgba(148, 163, 184, 0.80); /* slate-400/80% — matches desktop .nav-link */
+  text-decoration: none;
+  display: block;
+  padding: 0.75rem 1.5rem; /* 12px top/bottom → total tap target ≥ 56px at 2rem line-height */
+  text-align: center;
+  transition: color 0.15s;
+}
+
+.mobile-nav-link:hover {
+  color: #f8fafc;
+}
+
+/* Active: orange accent color (no underline — color alone is legible at 2rem) */
+.mobile-nav-link--active {
+  color: #fb923c;
+}
+
+@media (max-width: 767px) {
+  .mobile-nav-trigger {
+    display: flex;
+  }
 }
