@@ -69,7 +69,7 @@ export default function BottomSheet({
               for long content. stopPropagation prevents panel clicks from bubbling
               up to the outer container's dismiss handler. */}
           <div
-            className="mx-auto w-full max-w-[720px] max-h-[93dvh] flex flex-col bg-slate-900 rounded-t-xl overflow-hidden"
+            className="mx-auto w-full max-w-[720px] max-h-[93dvh] sm:min-h-[70vh] flex flex-col bg-slate-900 rounded-t-xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
 

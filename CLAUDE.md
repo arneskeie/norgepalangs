@@ -276,14 +276,18 @@ current session.
    Fjellstue, Umbukta Fjellstue) have non-black backgrounds — they show their
    original bg color via screen blend; acceptable, PNG conversion deferred.
 6. **Footer** — two-part layout within `max-w-content` container:
-   LEFT: "NORGE på LANGS" wordmark at `text-[1.125rem]` via `<Wordmark>` component
-   (same font/accent/tracking as TitleCard but footer-sized). RIGHT: credit as a
-   `<div>` with 3 separate `<p>` lines (no "|" separators), `text-slate-500
-   text-[0.875rem] leading-snug`, right-aligned on desktop, centered mobile.
+   LEFT: `<Wordmark>` at `text-[1.125rem]` + a subtitle line "med Montarou & co" directly
+   below it, grouped in a `<div>`. Subtitle: `font-sans font-medium text-[8px] leading-4
+   uppercase tracking-[0.2em] text-slate-400 mt-1`. **8px is an explicit one-off exception**
+   — below both the 0.75rem site-wide floor and the 0.625rem TitleCard-mobile exception.
+   Scoped to this single element only; the floor rule is unchanged everywhere else.
+   RIGHT: credit as a `<div>` with 3 separate `<p>` lines (no "|" separators),
+   `text-slate-500 text-[0.875rem] leading-snug`, right-aligned on desktop, centered mobile.
    Lines: "Turgåer & Ansvarlig redaktør: Marius Montarou" (Marius linked to
    norgepalangs-2009/omoss.html), "Webmaster: Arne S. Skeie", "NORGEpåLANGS © 2008/2009".
    Mobile: `flex-col items-center gap-4` (stacked centered). Desktop (sm+):
-   `flex-row justify-between`. No eyebrow or subtitle from TitleCard — wordmark only.
+   `flex-row items-start justify-between` (top-aligned — both columns align to top of
+   the flex row, not vertically centered against each other).
    The `<Wordmark>` component is a named export from SiteHeader.jsx; import it from
    there to avoid drift between TitleCard and footer wordmark markup.
 7. **Version switcher** — sits BELOW the footer (separate element), centered.
@@ -570,12 +574,17 @@ there would be overwritten by vaul's animation. Instead, an inner wrapper `div` 
 outer container, styled inner container. This inner wrapper carries `bg-slate-900 rounded-t-xl
 overflow-hidden flex flex-col max-h-[93dvh]` (was 960px / `h-full` / no max-h — changed 2026-06-21).
 
-**Height (auto-sizing):** The inner wrapper uses `max-h-[93dvh]` and `flex flex-col` — short
-content sizes the panel down to fit naturally; long content hits the 93dvh cap and the scrollable
-`flex-1 overflow-y-auto` area handles internal scrolling. The outer `Drawer.Content` has **no
-explicit height** (removed `h-[93dvh]`), so vaul's `translateY(100%→0)` slides by the panel's
-actual height, not a fixed 93dvh. This eliminates the large empty space below short-content sheets
-without reintroducing snap points.
+**Height (auto-sizing + desktop floor):** The inner wrapper uses `max-h-[93dvh]` and
+`flex flex-col` — short content sizes the panel down to fit naturally; long content hits the
+93dvh cap and the scrollable `flex-1 overflow-y-auto` area handles internal scrolling. The
+outer `Drawer.Content` has **no explicit height** (removed `h-[93dvh]`), so vaul's
+`translateY(100%→0)` slides by the panel's actual height, not a fixed 93dvh. This eliminates
+the large empty space below short-content sheets without reintroducing snap points.
+**Desktop minimum height (sm+): `sm:min-h-[70vh]`** — the panel never shrinks below 70% of
+viewport height on desktop. Short-content sheets (e.g. an Om Oss entry with minimal bio) still
+render tall enough to feel substantive. Mobile auto-height behavior is unchanged (no min-h on
+mobile). The 70vh min coexists correctly with the 93dvh max: short content → floor, medium
+content → auto, long content → 93dvh ceiling with internal scroll.
 
 **Desktop dismiss zones:** `Drawer.Content` (the full-viewport-width transparent outer container)
 has an `onClick={() => onOpenChange(false)}` handler — clicking the transparent areas left or right
@@ -1533,6 +1542,25 @@ here as outstanding work, not shipped features.
   subtitle = etapper joined with " · " (orange-400 eyebrow via .eyebrow class), body =
   `<PersonSheetBody>` ReactNode (metadata dl + bio paragraphs). The ReactNode body approach
   avoids duplicating SheetContent's font/size/color wrapper classes on each paragraph.
+- 2026-06-21: Footer — top alignment + wordmark subtitle.
+  1. Desktop alignment changed from `sm:items-center` → `sm:items-start`. Both the wordmark
+     column (left) and credit text column (right) now align to the top of the footer flex row
+     instead of vertically centering against each other. Especially important now that the
+     left column is taller due to the subtitle line.
+  2. "med Montarou & co" subtitle added below the wordmark. Styled matching the TitleCard
+     subtitle treatment (Work Sans, font-medium, uppercase, tracking-[0.2em], slate-400) but
+     left-aligned and at `font-size: 8px` (0.5rem). 8px is an explicit one-off exception —
+     below both the 0.75rem site-wide floor and the 0.625rem TitleCard-mobile exception.
+     Scoped to this single footer element only. `mt-1` (4px) gap above it. `leading-4`
+     matches TitleCard subtitle treatment. Wordmark + subtitle wrapped in a `<div>`.
+- 2026-06-21: BottomSheet desktop minimum height added.
+  Added `sm:min-h-[70vh]` to the inner wrapper div. On desktop (≥640px), the panel never
+  shrinks below 70% of viewport height — short-content sheets (e.g. Om Oss entry with a
+  brief bio) now render tall rather than cramped. Mobile auto-height behavior unchanged (no
+  min-h on mobile). The 70vh min coexists correctly with the existing `max-h-[93dvh]` ceiling:
+  short content → 70vh floor, medium content → auto-height, long content → 93dvh cap with
+  internal scrolling via `flex-1 overflow-y-auto`. vaul's `translateY(100%→0)` animation
+  still works correctly — it slides by the panel's actual height (now at least 70vh on desktop).
 - 2026-06-20: BottomSheet bug fixes — desktop non-render + mobile too-short height.
   Bug 1 (desktop): vaul's snap-point offset math (`window.innerHeight - snapPoint ×
   window.innerHeight`) assumes the drawer is full-viewport-height tall. When content is

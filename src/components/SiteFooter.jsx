@@ -5,8 +5,13 @@ export default function SiteFooter() {
   return (
     <>
       <footer className="border-t border-white/[.06] py-8">
-        <div className="max-w-content mx-auto px-6 flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <Wordmark className="text-[1.125rem]" />
+        <div className="max-w-content mx-auto px-6 flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <Wordmark className="text-[1.125rem]" />
+            {/* 8px is a deliberate one-off exception — below the 0.75rem floor and the 0.625rem TitleCard-mobile exception.
+                Scoped exclusively to this element; the floor rule is unchanged everywhere else. */}
+            <p className="font-sans font-medium text-[8px] leading-4 uppercase tracking-[0.2em] text-slate-400 mt-1">med Montarou &amp; co</p>
+          </div>
           <div className="font-sans text-[0.875rem] text-slate-500 leading-snug text-center sm:text-right">
             <p>Turgåer &amp; Ansvarlig redaktør: <a href="https://arneskeie.github.io/norgepalangs-2009/omoss.html" className="hover:text-slate-300 transition-colors duration-150">Marius Montarou</a></p>
             <p>Webmaster: Arne S. Skeie</p>
