@@ -53,14 +53,14 @@ export default function BottomSheet({
     >
       <Drawer.Portal>
         {/* Backdrop — dims page, click to dismiss */}
-        <Drawer.Overlay className="fixed inset-0 bg-slate-950/80 z-40" />
+        <Drawer.Overlay className="fixed inset-0 bg-slate-950/80 z-[105]" />
 
         {/* Outer container — vaul controls transform here for slide animation.
             Transparent + full-width so vaul's translateY(100%→0) works unobstructed.
             onClick dismisses when clicking the transparent side areas (left/right of panel)
             that sit above Drawer.Overlay in z-order and would otherwise swallow clicks. */}
         <Drawer.Content
-          className="fixed bottom-0 left-0 right-0 z-50 outline-none"
+          className="fixed bottom-0 left-0 right-0 z-[110] outline-none"
           aria-label={ariaLabel}
           onClick={() => onOpenChange(false)}
         >

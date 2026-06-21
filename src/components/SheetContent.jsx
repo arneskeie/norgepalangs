@@ -77,7 +77,7 @@ function BodyArea({ body, link, gallery }) {
           : <div className="font-sans text-[1.125rem] text-slate-300 leading-normal">{body}</div>
       )}
       {link && (
-        <div className="mt-6">
+        <div className="mt-10">
           <a
             href={link.href}
             target={link.external !== false ? '_blank' : undefined}
@@ -127,7 +127,7 @@ export default function SheetContent({
       <div>
         {/* Profile header row: mobile → image centered above text (stacked);
             desktop (sm+) → circular photo left, identity stack right. */}
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start px-6 sm:px-16 pt-6 sm:pt-16 pb-4">
+        <div className="flex flex-col items-center gap-4 sm:gap-8 sm:flex-row sm:items-start px-6 sm:px-16 pt-6 sm:pt-12 pb-4">
           {image && (
             /* w-20 mobile / w-36 desktop (144px = 9rem). Source JPGs are 70×70px so
                80px is near-native (≈1.15× upscale after border crop); 144px on desktop
@@ -184,8 +184,8 @@ export default function SheetContent({
         )
       )}
 
-      {/* Content area — 4rem left/right + 4rem top + 6rem bottom on desktop */}
-      <div className="px-6 sm:px-16 pt-5 sm:pt-16 pb-8 sm:pb-24">
+      {/* Content area — 4rem left/right + 3rem top + 6rem bottom on desktop */}
+      <div className="px-6 sm:px-16 pt-5 sm:pt-12 pb-8 sm:pb-24">
 
         {/* Default: image inside padded container — padding above/beside image, natural gap below */}
         {!fullBleedImage && image && (
@@ -194,8 +194,8 @@ export default function SheetContent({
               <img src={image} alt="" className="w-full h-full object-cover" />
             </div>
           ) : (
-            /* py-4 gives internal breathing room within the image container area */
-            <div className={`w-full ${imageHeight} flex items-center justify-center py-4 mb-4`}>
+            /* pb-4 gives breathing room below image; top padding comes from the container's pt-5/pt-12 */
+            <div className={`w-full ${imageHeight} flex items-center justify-center pb-4 mb-4`}>
               <img src={image} alt="" className="max-h-full max-w-full object-contain" />
             </div>
           )

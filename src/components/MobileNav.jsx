@@ -61,18 +61,18 @@ export default function MobileNav({ currentPage = '' }) {
         aria-label={open ? 'Lukk meny' : 'Åpne meny'}
         aria-expanded={open}
         aria-haspopup="dialog"
-        className="mobile-nav-trigger"
+        className={`mobile-nav-trigger${open ? ' mobile-nav-trigger--open' : ''}`}
       >
         {open ? (
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-            <line x1="4" y1="4" x2="18" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="18" y1="4" x2="4" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <line x1="5" y1="5" x2="23" y2="23" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+            <line x1="23" y1="5" x2="5" y2="23" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
         ) : (
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-            <line x1="2" y1="6"  x2="20" y2="6"  stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="2" y1="11" x2="20" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="2" y1="16" x2="20" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <line x1="3" y1="8"  x2="25" y2="8"  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+            <line x1="3" y1="14" x2="25" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+            <line x1="3" y1="20" x2="25" y2="20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
         )}
       </button>

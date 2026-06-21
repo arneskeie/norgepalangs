@@ -123,10 +123,16 @@ current session.
   The inline nav bar is **completely hidden** on mobile (`display: none`). Two new elements
   implemented in `src/components/MobileNav.jsx`, rendered by `SiteHeader` default export:
   - **Floating trigger button:** `position: fixed; bottom: 24px; right: 24px; z-index: 100`.
-    56px circle, `background: #0f172a` (slate-900, matches nav-pill), `color: #f8fafc`, box-shadow.
-    Always visible while scrolling. Hamburger icon (☰) when closed, X when overlay is open.
-    Tap target 56px ≥ 44px guideline. `aria-expanded`, `aria-haspopup="dialog"`. When overlay
+    72px circle. **Closed state:** `background: #fb923c` (orange-400), `color: #020617` (slate-950 dark icon).
+    **Open state** (`.mobile-nav-trigger--open` class applied when `open` is true): `background: #0f172a`
+    (slate-900), `color: #f8fafc` (white icon). `transition: background 0.2s, color 0.2s`. Box shadow.
+    Always visible while scrolling. Hamburger icon (28×28, strokeWidth 2.5) when closed, X when overlay is open.
+    Tap target 72px ≥ 44px guideline. `aria-expanded`, `aria-haspopup="dialog"`. When overlay
     is open, `tabIndex={-1}` prevents keyboard Tab from landing on the trigger (focus stays inside overlay).
+    **BottomSheet z-index interaction:** BottomSheet `Drawer.Overlay` is `z-[105]` and `Drawer.Content`
+    is `z-[110]` — both above the trigger's z-100. When a sheet is open, the overlay dims the trigger
+    and the sheet content covers it on mobile (full-width panel). The button is effectively hidden
+    and inaccessible while a sheet is open.
   - **Full-screen overlay:** `position: fixed; inset: 0; z-index: 90; background: #020617`.
     Centered flex column. All 4 links at `font-size: 2rem` Work Sans, `font-weight: 500`,
     `color: rgba(148,163,184,0.80)` default, `#f8fafc` on hover, `#fb923c` when active. Tap
@@ -509,7 +515,7 @@ and Reiserute all consume this same pair.
      applied to the image container. Default: `'h-48'` (192px) — preserves existing behavior for
      all consumers that don't pass this prop. Pass multiple classes for responsive sizing, e.g.
      `'h-48 sm:h-64'`. Opt-in per consumer. Currently only Utstyr overrides this:
-     `imageHeight="h-48 sm:h-64"` (192px mobile / 256px = 16rem desktop). Ignored in `'profile'`
+     `imageHeight="h-40 sm:h-64"` (160px = 10rem mobile / 256px = 16rem desktop). Ignored in `'profile'`
      layout. Do not change the default; any new consumer that needs a different size should pass
      the prop explicitly.
    - **fullBleedImage** `boolean` — (`'header'` layout only) Default `false`. When `false` (default),
@@ -536,10 +542,12 @@ and Reiserute all consume this same pair.
      omit or pass empty array to hide.
    - Spacing (header content area):
      Mobile: px-6 / pt-5 (20px) / pb-8 (32px).
-     Desktop (sm+): px-16 (4rem) / pt-16 (4rem) / pb-24 (6rem).
-     subtitle → title: mb-3. title → meta/body: mb-4/mb-5.
+     Desktop (sm+): px-16 (4rem) / pt-12 (3rem) / pb-24 (6rem).
+     Image container (contain mode): no top padding inside container — `pb-4` only (16px bottom).
+     The container's top padding comes from the enclosing div's pt-5/pt-12. mb-4 (16px) below image to title.
+     subtitle → title: mb-3. title → meta/body: mb-4/mb-5. link/button margin-top: mt-10 (40px / 2.5rem).
    - Spacing (profile):
-     Header row — mobile: px-6 pt-6 pb-4. Desktop (sm+): px-16 pt-16 pb-4.
+     Header row — mobile: px-6 pt-6 pb-4 gap-4. Desktop (sm+): px-16 pt-12 pb-4 gap-8 (32px between image and text).
      Body section — mobile: px-6 pt-5 pb-8. Desktop (sm+): px-16 pt-5 pb-24 (6rem).
      Divider: mx-6 sm:mx-16.
    - `MetaDl` and `BodyArea` extracted as internal sub-components (not exported) so both layouts
@@ -578,15 +586,16 @@ a `pointermove + pointerup`, not a `click`, so the dismiss handler is not trigge
 
 **Desktop content padding:** All text/body content areas in SheetContent use:
 - Left/right: `px-6 sm:px-16` (24px mobile / 64px = 4rem desktop)
-- Top: `pt-5 sm:pt-16` (20px mobile / 64px = 4rem desktop) — `'header'` content area and
+- Top: `pt-5 sm:pt-12` (20px mobile / 48px = 3rem desktop) — `'header'` content area and
   `'profile'` header row
 - Bottom: `pb-8 sm:pb-24` (32px mobile / 96px = 6rem desktop) — `'header'` content area and
   `'profile'` body section
 In the `'header'` layout, the image renders INSIDE the padded container by default — padding
-appears above and beside the image, and `mb-4` (16px) separates the image from the title below.
-This ensures the top padding lands above the image (correct), not between the image and the text
-(the prior bug). Pass `fullBleedImage={true}` to opt into full-bleed rendering (image above the
+appears above and beside the image. The image container (contain mode) uses `pb-4` only (no top
+padding — top space comes from the enclosing `pt-5/pt-12`). `mb-4` (16px) separates image from
+title below. Pass `fullBleedImage={true}` to opt into full-bleed rendering (image above the
 padded container, edge-to-edge) — no current consumer uses this.
+The profile layout header row has `gap-4 sm:gap-8` — 16px mobile (stacked), 32px desktop (side-by-side).
 The profile layout divider uses `mx-6 sm:mx-16`.
 
 ## Video gallery (Reiserute & Galleri page)
@@ -1476,6 +1485,28 @@ here as outstanding work, not shipped features.
   above the image, `mb-4` (16px) separates image from title below. Added `fullBleedImage` boolean
   prop (default `false`) to opt into the old behavior (image full-bleed outside the padded container,
   edge-to-edge) — reserved for future consumers, no current consumer passes this prop.
+- 2026-06-21: Spacing + nav button batch.
+  1. SheetContent 'header' top padding: desktop reduced 4rem → 3rem (`sm:pt-16` → `sm:pt-12`).
+     Left/right (4rem) and bottom (6rem) unchanged. Mobile top (20px) unchanged.
+  2. SheetContent 'header' image container (contain mode): removed top padding — changed `py-4`
+     to `pb-4`. Top breathing room comes from the enclosing container's pt-5/pt-12; only the bottom
+     padding (16px) remains internal to the container.
+  3. SheetContent BodyArea link/button: margin-top increased 1.5rem → 2.5rem (`mt-6` → `mt-10`, 40px).
+  4. SheetContent 'profile' header row: desktop top padding reduced 4rem → 3rem (`sm:pt-16` → `sm:pt-12`).
+     Added `sm:gap-8` — desktop gap between image and text column increases from 16px to 32px (2rem);
+     mobile gap stays 16px. Keeps mobile stacking unchanged.
+  5. Utstyr imageHeight mobile: reduced `h-48` → `h-40` (192px → 160px = 10rem). Desktop `sm:h-64`
+     (256px = 16rem) unchanged. CLAUDE.md imageHeight prop description updated accordingly.
+  6. BottomSheet z-index fix: `Drawer.Overlay` raised `z-40` → `z-[105]`, `Drawer.Content` raised
+     `z-50` → `z-[110]`. Both are now above the mobile nav trigger (z-index: 100). When a sheet
+     opens, the overlay dims the trigger and the sheet panel covers it on mobile. Previously the
+     trigger floated above the open sheet.
+  7. MobileNav trigger: size increased 56px → 72px. Closed state color inverted: background
+     changed `#0f172a` → `#fb923c` (orange-400), icon color `#f8fafc` → `#020617` (slate-950).
+     Open state (`.mobile-nav-trigger--open` class) keeps dark: `#0f172a` bg / `#f8fafc` icon.
+     Transition extended: `background 0.15s` → `background 0.2s, color 0.2s`. Hover: closed
+     state `#fdba74` (orange-300), open state `#1e293b` (slate-800). SVG size increased 22×22
+     → 28×28 (viewBox and coordinates), strokeWidth 2 → 2.5.
 - 2026-06-21: Security hardening audit. External links: all target="_blank" links
   in src/ already had rel="noopener noreferrer" — no changes needed. Sensitive
   data: no .env files, no API keys/secrets found in src/. Dead URL equivalence:

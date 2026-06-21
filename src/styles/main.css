@@ -403,30 +403,41 @@
 /* ─── Mobile nav (floating hamburger + full-screen overlay) ──────────────────── */
 
 /* Fixed circular trigger button — hidden on desktop, shown on mobile via media query.
-   56px diameter meets touch-target guidance; z-index 100 keeps it above all content
-   including the version-switcher bar (z-index not set, defaults to auto). */
+   72px diameter; z-index 100. Closed state: orange-400 bg / slate-950 icon.
+   Open state (.mobile-nav-trigger--open): slate-900 bg / white icon — applied in MobileNav.jsx.
+   Sheet overlay (z-[105]) and content (z-[110]) sit above this button when a sheet is open. */
 .mobile-nav-trigger {
   display: none;
   position: fixed;
   bottom: 24px;
   right: 24px;
   z-index: 100;
-  width: 56px;
-  height: 56px;
+  width: 72px;
+  height: 72px;
   border-radius: 9999px;
   border: none;
-  background: #0f172a; /* slate-900 — matches nav-pill */
-  color: #f8fafc;
+  background: #fb923c; /* orange-400 — closed state */
+  color: #020617;      /* slate-950 — dark icon on orange */
   cursor: pointer;
   align-items: center;
   justify-content: center;
   box-shadow:
     0 4px 16px rgba(2, 6, 23, 0.80),
     0 1px 4px rgba(2, 6, 23, 0.60);
-  transition: background 0.15s;
+  transition: background 0.2s, color 0.2s;
 }
 
 .mobile-nav-trigger:hover {
+  background: #fdba74; /* orange-300 — closed hover */
+}
+
+/* Open state — dark bg, white icon */
+.mobile-nav-trigger--open {
+  background: #0f172a; /* slate-900 */
+  color: #f8fafc;      /* slate-50 */
+}
+
+.mobile-nav-trigger--open:hover {
   background: #1e293b; /* slate-800 */
 }
 

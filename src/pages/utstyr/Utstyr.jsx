@@ -105,7 +105,7 @@ export default function Utstyr() {
         {selectedItem && (
           <SheetContent
             image={selectedItem.image ? `${BASE}images/utstyr/${selectedItem.image}` : undefined}
-            imageHeight="h-48 sm:h-64"
+            imageHeight="h-40 sm:h-64"
             title={selectedItem.name}
             body={selectedItem.body}
             link={selectedItem.link}
