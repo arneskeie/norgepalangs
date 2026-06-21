@@ -490,6 +490,12 @@ and Reiserute all consume this same pair.
      `imageHeight="h-48 sm:h-64"` (192px mobile / 256px = 16rem desktop). Ignored in `'profile'`
      layout. Do not change the default; any new consumer that needs a different size should pass
      the prop explicitly.
+   - **fullBleedImage** `boolean` — (`'header'` layout only) Default `false`. When `false` (default),
+     the image renders INSIDE the padded content container — padding applies above (4rem desktop),
+     on both sides (4rem desktop), and the image flows naturally before the title/body. When `true`,
+     the image renders OUTSIDE (above) the padded container, edge-to-edge (ignoring horizontal and
+     top padding). Reserved for future consumers that specifically need a full-bleed image strip;
+     no current consumer passes this prop. Ignored in `'profile'` layout.
    - **imageMode** `'contain' | 'cover'` — (`'header'` layout only) how the image fills the strip.
      `'contain'` (default): `object-contain` + px-6/py-4 padding, renders on the sheet's own
      `bg-slate-900` background — correct for transparent-background product PNGs (Utstyr). The
@@ -554,7 +560,11 @@ a `pointermove + pointerup`, not a `click`, so the dismiss handler is not trigge
   `'profile'` header row
 - Bottom: `pb-8 sm:pb-24` (32px mobile / 96px = 6rem desktop) — `'header'` content area and
   `'profile'` body section
-The image area at the top of the `'header'` layout is not affected by content padding.
+In the `'header'` layout, the image renders INSIDE the padded container by default — padding
+appears above and beside the image, and `mb-4` (16px) separates the image from the title below.
+This ensures the top padding lands above the image (correct), not between the image and the text
+(the prior bug). Pass `fullBleedImage={true}` to opt into full-bleed rendering (image above the
+padded container, edge-to-edge) — no current consumer uses this.
 The profile layout divider uses `mx-6 sm:mx-16`.
 
 ## Video gallery (Reiserute & Galleri page)
@@ -1413,6 +1423,13 @@ here as outstanding work, not shipped features.
   created at public/ (served at /norgepalangs/ base). Key constraint: Vite does
   NOT inject base URL into meta content="" attributes — canonical and og: URLs
   must be full absolute https:// paths, not root-relative.
+- 2026-06-21: SheetContent 'header' layout image positioning fixed. Bug: the image was rendered
+  OUTSIDE the padded content container, so `pt-5 sm:pt-16` landed between the image and the text
+  (64px unwanted gap on desktop) while the image touched the very top of the sheet with no padding
+  above it. Fix: image now renders INSIDE the padded container by default — `pt-5 sm:pt-16` applies
+  above the image, `mb-4` (16px) separates image from title below. Added `fullBleedImage` boolean
+  prop (default `false`) to opt into the old behavior (image full-bleed outside the padded container,
+  edge-to-edge) — reserved for future consumers, no current consumer passes this prop.
 - 2026-06-21: Security hardening audit. External links: all target="_blank" links
   in src/ already had rel="noopener noreferrer" — no changes needed. Sensitive
   data: no .env files, no API keys/secrets found in src/. Dead URL equivalence:

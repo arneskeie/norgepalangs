@@ -38,6 +38,14 @@ import React from 'react'
  *                                    container. Default: 'h-48' (192px). Pass multiple classes for
  *                                    responsive sizing (e.g. 'h-48 sm:h-64'). Ignored in 'profile'
  *                                    layout. Opt-in per consumer — default preserves existing behavior.
+ *   fullBleedImage boolean         — (header layout only) When false (default), the image renders
+ *                                    INSIDE the padded content container — padding applies above,
+ *                                    on both sides, and below the image as part of the normal
+ *                                    content flow. When true, the image renders OUTSIDE (above) the
+ *                                    padded container, edge-to-edge (full-bleed). Reserved for
+ *                                    future consumers that specifically need a full-bleed image
+ *                                    strip; no current consumer passes this prop. Ignored in
+ *                                    'profile' layout.
  *   gallery    Array<string | { src, alt }>
  *                                  — optional thumbnail grid (3-col, aspect-[4/3])
  *                                    empty/omitted → grid not rendered
@@ -105,6 +113,7 @@ export default function SheetContent({
   image,
   imageMode = 'contain',
   imageHeight = 'h-48',
+  fullBleedImage = false,
   title,
   subtitle,
   meta,
@@ -159,17 +168,16 @@ export default function SheetContent({
     )
   }
 
-  // layout === 'header' (default) — full-width image on top
+  // layout === 'header' (default) — image inside padded container by default
   return (
     <div>
-      {/* Hero image */}
-      {image && (
+      {/* Full-bleed image — outside padded container (opt-in, no current consumer uses this) */}
+      {fullBleedImage && image && (
         imageMode === 'cover' ? (
           <div className={`w-full ${imageHeight} overflow-hidden`}>
             <img src={image} alt="" className="w-full h-full object-cover" />
           </div>
         ) : (
-          /* contain: image renders on the sheet's own bg (slate-900); px/py give breathing room */
           <div className={`w-full ${imageHeight} flex items-center justify-center px-6 py-4`}>
             <img src={image} alt="" className="max-h-full max-w-full object-contain" />
           </div>
@@ -178,6 +186,20 @@ export default function SheetContent({
 
       {/* Content area — 4rem left/right + 4rem top + 6rem bottom on desktop */}
       <div className="px-6 sm:px-16 pt-5 sm:pt-16 pb-8 sm:pb-24">
+
+        {/* Default: image inside padded container — padding above/beside image, natural gap below */}
+        {!fullBleedImage && image && (
+          imageMode === 'cover' ? (
+            <div className={`w-full ${imageHeight} overflow-hidden mb-4`}>
+              <img src={image} alt="" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            /* py-4 gives internal breathing room within the image container area */
+            <div className={`w-full ${imageHeight} flex items-center justify-center py-4 mb-4`}>
+              <img src={image} alt="" className="max-h-full max-w-full object-contain" />
+            </div>
+          )
+        )}
 
         {/* Accent subtitle — eyebrow style */}
         {subtitle && (
