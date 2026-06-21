@@ -112,6 +112,16 @@ const OPPVARMINGSTUR = {
   note: 'En måneds kanotur i Nord-Finland — innledning til livet i villmarken.',
 }
 
+// ─── Verbatim from 02-restored-static/videogalleri.html ──────────────────────
+const VIDEOS = [
+  { id: '5An_8LozHB0', title: 'Fjernsynskjøkkenet, Episode 1', subtitle: 'Idag: hjemmelaget brød' },
+  { id: 'ez5pVtzbmIg', title: 'Ronny og storørreten', subtitle: 'Kilosørret på kroken' },
+  { id: 'WmM8az1Ql14', title: 'Fjernsynskjøkkenet, Episode 2', subtitle: 'Idag: pannekaker og camp-utsikt' },
+  { id: 'K7v6iB05Ofw', title: 'Kampen med Storgjedda', subtitle: 'Montarou drar i land et smakfullt udyr' },
+  { id: 'lkf7TvXuDIU', title: 'Nestenkanovelt', subtitle: 'Farlig nær katastrofe' },
+  { id: '3JrKnijl7wA', title: 'Status dag 7', subtitle: 'Truls presenterer ukesrapport' },
+]
+
 function EtappeRow({ etappe, base, activeSlug, onToggle }) {
   const isOpen = activeSlug === etappe.slug + etappe.nr
 
@@ -226,6 +236,32 @@ export default function Reiserute() {
           <div>
             {varEtapper.map((e) => (
               <EtappeRow key={e.slug + e.nr} etappe={e} base={base} activeSlug={activeSlug} onToggle={toggle} />
+            ))}
+          </div>
+        </div>
+
+        {/* Video gallery */}
+        <div className="mt-20 pt-16 border-t border-white/[.06]">
+          <p className="eyebrow mb-6">Video</p>
+          <h2 className="font-serif text-[2rem] md:text-[2.5rem] text-slate-50 leading-tight mb-10">
+            Videogalleri
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {VIDEOS.map((video) => (
+              <div key={video.id}>
+                <div className="relative w-full aspect-video overflow-hidden rounded">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${video.id}`}
+                    title={video.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full border-0"
+                  />
+                </div>
+                <h3 className="font-serif text-base text-slate-100 mt-3 mb-1">{video.title}</h3>
+                <p className="font-sans text-sm text-slate-500">{video.subtitle}</p>
+              </div>
             ))}
           </div>
         </div>

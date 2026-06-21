@@ -518,6 +518,124 @@ there would be overwritten by vaul's animation. Instead, an inner wrapper `div` 
 outer container, styled inner container. This inner wrapper carries `bg-slate-900 rounded-t-xl
 overflow-hidden flex flex-col h-full`.
 
+## Video gallery (Reiserute & Galleri page)
+
+Added as the last section of `src/pages/reiserute/Reiserute.jsx`, below the
+Vår-etapper accordion, visually separated with `mt-20 pt-16 border-t border-white/[.06]`.
+
+**Source:** Verbatim from `02-restored-static/videogalleri.html` — same 6 videos
+and same order as the original table. Video IDs and titles are as-recovered; do not
+change or reorder without verifying against the original source.
+
+**Videos (verbatim from source):**
+| ID            | Title                         | Subtitle                              |
+|---------------|-------------------------------|---------------------------------------|
+| 5An_8LozHB0   | Fjernsynskjøkkenet, Episode 1 | Idag: hjemmelaget brød                |
+| ez5pVtzbmIg   | Ronny og storørreten          | Kilosørret på kroken                  |
+| WmM8az1Ql14   | Fjernsynskjøkkenet, Episode 2 | Idag: pannekaker og camp-utsikt       |
+| K7v6iB05Ofw   | Kampen med Storgjedda         | Montarou drar i land et smakfullt udyr|
+| lkf7TvXuDIU   | Nestenkanovelt                | Farlig nær katastrofe                 |
+| 3JrKnijl7wA   | Status dag 7                  | Truls presenterer ukesrapport         |
+
+**Layout:**
+- Section heading: eyebrow "Video" + h2 "Videogalleri" (`text-[2rem] md:text-[2.5rem]`)
+- Grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` with `gap-6`
+- Each video: wrapper `relative w-full aspect-video overflow-hidden rounded` with `<iframe>` inside as `absolute inset-0 w-full h-full`
+- `loading="lazy"` on all iframes; `allowFullScreen`; `title` set to video title for accessibility
+- No thumbnail overlay or play-button chrome — standard YouTube embed UI
+
+## SEO metadata
+
+All 11 HTML entry points have been updated with the same tag set:
+
+**Per-page `<head>` additions:**
+- `<meta name="description">` — specific to each page, grounded in real content
+- `<meta property="og:title">` — same as or slight variation on the `<title>` tag
+- `<meta property="og:description">` — same as `name="description"`
+- `<meta property="og:type" content="website">` — all pages are `website` type
+- `<meta property="og:url">` — full absolute canonical URL
+- `<meta property="og:image">` — absolute URL to a real image (see below)
+- `<link rel="canonical">` — same full absolute URL as og:url
+
+**Important note on URL handling:** Vite's base URL injection (`/norgepalangs/`) only
+transforms `href="/"` and `src="/"` attributes — NOT `content=""` in meta tags. All
+canonical and og: URLs are therefore hardcoded as full absolute
+`https://arneskeie.github.io/norgepalangs/` paths. Do not use root-relative paths
+(`/norgepalangs/...`) in meta tag content attributes — they will NOT be prefixed at
+build time and will render as broken relative URLs.
+
+**og:image selection:**
+- Homepage, Om Oss, Reiserute, Utstyr, Sponsorer: `images/Velkommen.webp`
+  (the hero background image at `public/images/Velkommen.webp`)
+- Reisebrev 1–6: individual cover images (`images/reisebrev/Reisebrev0N02.jpg`),
+  matching the highest-res image selected for each entry
+
+**Reisebrev title improvements:** HTML shell titles updated from "Reisebrev N — Norge På Langs"
+to include the actual etappe info, e.g. "Etappe 1: Nordkapp – Skaidi — Norge På Langs".
+These are static strings in the HTML shells (React doesn't set document.title at runtime).
+
+**sitemap.xml:** Created at `public/sitemap.xml` — served at `/norgepalangs/sitemap.xml`
+in production. Lists all 11 pages with lastmod 2026-06-21 and sensible priority values
+(homepage 1.0; main inner pages 0.8; content pages 0.7; Sponsorer 0.6).
+
+**robots.txt:** Created at `public/robots.txt` — served at `/norgepalangs/robots.txt`.
+Contains `User-agent: * / Allow: /` and a `Sitemap:` reference to the absolute sitemap URL.
+**Note:** On GitHub Pages project pages, `robots.txt` at a subdirectory path
+(`/norgepalangs/robots.txt`) is non-standard — crawlers expect it at the domain root
+(`/robots.txt`). This cannot be remedied on GitHub Pages project pages (no control over
+the domain root). The sitemap URL in the HTML canonical tags compensates for
+crawlers that discover the sitemap directly.
+
+## Security hardening
+
+**External link audit (rel="noopener noreferrer"):**
+All external links in `src/` that use `target="_blank"` already have `rel="noopener noreferrer"`.
+Locations confirmed:
+- `Home.jsx` — all 20 sponsor logo links ✓ (via conditional `<a>` wrapper)
+- `SheetContent.jsx` — the `link.external` prop defaults to true and conditionally sets both attributes ✓
+- `Sponsorer.jsx` — all sponsor logo links ✓
+No instances of bare `target="_blank"` without `rel="noopener noreferrer"` found.
+
+**Sensitive data scan:**
+- No `.env` file present in `03-modernized/`
+- `grep` of all `src/` files for API keys, secrets, tokens, passwords, credentials: no results
+- Only env var used anywhere is `import.meta.env.BASE_URL` (injected by Vite at build, not secret) ✓
+
+**Dead/unsafe URL equivalence check (vs 02-restored-static audit):**
+Two sponsor URLs in `03-modernized` were flagged as dead/suspended in the
+`02-restored-static` audit (performed 2026-06-20):
+- `http://www.sportsbua.no/` — "connection refused" in 02-restored-static audit;
+  marked ✓ in 03-modernized content inventory (checked 2026-06-19, one day earlier).
+  Present in Home.jsx (sponsor logo) and Sponsorer.jsx.
+- `http://www.femundfjellstue.no/` — "suspended account" in 02-restored-static audit;
+  marked ✓ in 03-modernized content inventory.
+  Present in Home.jsx and Sponsorer.jsx.
+Interpretation: sponsor website availability fluctuates; both sites may be intermittently
+down. URLs are accurate (both are the real businesses). No action taken — links kept live.
+Re-verify if doing another URL audit pass.
+
+All other dead/unsafe URLs from the 02-restored-static audit were either:
+- Already corrected in 03-modernized (alfasko.no → alfa.no; mx-sport.no subpath → root;
+  fjellpulken.no → fjellpulken.com; rottefella.no → rottefella.com)
+- Not present at all in 03-modernized (arcticfemme.com, sidebar links, norgepaakryssogtvers.net, etc.)
+
+**Content Security Policy (CSP) — DEFERRED:**
+Not implemented. Reasons:
+1. GitHub Pages does not support custom HTTP response headers — CSP would need to be a
+   `<meta http-equiv="Content-Security-Policy">` tag in the source HTML files.
+2. Vite injects an inline `<script>` for React Fast Refresh in dev mode (`@vitejs/plugin-react`
+   preamble). Adding `script-src 'self'` to the source HTML meta tag blocks this script
+   in dev mode, breaking hot reload. Production builds do not contain the inline script,
+   but the meta tag is in the same source HTML file used for both dev and prod.
+3. vaul and React apply inline `style` attributes to DOM elements at runtime — requiring
+   `'unsafe-inline'` in `style-src`, which significantly weakens that directive.
+4. A meta-tag CSP cannot enforce `frame-ancestors` (ignored by spec) — one of the more
+   useful directives for project pages.
+If CSP is desired in a future session, the recommended approach is a post-build
+Vite plugin that modifies the HTML output files (not the source files), allowing
+the policy to be active in production only. Recommended policy for that scenario:
+`default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.youtube.com; object-src 'none'`
+
 ## Known open items / TO DO
 
 All items below are **NOT YET STARTED** unless explicitly marked otherwise.
@@ -527,8 +645,9 @@ here as outstanding work, not shipped features.
 - [ ] **Reiserute & Galleri full rebuild** — real Norway map with route overlay,
   per-etappe hover/click interaction, eventually animated SVG route.
   Explicitly deferred to last, after all other work is done.
-- [ ] **Video gallery section** — to be added at the bottom of the Reiserute &
-  Galleri page, sourced from `02-restored-static`'s video gallery tab.
+- [x] **Video gallery section** — DONE 2026-06-21. Added at the bottom of
+  Reiserute.jsx, after the Vår-etapper accordion section. See "Video gallery"
+  section below for full documentation.
 - [x] **Shared bottom-sheet component** — DONE 2026-06-20: BottomSheet + SheetContent built.
   See "Bottom sheet component" section above.
   2026-06-21: BottomSheet updated with inner-wrapper max-width centering (960px on desktop,
@@ -583,10 +702,12 @@ here as outstanding work, not shipped features.
   clamp as arbitrary Tailwind value `text-[clamp(1.25rem,calc(3.5vw+0.5rem),1.5rem)]`.
 - [x] **Reiserute & Galleri page** — DONE 2026-06-20: `.section-description` applied
   to route summary paragraph; max-w-[640px] removed; color updated slate-300 → slate-400.
-- [ ] **SEO optimization** — meta descriptions, og:image, title tags, sitemap
-  (modernized site only).
-- [ ] **Site security hardening** — review CSP headers, external link safety,
-  and any other hardening applicable to a static GitHub Pages site.
+- [x] **SEO optimization** — DONE 2026-06-21. meta descriptions, og: tags,
+  canonical links, title improvements, sitemap.xml, robots.txt added to all
+  11 pages. See "SEO metadata" section below for pattern documentation.
+- [x] **Site security hardening** — DONE 2026-06-21 (CSP deferred — see note).
+  External links audited ✓; sensitive data scan ✓; dead-URL equivalence check
+  done (2 flags). See "Security hardening" section below.
 
 ## Live URLs (post-rename)
 
@@ -1208,6 +1329,29 @@ here as outstanding work, not shipped features.
   (which mixed metadata + bio) removed. Reiserute per-etappe sheets may also use
   'profile' if their thumbnail sources have the same resolution constraint. Utstyr
   unaffected — uses default `layout="header"` implicitly.
+- 2026-06-21: Video gallery section added to Reiserute.jsx. 6 YouTube embeds
+  verbatim from 02-restored-static/videogalleri.html, same order. Section placed
+  at the bottom of the page after Vår-etapper, separated by a border-t divider.
+  Grid: 1/2/3 col at mobile/sm/lg. Each video: aspect-video responsive iframe
+  with lazy loading, title and subtitle below. VIDEOS data const uses verbatim
+  video IDs and Norwegian titles/subtitles from source.
+- 2026-06-21: SEO metadata batch added to all 11 HTML entry points. Added:
+  meta name="description", og:title/description/type/url/image, link canonical.
+  og:image: Velkommen.webp for main pages; per-entry Reisebrev0N02.jpg for post
+  pages. Reisebrev HTML shell titles updated to include actual etappe title (e.g.
+  "Etappe 1: Nordkapp – Skaidi — Norge På Langs"). sitemap.xml and robots.txt
+  created at public/ (served at /norgepalangs/ base). Key constraint: Vite does
+  NOT inject base URL into meta content="" attributes — canonical and og: URLs
+  must be full absolute https:// paths, not root-relative.
+- 2026-06-21: Security hardening audit. External links: all target="_blank" links
+  in src/ already had rel="noopener noreferrer" — no changes needed. Sensitive
+  data: no .env files, no API keys/secrets found in src/. Dead URL equivalence:
+  two sponsor URLs in 03-modernized that were flagged dead in the 02-restored-static
+  audit (sportsbua.no, femundfjellstue.no) kept live — both appear in the
+  03-modernized content inventory as verified ✓ on June 19 (one day earlier);
+  status likely fluctuating, not a sourcing error. CSP not implemented — Vite dev
+  mode inline React preamble would be blocked by source-HTML meta tag CSP;
+  documented in "Security hardening" section with recommended future approach.
 - 2026-06-21: Om Oss page redesign — card grid + BottomSheet integration.
   Grayscale filter removed from thumbnail images (was applied always-on via className, lifted
   only on the active card — now always full color). Circular thumbnail cropping: wrapper div

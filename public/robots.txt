@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://arneskeie.github.io/norgepalangs/sitemap.xml
