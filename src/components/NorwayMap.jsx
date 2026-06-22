@@ -277,12 +277,16 @@ export default function NorwayMap({ interactive = false }) {
   const isDotHighlighted = (wpIdx) =>
     highlightedSegs.has(wpIdx - 1) || highlightedSegs.has(wpIdx)
 
-  // Inline styles override CSS animation fills once animationDone is true.
-  // Setting animation:'none' cancels the keyframe so inline fill takes effect.
+  // Inline styles take over from the CSS animation once animationDone is true.
+  // animation:'none' cancels the keyframe (including its forwards-fill).
+  // The CSS base rule has opacity:0, so opacity:1 MUST be set simultaneously
+  // with animation:'none' — React applies the full style object in one DOM commit,
+  // preventing any frame where the animation is cancelled but opacity is still 0.
   const dotStyle = (wpIdx) => {
     if (!animationDone) return {}
     return {
       animation: 'none',
+      opacity: 1,
       fill: isDotHighlighted(wpIdx) ? '#fb923c' : '#94a3b8',
       transform: svgHovered ? 'scale(0.8)' : 'scale(1)',
     }
@@ -291,6 +295,7 @@ export default function NorwayMap({ interactive = false }) {
     if (!animationDone) return {}
     return {
       animation: 'none',
+      opacity: 1,
       fill: isDotHighlighted(wpIdx) ? '#f8fafc' : '#94a3b8',
     }
   }

@@ -997,6 +997,16 @@ scale is relative to each dot's own center, not the SVG origin.
 the keyframe, allowing inline `fill` to take effect. CSS `transition: fill 0.25s ease` on
 `.norway-map-circle` and `.norway-map-label` then animates state changes smoothly.
 
+**CRITICAL — opacity must be set alongside animation:'none' (Batch 17 bug fix):**
+The CSS base rule `.norway-map-circle { opacity: 0 }` is the starting state for the intro
+animation. The animation sets `opacity: 1` via keyframes; `animation-fill-mode: forwards`
+keeps `opacity: 1` after the animation ends. When `animation: 'none'` is set inline,
+`forwards`-fill is cancelled and opacity reverts to the CSS base `0` — dots vanish.
+Fix: `dotStyle`/`labelStyle` MUST include `opacity: 1` in the same style object as
+`animation: 'none'`. React applies the full style object in a single DOM commit, so
+there is no intermediate frame where the animation is cancelled but opacity is still 0.
+Do NOT split these into separate renders or useEffect calls — that reintroduces the race.
+
 **Route switch:** The full-route `<path className="norway-map-route">` drives the intro
 animation. When `animationDone`, its inline `strokeOpacity` changes 0.5→0 (0.4s transition).
 Simultaneously, 16 individual `<path className="norway-map-segment">` paths fade in to 0.3
@@ -2338,6 +2348,15 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 17: NorwayMap — fix dots/labels disappearing after intro animation.
+  **Root cause:** `.norway-map-circle { opacity: 0 }` is the CSS base. The animation keyframe
+  sets `opacity: 1` with `forwards`-fill keeping it visible. Setting `animation: 'none'` inline
+  cancels the forwards-fill — opacity reverts to base `0`. `dotStyle`/`labelStyle` did not
+  explicitly set `opacity: 1`, so all dots and labels vanished permanently on `animationDone`.
+  **Fix:** Added `opacity: 1` to both `dotStyle` and `labelStyle` return values alongside
+  `animation: 'none'`. React applies the full style object atomically in one DOM commit — no
+  intermediate frame where animation is cancelled but opacity is 0. Transition from orange→grey
+  still works because `fill` transition fires after the style update.
 - 2026-06-22 Batch 16: NorwayMap — desktop interactive mode (hover, click-to-scroll, viewport highlighting).
   **`interactive` prop** added to `NorwayMap`. Passed as `<NorwayMap interactive />` to the desktop
   sticky instance in Reiserute.jsx; mobile instance stays `<NorwayMap />` (no prop, no interactivity).
