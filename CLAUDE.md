@@ -1063,6 +1063,35 @@ First rect extends to viewBox top (VB_Y = -17.297); last rect extends to viewBox
 - Styling: `font-sans text-base text-slate-500 hover:text-slate-200 transition-colors` — subtle text links,
   no pill/button styling (low visual weight; secondary CTAs alongside the primary participant profiles).
 
+## Galleri page — three-tier image system
+
+**Three source tiers (Batch 18 — never collapse these back to one):**
+
+| Tier | Path | Max dim | Size | Used for |
+|---|---|---|---|---|
+| Original | `public/images/galleri/` | 900px | 70MB | Lightbox main image only (full quality) |
+| Preview | `public/images/galleri-preview/` | 128px | 4MB | Accordion header thumbs (64px display) + lightbox strip thumbs (48px display) |
+| Thumb | `public/images/galleri-thumb/` | 400px | 16MB | Expanded grid thumbnails (~147px at lg, ~224px at sm) |
+
+All three tiers have identical subfolder structure (`oppvarmingstur/`, `etappe1/`–`etappe15/`)
+and identical filenames. All 944 files exist in all three tiers.
+
+**Generation method (macOS only):**
+```
+sips -Z <size> --setProperty format png <input.webp> -o /tmp/tmp.png && cwebp -q 80 /tmp/tmp.png -o <output.webp>
+```
+`sips` cannot write WebP directly — must go via PNG temp file.
+
+**Galleri.jsx image src mapping (4 locations):**
+- Line 25 (`src` in Lightbox): `galleri/` — lightbox main image, KEEP as-is
+- Line 165 (Lightbox strip `<img>`): `galleri-preview/`
+- Line 228 (GalleriSection preview thumb `<img>`): `galleri-preview/`
+- Line 261 (GalleriSection grid thumbnail `<img>`): `galleri-thumb/`
+
+**loading/decoding on all thumbnail elements:** `loading="lazy"` and `decoding="async"` are
+present on all four img elements. The lightbox main image (line 127) can be eager — user has
+clicked to view it — but the other three all have lazy+async.
+
 ## Lightbox — etappe context and thumbnail strip
 
 **Etappe context bar** (top of lightbox, added 2026-06-22):
@@ -2348,6 +2377,21 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 18: Galleri — three-tier image system for thumbnail performance.
+  **Problem:** All 944 gallery images served at 900px max dimension even for 64px preview thumbs and
+  ~147px grid thumbnails. 70MB total; collapsed accordions still trigger lazy-loads for oversized images.
+  **Three tiers created:**
+  - `public/images/galleri/` — original 900px WebP, q80. Used ONLY by the lightbox main image (full quality).
+  - `public/images/galleri-preview/` — 128px max dimension WebP, q80. 4MB total (94% reduction).
+    Used by: accordion header preview thumbs (64×64px display) and lightbox thumbnail strip (48×48px display).
+  - `public/images/galleri-thumb/` — 400px max dimension WebP, q80. 16MB total (77% reduction).
+    Used by: expanded grid thumbnails (up to ~224px at sm viewport, 147px at lg).
+  **Generation:** sips (macOS) to resize and convert to PNG temp → cwebp -q 80 to encode WebP.
+  Subfolder structure mirrors `galleri/` (oppvarmingstur, etappe1–etappe15). All 944 files processed.
+  **Galleri.jsx changes:** 3 of 4 image src paths updated. Lightbox strip (line 165): galleri/ → galleri-preview/
+  + added decoding="async". Preview thumbs (line 228): galleri/ → galleri-preview/. Grid thumbs (line 261):
+  galleri/ → galleri-thumb/. Main lightbox image (line 25) unchanged. loading="lazy" and decoding="async"
+  were already present on all gallery image elements except the lightbox strip (decoding added there now).
 - 2026-06-22 Batch 17: NorwayMap — fix dots/labels disappearing after intro animation.
   **Root cause:** `.norway-map-circle { opacity: 0 }` is the CSS base. The animation keyframe
   sets `opacity: 1` with `forwards`-fill keeping it visible. Setting `animation: 'none'` inline

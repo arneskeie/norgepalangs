@@ -162,9 +162,10 @@ function Lightbox({ section, index, onClose, onNavigate }) {
               }`}
             >
               <img
-                src={`${base}images/galleri/${section.folder}/${thumb}`}
+                src={`${base}images/galleri-preview/${section.folder}/${thumb}`}
                 alt=""
                 loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </button>
@@ -224,7 +225,7 @@ function GalleriSection({ section, isOpen, onToggle, previews, onOpen }) {
                     className="w-16 h-16 rounded overflow-hidden flex-shrink-0"
                   >
                     <img
-                      src={`${base}images/galleri/${section.folder}/${img}`}
+                      src={`${base}images/galleri-preview/${section.folder}/${img}`}
                       alt=""
                       loading="lazy"
                       decoding="async"
@@ -257,7 +258,7 @@ function GalleriSection({ section, isOpen, onToggle, previews, onOpen }) {
             aria-label={`Åpne bilde ${idx + 1} av ${section.images.length} fra ${section.label}`}
           >
             <img
-              src={`${base}images/galleri/${section.folder}/${img}`}
+              src={`${base}images/galleri-thumb/${section.folder}/${img}`}
               alt=""
               loading="lazy"
               decoding="async"
