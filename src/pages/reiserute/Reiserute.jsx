@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
+import BottomSheet from '../../components/BottomSheet.jsx'
+import SheetContent from '../../components/SheetContent.jsx'
 import { PEOPLE } from '../../data/people.js'
 
 // ─── Text from 01-original-php/Reiserute.php (authoritative) ─────────────────
@@ -141,31 +143,60 @@ function getOppParticipants() {
   return PEOPLE.filter((p) => p.etapper.some((e) => e === 'Oppvarmingstur i Finland'))
 }
 
+function getGalleriId(etappe, isOpp = false) {
+  if (isOpp) return 'oppvarmingstur'
+  const nr = etappe.nr
+  if (nr === '11a' || nr === '11b') return 'etappe11'
+  return `etappe${nr}`
+}
+
+function getReisebrevNr(etappe) {
+  const nr = etappe.nr
+  return typeof nr === 'number' && nr >= 1 && nr <= 6 ? nr : null
+}
+
 // ─── Timeline components ──────────────────────────────────────────────────────
 
-function ParticipantList({ people, base }) {
+function PersonSheetSubtitle({ etapper }) {
+  return (
+    <>
+      {etapper.map((e, i) => (
+        <React.Fragment key={e}>
+          {i > 0 && <br />}
+          <span className="tracking-[0.1em]">{e}</span>
+        </React.Fragment>
+      ))}
+    </>
+  )
+}
+
+function ParticipantList({ people, base, onSelectPerson }) {
   if (!people.length) return null
   return (
-    <div className="flex flex-wrap gap-3 mt-4">
+    <div className="flex flex-wrap gap-3">
       {people.map((p) => (
-        <div key={p.id} className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+        <button
+          key={p.id}
+          onClick={() => onSelectPerson(p)}
+          className="flex items-center gap-2 rounded-full px-3 py-1 -mx-3 -my-1 hover:bg-white/[.06] transition-colors"
+        >
+          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
             <img
               src={`${base}images/profiles/${p.id}.jpg`}
               alt={p.name}
               className="w-full h-full object-cover scale-[1.15]"
             />
           </div>
-          <span className="font-sans text-xs text-slate-500">
-            {p.name.split(' ')[p.name.split(' ').length - 1]}
+          <span className="font-sans text-base text-slate-500">
+            {p.name.split(' ').pop()}
           </span>
-        </div>
+        </button>
       ))}
     </div>
   )
 }
 
-function EtappeContent({ etappe, participants, base, isOpp = false }) {
+function EtappeContent({ etappe, participants, base, onSelectPerson, isOpp = false }) {
   const statParts = []
   if (!isOpp) {
     if (etappe.dager) statParts.push(`${etappe.dager} dager`)
@@ -183,6 +214,9 @@ function EtappeContent({ etappe, participants, base, isOpp = false }) {
       : etappe.nr === '11b' ? 'Etappe 11 del II'
       : `Etappe ${etappe.nr}`)
 
+  const galleriId = getGalleriId(etappe, isOpp)
+  const reisebrevNr = isOpp ? null : getReisebrevNr(etappe)
+
   return (
     <div className="pl-7 pb-10">
       <p className="font-sans font-medium text-xs uppercase tracking-widest text-orange-400 mb-1">
@@ -196,10 +230,28 @@ function EtappeContent({ etappe, participants, base, isOpp = false }) {
           {statParts.join(' · ')}
         </p>
       )}
-      <p className="font-sans text-sm text-slate-400 leading-relaxed text-pretty">
+      <p className="font-sans text-base text-slate-400 leading-relaxed text-pretty">
         {etappe.note}
       </p>
-      <ParticipantList people={participants} base={base} />
+      <div className="flex flex-wrap items-start gap-4 mt-4">
+        <ParticipantList people={participants} base={base} onSelectPerson={onSelectPerson} />
+        <div className="flex flex-col items-end gap-2 ml-auto flex-shrink-0">
+          {reisebrevNr && (
+            <a
+              href={`${base}reisebrev${reisebrevNr}.html`}
+              className="font-sans text-base text-slate-500 hover:text-slate-200 transition-colors"
+            >
+              Les reisebrev →
+            </a>
+          )}
+          <a
+            href={`${base}galleri.html#${galleriId}`}
+            className="font-sans text-base text-slate-500 hover:text-slate-200 transition-colors"
+          >
+            Se bilder →
+          </a>
+        </div>
+      </div>
     </div>
   )
 }
@@ -247,6 +299,7 @@ function SeasonDivider({ label }) {
 
 export default function Reiserute() {
   const base = import.meta.env.BASE_URL
+  const [selectedPerson, setSelectedPerson] = useState(null)
 
   const hostEtapper = ETAPPER.filter((e) => e.sesong === 'høst')
   const varEtapper  = ETAPPER.filter((e) => e.sesong === 'vår')
@@ -295,6 +348,7 @@ export default function Reiserute() {
             etappe={OPPVARMINGSTUR}
             participants={oppParticipants}
             base={base}
+            onSelectPerson={setSelectedPerson}
             isOpp
           />
 
@@ -306,7 +360,7 @@ export default function Reiserute() {
             const participants = getParticipants(e)
             return (
               <React.Fragment key={e.slug + e.nr}>
-                <EtappeContent etappe={e} participants={participants} base={base} />
+                <EtappeContent etappe={e} participants={participants} base={base} onSelectPerson={setSelectedPerson} />
                 <Waypoint name={e.til} />
               </React.Fragment>
             )
@@ -320,7 +374,7 @@ export default function Reiserute() {
             const participants = getParticipants(e)
             return (
               <React.Fragment key={e.slug + e.nr}>
-                <EtappeContent etappe={e} participants={participants} base={base} />
+                <EtappeContent etappe={e} participants={participants} base={base} onSelectPerson={setSelectedPerson} />
                 {e.nr === 15 ? (
                   <Waypoint name="Lindesnes" coords="57°58′N" isEnd />
                 ) : (
@@ -333,6 +387,33 @@ export default function Reiserute() {
 
       </main>
       <SiteFooter />
+
+      <BottomSheet
+        open={selectedPerson !== null}
+        onOpenChange={(open) => { if (!open) setSelectedPerson(null) }}
+        ariaLabel={selectedPerson?.name ?? 'Person'}
+      >
+        {selectedPerson && (
+          <SheetContent
+            layout="profile"
+            image={`${base}images/profiles/${selectedPerson.id}.jpg`}
+            subtitle={<PersonSheetSubtitle etapper={selectedPerson.etapper} />}
+            title={selectedPerson.name}
+            meta={[
+              { label: 'Alder', value: selectedPerson.alder },
+              { label: 'Oppvokst i', value: selectedPerson.oppvokst },
+              { label: 'Studerer', value: selectedPerson.studerer },
+            ]}
+            body={
+              <div className="space-y-4">
+                {selectedPerson.bio.map((para, i) => (
+                  <p key={i} className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty">{para}</p>
+                ))}
+              </div>
+            }
+          />
+        )}
+      </BottomSheet>
     </div>
   )
 }

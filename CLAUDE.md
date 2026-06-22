@@ -750,6 +750,85 @@ change or reorder without verifying against the original source.
 - `loading="lazy"` on all iframes; `allowFullScreen`; `title` set to video title for accessibility
 - No thumbnail overlay or play-button chrome — standard YouTube embed UI
 
+## Galleri page — accordion behavior and heading structure
+
+**Two-tier section headings** (added 2026-06-22):
+- `eyebrow` (`.eyebrow` class, orange-400 uppercase): section label, e.g. "Etappe 1" or "Oppvarmingstur"
+- `card-title` below it: the route, e.g. "Nordkapp – Skaidi" — sourced from `galleri.js` `route` field
+  (all 16 sections now have a `route` field; values match ETAPPER `fra – til` in Reiserute.jsx exactly)
+- Photo count + ↑/↓ toggle indicator in `text-xs text-slate-600` below
+
+**Accordion behavior** (added 2026-06-22):
+- All sections collapsed by default (empty Set state)
+- **Multiple sections open simultaneously** — better for gallery browsing (no forced single-open)
+- Toggle: clicking the heading button (entire heading area — eyebrow + card-title + count)
+- Hash-based auto-expand: if `window.location.hash` matches a section `id` on page load, that
+  section opens and scrolls into view (100ms delay allows React to render before scroll).
+  Hash IDs: `oppvarmingstur`, `etappe1`–`etappe15`. Used by "Se bilder →" links on Reiserute.
+  Section DOM: `<section id={section.id}>` (Galleri `id` field matches hash target directly).
+
+**Preview thumbnails** (collapsed state):
+- 3 random images per section, selected from `section.images` on mount via `useMemo` (stable).
+- Clicking a preview thumb opens the lightbox directly for that image (real index looked up via
+  `section.images.indexOf(img)`). Does NOT toggle the accordion.
+- Preview grid fades to `opacity-0 h-0 overflow-hidden` when section opens (300ms).
+- `tabIndex={-1}` applied to preview buttons when section is open (accessibility).
+
+**Full grid fade-in** (expanded state):
+- Full grid mounts when `isOpen` becomes true.
+- `showFull` state: set to `true` via 16ms `setTimeout` after mount → allows React to render
+  the grid at `opacity-0` before the transition fires, producing a visible fade-in.
+- Grid uses `transition-opacity duration-300`.
+
+## Reiserute — participant interaction and links
+
+**Clickable participants → BottomSheet** (added 2026-06-22):
+- Each participant chip is now a `<button>` with hover pill background (`hover:bg-white/[.06]`).
+- Clicking opens a `BottomSheet` with `SheetContent layout="profile"` — same data and layout
+  as the Om Oss page. `selectedPerson` state in `Reiserute` default export.
+- Person data: `ParticipantList` receives the PEOPLE array entries directly from `getParticipants()`,
+  which already returns full person objects. Passed via `onSelectPerson` prop → `setSelectedPerson`.
+- Sheet subtitle: `<PersonSheetSubtitle etapper={p.etapper} />` ReactNode — same tracking-[0.1em]
+  override pattern as OmOss (scoped, does not affect `.eyebrow` globally).
+- Sheet body: `<div class="space-y-4">` with one `<p>` per bio paragraph (matching OmOss treatment).
+- Profile images: `${base}images/profiles/${p.id}.jpg` (same path as OmOss).
+- Name mismatch check: all 10 PEOPLE entries with etapper strings match the cross-reference logic
+  in `getParticipants` — no mismatches that break the lookup.
+
+**Participant sizing** (updated 2026-06-22):
+- Thumbnail: `w-6 h-6` (24px) → `w-8 h-8` (32px). On the 4/8pt grid. Proportional to name size increase.
+- Name (last name only): `text-xs` (12px) → `text-base` (16px).
+- `mt-4` moved from `ParticipantList` outer div to the wrapper in `EtappeContent`.
+
+**Etappe note text** (updated 2026-06-22):
+- `font-sans text-sm text-slate-400 leading-relaxed text-pretty` → `text-sm` changed to `text-base` (1rem).
+
+**"Les reisebrev →" and "Se bilder →" links** (added 2026-06-22):
+- Positioned to the right of the participants block via `ml-auto flex-shrink-0` on a `flex-col` div,
+  inside a `flex flex-wrap items-start gap-4` wrapper alongside `ParticipantList`.
+- "Les reisebrev →": shown only for etapper 1–6 (numeric nr 1–6). `href={${base}reisebrev${nr}.html}`.
+- "Se bilder →": shown for all etapper including Oppvarmingstur. `href={${base}galleri.html#${galleriId}}`.
+  `galleriId`: etappe1–etappe15 (numeric nr), etappe11 for both 11a and 11b, oppvarmingstur for isOpp.
+- Styling: `font-sans text-base text-slate-500 hover:text-slate-200 transition-colors` — subtle text links,
+  no pill/button styling (low visual weight; secondary CTAs alongside the primary participant profiles).
+
+## Lightbox — etappe context and thumbnail strip
+
+**Etappe context bar** (top of lightbox, added 2026-06-22):
+- Section label (e.g. "Etappe 1") in `.eyebrow` style (orange-400, uppercase, tracking-[0.2em], text-xs).
+- Route (e.g. "Nordkapp – Skaidi") from `section.route` in `text-xs text-slate-500`, truncated.
+- Counter (e.g. "5 / 38") and close button in the same top bar, right-aligned.
+
+**Scrollable thumbnail strip** (bottom of lightbox, added 2026-06-22):
+- All images in the current section rendered as 48px square thumbnails.
+- Active thumbnail: `ring-2 ring-orange-400 opacity-100`. Others: `opacity-40 hover:opacity-70`.
+- Clicking a thumbnail navigates directly to that image via `onNavigate(i)` (replaces prev/next callbacks).
+- Auto-scroll: `useEffect` watches `index`; queries `[data-active="true"]` and calls
+  `scrollIntoView({ inline: 'center', behavior: 'smooth' })`. Handles sections with 60+ photos.
+- Scrollbar hidden: `.scrollbar-hide` class added to main.css (scrollbar-width: none + webkit display: none).
+- Strip background: `bg-black/50` (semi-transparent). Height: ~72px (48px thumb + 12px top/bottom py-3).
+- `onNavigate(index)` callback replaces separate `onPrev`/`onNext` props — cleaner for arbitrary jumps.
+
 ## SEO metadata
 
 All 11 HTML entry points have been updated with the same tag set:
@@ -846,7 +925,7 @@ All items below are **NOT YET STARTED** unless explicitly marked otherwise.
 A future session (or fresh instance with no chat history) should treat everything
 here as outstanding work, not shipped features.
 
-- [ ] **Reiserute & Galleri rebuild** — **Batch 1 DONE 2026-06-21.** Batches 2–5 in progress. Full architecture plan below.
+- [x] **Reiserute & Galleri rebuild** — **ALL BATCHES DONE 2026-06-22.** Full architecture plan below.
 
 ### Reiserute & Galleri rebuild — architecture plan (2026-06-21, finalized)
 
@@ -945,6 +1024,8 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
    Galleri · Utstyr · Sponsorer (5 items). Desktop nav gap reduced 3rem → 2rem (was increased
    when nav had 4 items). Sponsorer.jsx: added currentPage="sponsorer.html" (was missing).
    MobileNav automatically reflects the new NAV_LINKS (shared export). Build clean.
+6. ✅ **Reiserute interaction + Galleri accordion + lightbox improvements** — DONE 2026-06-22.
+   See Decision changelog 2026-06-22 (Batch 6) for full details.
 
 - [x] **Video gallery section** — DONE 2026-06-21. Added at the bottom of
   Reiserute.jsx, after the Vår-etapper accordion section. See "Video gallery"
@@ -1928,4 +2009,39 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      text appended to Etappe 5's note. Now renders as plain prose matching other etappe notes
      (no italic, no border). The `isLastBeforePause` conditional logic also removed (dead code —
      both branches rendered `<Waypoint name={e.til} />` anyway).
+- 2026-06-22 Batch 6: Reiserute interaction + Galleri accordion/lightbox improvements.
+  1. Saltfjellet callout confirmed gone (no regression — already removed in previous batch).
+     Etappe 5 note already contains the merged text; callout block and `isLastBeforePause`
+     conditional already deleted. No code change needed.
+  2. **galleri.js**: `route` field added to all 16 sections. Values match ETAPPER `fra – til`
+     in Reiserute.jsx exactly. Etappe 11 (combined 11a+11b folder) → "Elgå – Fagernes".
+  3. **Galleri heading structure**: Each section now shows a two-tier heading — `eyebrow`
+     (section label, e.g. "Etappe 1") + `card-title` (route, e.g. "Nordkapp – Skaidi").
+     Previously only `card-title` with the label. Photo count + ↑/↓ indicator below.
+  4. **Galleri accordion**: All sections collapsed by default. Toggle via heading button.
+     Multiple sections open simultaneously (better for browsing). Collapsed state shows 3
+     random preview thumbnails (picked from `section.images` on mount via `useMemo`).
+     Full grid fades in (16ms delay + `transition-opacity duration-300`) when expanded.
+     Preview thumbs click to open the lightbox directly (not to expand the accordion).
+  5. **Galleri hash-based auto-expand**: Page load with URL hash matching a section id
+     (e.g. `#etappe1`, `#oppvarmingstur`) opens that section and scrolls to it (100ms delay).
+     Used by "Se bilder →" links on Reiserute. Section `id` attributes match hash targets.
+  6. **Reiserute note text**: `text-sm` → `text-base` (1rem) on all etappe note paragraphs.
+  7. **Reiserute participants**: Thumbnail `w-6 h-6` → `w-8 h-8` (32px); name `text-xs` →
+     `text-base` (16px). Both changes proportional / on the 4/8pt grid.
+  8. **Reiserute clickable participants**: Each participant chip is now a `<button>`. Clicking
+     opens a `BottomSheet` with `SheetContent layout="profile"` (same Om Oss design). State:
+     `selectedPerson` in `Reiserute`. Sheet image, subtitle, meta, bio all from PEOPLE data.
+     New `PersonSheetSubtitle` helper handles etappe list with tracking-[0.1em] override.
+  9. **Reiserute "Les reisebrev →" / "Se bilder →" links**: Inline text links added to each
+     etappe. "Les reisebrev →": etapper 1–6 only. "Se bilder →": all etapper (incl. Oppvarmingstur).
+     Links hash-target the correct Galleri section. Positioned right of participants via `ml-auto`.
+  10. **Lightbox context bar**: Etappe label (orange-400 eyebrow) + route (slate-500) + counter
+      + close button in a single top bar. Replaces floating counter + floating close button.
+  11. **Lightbox thumbnail strip**: Scrollable horizontal strip at bottom showing all section
+      images as 48px thumbs. Active thumb highlighted with `ring-2 ring-orange-400`. Clicking
+      any thumb jumps to that image. Auto-scrolls to keep active thumb visible (`scrollIntoView`).
+      `onNavigate(index)` replaces separate `onPrev`/`onNext` callbacks throughout.
+  12. **main.css**: `.scrollbar-hide` utility class added (scrollbar-width: none + webkit display: none)
+      for the lightbox thumbnail strip.
 
