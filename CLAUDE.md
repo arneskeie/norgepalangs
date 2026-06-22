@@ -198,10 +198,11 @@ current session.
   applied as inline `style={{ width, height }}` on each `<img>`. Two sets exist:
   - **`SIZE_BUCKETS`** (default): min h=48, max h=102. Used by the hero strip (all viewports)
     and by inner-page strips on desktop (≥ 640px).
-  - **`SMALL_SIZE_BUCKETS`** (compact mode): min h=22, max h=46. Scale factor 46/102 ≈ 0.451
-    applied to both w and h, preserving the ~4:3 aspect ratio and variety ratio (46/22 ≈ 2.09
-    vs 102/48 ≈ 2.13). Used only by inner-page strips on mobile (< 640px). Max h=46 → track
-    height 62px < 64px wrapper (2px safety margin, no clipping).
+  - **`SMALL_SIZE_BUCKETS`** (compact mode): 6 buckets evenly distributed h=36→46 (step 2px),
+    aspect ratio ~1.32 (~4:3). Values: `{w:48,h:36}` `{w:50,h:38}` `{w:53,h:40}` `{w:55,h:42}`
+    `{w:58,h:44}` `{w:61,h:46}`. Max h=46 → track height 62px < 64px wrapper (no clipping).
+    Used only by inner-page strips on mobile (< 640px). Variety ratio 46/36 ≈ 1.28 (tighter than
+    SIZE_BUCKETS' 2.13 — constrained by the 64px strip leaving only a 10px h range).
   - **`compact` prop on `PhotoStrip`:** Passed as `compact={true}` from `InnerHeader`. The
     `useMemo` checks `compact && window.matchMedia('(max-width: 639px)').matches` at mount and
     picks the appropriate bucket set. The hero (`HeroHeader`) never passes `compact` — always
@@ -2389,6 +2390,14 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 21: Mobile inner-page photo strip — raise min photo height, reduce border and gap.
+  **SMALL_SIZE_BUCKETS:** min raised from h=22 to h=36. 6 buckets evenly distributed h=36→46 (step 2px),
+  aspect ratio ~1.32: `{48,36}` `{50,38}` `{53,40}` `{55,42}` `{58,44}` `{61,46}`.
+  **Border:** `.strip-img { border: 4px solid #ffffff }` (global). Mobile inner-page override:
+  `header.inner-header .strip-img { border-width: 2px }` in `@media (max-width:639px)` — inherits
+  color/style from the base rule, only narrows the width. Desktop and hero strip unchanged (4px).
+  **Gap:** `.strip-track { gap: 16px }` (global). Mobile inner-page override:
+  `header.inner-header .strip-track { gap: 8px }` in the same media query. Desktop unchanged (16px).
 - 2026-06-22 Batch 20: Mobile inner-page photo strip — SMALL_SIZE_BUCKETS for compact strip.
   **Problem:** Strip height reduced to 64px (Batch 19) but photos still used SIZE_BUCKETS (max h=102),
   causing clipping inside the 64px wrapper. CSS max-height override was rejected because it would

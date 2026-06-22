@@ -332,6 +332,12 @@
     top: 61px;
     height: 64px;
   }
+  header.inner-header .strip-track {
+    gap: 8px;
+  }
+  header.inner-header .strip-img {
+    border-width: 2px;
+  }
 
   /* Hero text block: stays in flex flow on mobile (position:relative, not absolute)
      to avoid overlap with any in-flow content. margin-top:auto pushes it to the

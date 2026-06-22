@@ -33,16 +33,15 @@ const SIZE_BUCKETS = [
   { w: 136, h: 102 },
 ]
 
-// Compact buckets for mobile inner-page strip (64px tall, track padding 8px×2 = 48px inner).
-// Scale factor 46/102 ≈ 0.451 applied to w and h — preserves ~4:3 aspect ratio and
-// the same max/min variety ratio as SIZE_BUCKETS (46/22 ≈ 2.09 vs 102/48 ≈ 2.13).
-// Max h 46px → track height 62px < 64px wrapper (2px safety margin).
+// Compact buckets for mobile inner-page strip (64px tall, 8px gap, 2px border).
+// 6 buckets evenly distributed h=36→46 (step 2px), aspect ratio ~1.32 (~4:3).
+// Max h 46px → track height 62px < 64px wrapper (2px safety margin, no clipping).
 const SMALL_SIZE_BUCKETS = [
-  { w: 29, h: 22 },
-  { w: 34, h: 26 },
-  { w: 41, h: 31 },
   { w: 48, h: 36 },
-  { w: 54, h: 41 },
+  { w: 50, h: 38 },
+  { w: 53, h: 40 },
+  { w: 55, h: 42 },
+  { w: 58, h: 44 },
   { w: 61, h: 46 },
 ]
 
