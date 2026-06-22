@@ -850,12 +850,13 @@ Styled: `stroke="#fb923c"`, `strokeWidth="1.5"`, `strokeLinecap="round"`,
 **Route line styling:** `strokeOpacity={0.8}` (80% opacity — slightly muted).
 
 **Animation — route draw:** `pathLength="1"`, CSS class `norway-map-route`,
-keyframe `norway-draw-route`, **5s duration**, 0.3s initial delay, **`linear` easing**.
+keyframe `norway-draw-route`, **2.5s duration**, 0.15s initial delay, **`linear` easing**.
 `linear` is required for correct dot sync: our delay formula assumes fraction-drawn =
 elapsed/duration, which is only true with linear easing. ease-in-out caused early dots
 to appear before the line (line slow-starts → less drawn than expected) and late dots
 to appear after the line passed (line accelerated past the midpoint → more drawn than
 expected). See Batch 10g changelog for root-cause detail.
+(Duration halved from 5s→2.5s in Batch 15; all dot delays scaled ×0.5 proportionally.)
 
 **Animation — waypoint dots and labels:**
 - **17 waypoints**. Each `<g>` contains a `<circle className="norway-map-circle">` and
@@ -866,7 +867,7 @@ expected). See Batch 10g changelog for root-cause detail.
   - `norway-dot-label-appear` (0.6s): same pattern, final fill #94a3b8
   - The 20% "white phase" = 0.12s (pop to full-white), 80% = 0.48s color settle to final colors.
   - CSS `fill` in keyframes overrides SVG presentation `fill` attribute (higher cascade priority).
-- **Delay formula (y-coordinate timing):** `delay = 0.3 + (cum_len_at_y_crossing / 194.9) × 5.0`
+- **Delay formula (y-coordinate timing):** `delay = 0.15 + (cum_len_at_y_crossing / 194.9) × 2.5`
   - For each waypoint, find cumulative path length along the route where the stroke tip
     first reaches that waypoint's y-coordinate (moving southward). Since all route segments
     go southward in the rotated coordinate system, this equals the cumulative length at
@@ -896,11 +897,11 @@ Gressli cx=42.7 cy=105.8 · Elgå cx=43.7 cy=114.4 · Ringebu cx=36.4 cy=118.7 �
 Fagernes cx=28.1 cy=124.0 · Geilo cx=21.5 cy=129.4 · Haukeliseter cx=15.9 cy=139.4 ·
 Ljosland cx=13.0 cy=150.0 · Lindesnes cx=11.5 cy=159.9 (viewBox 0 0 129.6 163.4)
 
-**Delay table (y-coordinate timing, 5s route duration, 0.3s initial delay):**
-Nordkapp 0.3s · Skaidi 0.533s · Kautokeino 0.96s · Abisko 1.524s · Fauske 2.023s ·
-Lønsdal 2.195s · Umbukta 2.362s · Nordli 2.934s · Hegra 3.356s · Gressli 3.553s ·
-Elgå 3.776s · Ringebu 3.994s · Fagernes 4.247s · Geilo 4.466s · Haukeliseter 4.759s ·
-Ljosland 5.041s · Lindesnes 5.298s
+**Delay table (y-coordinate timing, 2.5s route duration, 0.15s initial delay):**
+Nordkapp 0.15s · Skaidi 0.267s · Kautokeino 0.48s · Abisko 0.762s · Fauske 1.012s ·
+Lønsdal 1.097s · Umbukta 1.181s · Nordli 1.467s · Hegra 1.678s · Gressli 1.776s ·
+Elgå 1.888s · Ringebu 1.997s · Fagernes 2.123s · Geilo 2.233s · Haukeliseter 2.38s ·
+Ljosland 2.521s · Lindesnes 2.649s
 
 **Labels implementation:**
 - Font-size: `4` SVG units, `fontWeight={700}`, `letterSpacing="0.1em"`, `textTransform="uppercase"`.
@@ -2259,6 +2260,11 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 15: NorwayMap — halve route animation duration.
+  Route draw: 5s → 2.5s; CSS initial delay: 0.3s → 0.15s (`norway-draw-route 2.5s linear 0.15s`).
+  All 17 waypoint dot/label `animationDelay` values multiplied ×0.5 so dots remain in sync with
+  the stroke tip as it passes each waypoint. Delay formula updated: `0.15 + (frac × 2.5)`.
+  No other changes — easing, keyframes, opacity, component structure all unchanged.
 - 2026-06-22 Batch 14: Reiserute map — max-width cap and label style simplification.
   **Max-width:** Added `max-width: 22rem` (352px) to `.reiserute-map-sticky` in main.css.
   The right column uses `justify-content: center`, so the map stays centered as it scales

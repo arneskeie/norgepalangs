@@ -571,7 +571,7 @@
 }
 
 .norway-map-started .norway-map-route {
-  animation: norway-draw-route 5s linear 0.3s forwards;
+  animation: norway-draw-route 2.5s linear 0.15s forwards;
 }
 
 /* Dots flash white, then settle to orange-400. Labels flash white, then settle to slate-400. */
