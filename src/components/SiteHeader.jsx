@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import SiteNav from './SiteNav.jsx'
 import MobileNav from './MobileNav.jsx'
 
@@ -66,9 +66,23 @@ function randomFrom(arr) {
 }
 
 function PhotoStrip({ base, count = 18, compact = false }) {
+  // Reactive breakpoint state — updates whenever the viewport crosses 640px.
+  // useMemo with [] would bake in the matchMedia result at mount and never
+  // re-evaluate on resize, leaving inner-page strips in the wrong bucket set.
+  const [isCompactMobile, setIsCompactMobile] = useState(
+    () => compact && window.matchMedia('(max-width: 639px)').matches
+  )
+
+  useEffect(() => {
+    if (!compact) return
+    const mql = window.matchMedia('(max-width: 639px)')
+    const handler = (e) => setIsCompactMobile(e.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [compact])
+
   const items = useMemo(() => {
-    const isMobileCompact = compact && window.matchMedia('(max-width: 639px)').matches
-    const buckets = isMobileCompact ? SMALL_SIZE_BUCKETS : SIZE_BUCKETS
+    const buckets = isCompactMobile ? SMALL_SIZE_BUCKETS : SIZE_BUCKETS
     const picked = pickRandom(PHOTO_POOL, Math.min(count, PHOTO_POOL.length))
     return picked.map((slug) => ({
       src: `${base}strip-thumbs/${slug}.jpg`,
@@ -76,7 +90,7 @@ function PhotoStrip({ base, count = 18, compact = false }) {
       rotate: randomFrom(ROTATIONS),
     }))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [isCompactMobile])
 
   const doubled = [...items, ...items]
 

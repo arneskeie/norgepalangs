@@ -203,11 +203,16 @@ current session.
     `{w:58,h:44}` `{w:61,h:46}`. Max h=46 → track height 62px < 64px wrapper (no clipping).
     Used only by inner-page strips on mobile (< 640px). Variety ratio 46/36 ≈ 1.28 (tighter than
     SIZE_BUCKETS' 2.13 — constrained by the 64px strip leaving only a 10px h range).
-  - **`compact` prop on `PhotoStrip`:** Passed as `compact={true}` from `InnerHeader`. The
-    `useMemo` checks `compact && window.matchMedia('(max-width: 639px)').matches` at mount and
-    picks the appropriate bucket set. The hero (`HeroHeader`) never passes `compact` — always
-    uses `SIZE_BUCKETS`. Desktop inner pages (`compact=true` but media query false) also use
-    `SIZE_BUCKETS`. Only mobile inner pages use `SMALL_SIZE_BUCKETS`.
+  - **`compact` prop on `PhotoStrip`:** Passed as `compact={true}` from `InnerHeader`. The hero
+    (`HeroHeader`) never passes `compact` — always uses `SIZE_BUCKETS`.
+  - **Reactive breakpoint tracking (Batch 22):** `PhotoStrip` uses `useState` + `useEffect` with
+    `matchMedia.addEventListener('change', ...)` on `(max-width:639px)` to keep `isCompactMobile`
+    in sync with the actual viewport. `useMemo` has `[isCompactMobile]` as its dep — re-runs
+    (re-picking sizes and photos) only when the breakpoint is crossed, not on every render.
+    **Do NOT revert to `useMemo([])` with a one-time `matchMedia` check** — that bakes the
+    breakpoint result at mount and never updates on resize, leaving the strip in the wrong bucket
+    set if the window crosses 640px after mount. The `useEffect` returns early when `compact` is
+    false (hero strip), so the listener is never added there.
   - **Do NOT re-audit `SIZE_BUCKETS` widths/heights against the 4/8pt grid** — confirmed
     exception (aesthetic scrapbook variety; not spacing values).
 - **Nav two-layer structure (desktop):** `.nav-inner` is an invisible layout wrapper
@@ -2390,6 +2395,13 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 22: Fix responsive regression — reactive matchMedia for inner-page compact strip.
+  **Bug:** `useMemo([])` ran once at mount, baking in the matchMedia result. Resize desktop→mobile→desktop
+  left the strip stuck in SMALL_SIZE_BUCKETS after crossing back above 640px.
+  **Fix:** `useState(() => compact && matchMedia('(max-width:639px)').matches)` for correct initial value.
+  `useEffect` with `mql.addEventListener('change', handler)` updates state whenever the breakpoint is
+  crossed. `useMemo([isCompactMobile])` re-runs (re-picks sizes and photos) only on breakpoint transitions.
+  Hero strip (`compact` false): `useEffect` returns early, listener never attached.
 - 2026-06-22 Batch 21: Mobile inner-page photo strip — raise min photo height, reduce border and gap.
   **SMALL_SIZE_BUCKETS:** min raised from h=22 to h=36. 6 buckets evenly distributed h=36→46 (step 2px),
   aspect ratio ~1.32: `{48,36}` `{50,38}` `{53,40}` `{55,42}` `{58,44}` `{61,46}`.
