@@ -101,61 +101,199 @@ const SILHOUETTE = `<path fill="#475569" d="M45.021,48.992 L45.396,48.856 C45.39
       <path fill="#475569" d="M51.945,34.979 L52.133,34.911 C52.133,34.911,52.065,34.723,52.347,34.620 L52.910,34.415 L52.791,34.671 L52.962,35.141 L53.432,34.970 C53.432,34.970,53.620,34.902,53.551,34.714 S53.295,34.594,53.167,34.534 L53.030,34.158 L53.030,34.158 C53.030,34.158,53.150,33.902,53.209,33.774 C53.209,33.774,53.329,33.518,53.295,33.424 L53.295,33.424 L53.226,33.236 C53.226,33.236,53.158,33.048,53.312,32.885 L53.687,32.749 L53.756,32.937 L53.756,32.937 C53.756,32.937,53.824,33.124,53.944,32.868 C53.944,32.868,54.132,32.800,54.226,32.766 L55.071,32.458 C55.071,32.458,54.815,32.338,54.687,32.278 C54.687,32.278,54.405,32.381,54.431,32.159 C54.431,32.159,54.619,32.090,54.644,31.868 L54.541,31.586 L54.541,31.586 L54.473,31.398 L54.473,31.398 L54.268,30.835 C54.268,30.835,54.456,30.766,54.456,30.766 C54.456,30.766,54.387,30.578,54.575,30.510 L54.763,30.441 L54.695,30.254 L54.695,30.254 L54.455,29.596 L54.455,29.596 L54.524,29.784 L54.524,29.784 Q54.524,29.784,54.524,29.784 C54.524,29.784,54.336,29.852,54.242,29.886 L54.242,29.886 L54.105,29.510 L54.575,29.339 L54.507,29.151 C54.507,29.151,54.438,28.964,54.404,28.870 L54.336,28.682 C54.336,28.682,54.148,28.750,54.079,28.562 L54.079,28.562 L54.148,28.750 L54.148,28.750 C54.216,28.938,54.250,29.032,54.097,29.194 Q54.097,29.194,54.028,29.006 L53.891,28.631 S53.823,28.443,53.977,28.280 L53.840,27.904 S53.737,27.622,53.583,27.785 L53.583,27.785 C53.583,27.785,53.583,27.785,53.464,28.041 L53.464,28.041 L53.396,27.853 S53.139,27.734,53.114,27.956 L53.114,27.956 L53.285,28.426 C53.285,28.426,53.421,28.802,53.421,28.802 S53.165,28.682,53.131,28.588 L52.994,28.212 L52.994,28.212 Q52.994,28.212,52.994,28.212 L52.994,28.212 S52.994,28.212,52.806,28.281 L52.875,28.468 L52.875,28.468 C52.875,28.468,52.943,28.656,52.977,28.750 C52.977,28.750,52.977,28.750,53.046,28.938 C53.046,28.938,53.046,28.938,53.302,29.058 L53.302,29.058 L53.370,29.246 L53.370,29.246 C53.370,29.246,53.182,29.314,53.182,29.314 C53.182,29.314,52.994,29.383,52.994,29.383 L52.926,29.195 L52.926,29.195 S52.738,29.263,52.670,29.075 S52.379,28.862,52.251,28.802 L52.063,28.870 L52.166,29.152 S52.234,29.340,52.234,29.340 L52.439,29.904 L53.003,29.699 L53.071,29.887 S53.071,29.887,53.140,30.075 L53.328,30.006 L53.396,30.194 Q53.396,30.194,53.208,30.263 L53.020,30.331 S52.764,30.211,52.730,30.117 L52.542,30.186 C52.542,30.186,52.354,30.254,52.260,30.288 L51.696,30.494 S51.508,30.562,51.577,30.750 L51.645,30.938 L51.645,30.938 C51.645,30.938,51.645,30.938,51.457,31.006 L51.175,31.109 S51.175,31.109,51.244,31.297 L51.380,31.673 C51.380,31.673,51.380,31.673,51.380,31.673 L52.038,31.433 L52.107,31.621 L52.295,31.553 S52.482,31.484,52.551,31.672 L51.611,32.014 C51.611,32.014,51.423,32.083,51.526,32.365 S51.782,32.484,51.876,32.450 S51.876,32.450,51.876,32.450 L51.876,32.450 C51.876,32.450,51.876,32.450,52.064,32.382 C52.064,32.382,52.252,32.313,52.346,32.279 C52.346,32.279,52.628,32.176,52.628,32.176 L52.628,32.176 L52.765,32.552 S52.765,32.552,52.765,32.552 L52.201,32.758 C52.201,32.758,52.013,32.826,51.987,33.048 L52.056,33.236 L52.056,33.236 C52.056,33.236,52.244,33.168,52.432,33.099 L53.089,32.860 C53.089,32.860,53.158,33.048,53.192,33.142 L53.192,33.142 C53.192,33.142,53.004,33.210,53.004,33.210 L52.816,33.279 L52.919,33.560 L52.637,33.663 C52.637,33.663,52.705,33.851,52.739,33.945 L52.910,34.415 L53.192,34.312 L52.509,34.774 Z"/>
       <path fill="#475569" d="M54.455,27.255 S54.455,27.255,54.711,27.374 C54.711,27.374,54.711,27.374,54.711,27.374 L55.557,27.067 C55.557,27.067,55.839,26.964,55.933,26.930 L56.121,26.861 S56.121,26.861,56.240,26.605 C56.240,26.605,56.240,26.605,56.428,26.537 L56.898,26.366 S56.830,26.178,57.017,26.109 L56.915,25.827 L56.915,25.827 C56.915,25.827,56.727,25.896,56.659,25.708 L56.556,25.426 C56.488,25.238,56.641,25.076,56.735,25.041 L56.735,25.041 C56.701,24.947,56.855,24.785,56.915,24.657 L56.915,24.657 L56.846,24.469 L56.846,24.469 C56.812,24.375,56.812,24.375,56.931,24.119 L56.931,24.119 L56.863,23.931 L56.863,23.931 L56.726,23.555 L56.726,23.555 C56.692,23.461,56.658,23.367,56.624,23.273 C56.624,23.273,56.402,23.247,56.308,23.282 L56.026,23.384 S55.803,23.359,55.769,23.265 C55.769,23.265,55.479,23.051,55.513,23.145 C55.513,23.145,55.581,23.333,55.581,23.333 L55.393,23.401 L55.496,23.683 L55.496,23.683 L55.564,23.871 S55.821,23.991,55.855,24.085 L55.855,24.085 L56.094,24.743 L56.094,24.743 L56.163,24.930 L56.163,24.930 L56.231,25.118 L56.231,25.118 S56.197,25.024,56.009,25.093 L54.600,25.606 L54.736,25.982 S54.805,26.170,54.839,26.264 C54.839,26.264,54.839,26.264,55.027,26.195 L55.215,26.127 C55.215,26.127,55.317,26.409,55.164,26.571 L55.164,26.571 Q55.164,26.571,54.907,26.452 C54.907,26.452,54.651,26.332,54.625,26.554 C54.625,26.554,54.625,26.554,54.437,26.623 L54.437,26.623 L54.540,26.905 L54.540,26.905 C54.608,27.092,54.540,26.905,54.540,26.905 L54.916,26.768 L54.634,26.870 Z"/>`
 
-const ROUTE = 'M74.984,-5.225 L74.124,3.591 L77.700,19.446 L63.642,35.957 L55.360,53.116 L55.575,59.682 L54.834,65.964 L56.233,87.679 L49.078,102.155 L52.088,109.078 L55.969,116.626 L50.545,122.910 L44.559,130.536 L40.204,137.686 L38.396,148.811 L39.296,159.493 L41.272,169.066'
 
-const WAYPOINTS = [
-  { name: "Nordkapp", cx: 74.984, cy: -5.225, r: 3.5, isEnd: true, delay: '0.15s' },
-  { name: "Skaidi", cx: 74.124, cy: 3.591, r: 2.5, isEnd: false, delay: '0.267s' },
-  { name: "Kautokeino", cx: 77.7, cy: 19.446, r: 2.5, isEnd: false, delay: '0.48s' },
-  { name: "Abisko", cx: 63.642, cy: 35.957, r: 2.5, isEnd: false, delay: '0.762s' },
-  { name: "Fauske", cx: 55.36, cy: 53.116, r: 2.5, isEnd: false, delay: '1.012s' },
-  { name: "L\u00f8nsdal", cx: 55.669, cy: 59.648, r: 2.5, isEnd: false, delay: '1.097s' },
-  { name: "Umbukta", cx: 54.928, cy: 65.931, r: 2.5, isEnd: false, delay: '1.181s' },
-  { name: "Nordli", cx: 56.327, cy: 87.645, r: 2.5, isEnd: false, delay: '1.467s' },
-  { name: "Hegra", cx: 49.266, cy: 102.087, r: 2.5, isEnd: false, delay: '1.678s' },
-  { name: "Gressli", cx: 52.275, cy: 109.011, r: 2.5, isEnd: false, delay: '1.776s' },
-  { name: "Elg\u00e5", cx: 56.157, cy: 116.560, r: 2.5, isEnd: false, delay: '1.888s' },
-  { name: "Ringebu", cx: 50.767, cy: 122.935, r: 2.5, isEnd: false, delay: '1.997s' },
-  { name: "Fagernes", cx: 44.781, cy: 130.561, r: 2.5, isEnd: false, delay: '2.123s' },
-  { name: "Geilo", cx: 40.426, cy: 137.712, r: 2.5, isEnd: false, delay: '2.233s' },
-  { name: "Haukeliseter", cx: 38.584, cy: 148.744, r: 2.5, isEnd: false, delay: '2.38s' },
-  { name: "Ljosland", cx: 39.484, cy: 159.427, r: 2.5, isEnd: false, delay: '2.521s' },
-  { name: "Lindesnes", cx: 41.46, cy: 169.000, r: 3.5, isEnd: true, delay: '2.649s' },
+// Route points — identical to WAYPOINTS xy but derived from the rotated route path.
+// Slight per-point discrepancy from WAYPOINTS.cy is intentional (different compression origin).
+const ROUTE_POINTS = [
+  [74.984,  -5.225],  // Nordkapp
+  [74.124,   3.591],  // Skaidi
+  [77.700,  19.446],  // Kautokeino
+  [63.642,  35.957],  // Abisko
+  [55.360,  53.116],  // Fauske
+  [55.575,  59.682],  // Lønsdal
+  [54.834,  65.964],  // Umbukta
+  [56.233,  87.679],  // Nordli
+  [49.078, 102.155],  // Hegra
+  [52.088, 109.078],  // Gressli
+  [55.969, 116.626],  // Elgå
+  [50.545, 122.910],  // Ringebu
+  [44.559, 130.536],  // Fagernes
+  [40.204, 137.686],  // Geilo
+  [38.396, 148.811],  // Haukeliseter
+  [39.296, 159.493],  // Ljosland
+  [41.272, 169.066],  // Lindesnes
 ]
 
-// viewBox: 9.784 -17.297 103.026 202.210
-// Font-size 4 SVG units, weight 700, letter-spacing 0.1em, uppercase.
-// Gap 6 SVG units ≈ 1 CSS rem. Dots with cx > 60% of viewBox width get label LEFT.
-const LABEL_GAP = 6
-const FONT_SIZE = 4
-const LABEL_WEIGHT = 700
-const VB_RIGHT_THRESH = 9.784 + 103.026 * 0.6
+// Full polyline for the intro draw animation
+const ROUTE = ROUTE_POINTS.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(' ')
 
-export default function NorwayMap() {
-  // On desktop (≥960px) animation starts immediately.
-  // On mobile, IntersectionObserver starts it when the map top reaches viewport center.
+// 16 individual segment paths for interactive per-segment highlighting
+const SEGMENT_PATHS = ROUTE_POINTS.slice(0, -1).map((p, i) => {
+  const q = ROUTE_POINTS[i + 1]
+  return `M${p[0]},${p[1]} L${q[0]},${q[1]}`
+})
+
+// Segment → etappe mapping (geographic correspondence).
+// Bands 6-9 are reordered: the map goes Lønsdal→Umbukta→Nordli→Hegra→Gressli,
+// but the autumn detour (E6) walked Hegra→Gressli, so band 9 maps to etappeId '6'.
+const SEGMENTS = [
+  { etappeId: '1'   },  // 0  Nordkapp → Skaidi
+  { etappeId: '2'   },  // 1  Skaidi → Kautokeino
+  { etappeId: '3'   },  // 2  Kautokeino → Abisko
+  { etappeId: '4'   },  // 3  Abisko → Fauske
+  { etappeId: '5'   },  // 4  Fauske → Lønsdal
+  { etappeId: '7'   },  // 5  Lønsdal → Umbukta  (spring E7)
+  { etappeId: '8'   },  // 6  Umbukta → Nordli    (spring E8)
+  { etappeId: '9'   },  // 7  Nordli → Hegra      (spring E9)
+  { etappeId: '6'   },  // 8  Hegra → Gressli     (autumn detour E6)
+  { etappeId: '10'  },  // 9  Gressli → Elgå
+  { etappeId: '11a' },  // 10 Elgå → Ringebu
+  { etappeId: '11b' },  // 11 Ringebu → Fagernes
+  { etappeId: '12'  },  // 12 Fagernes → Geilo
+  { etappeId: '13'  },  // 13 Geilo → Haukeliseter
+  { etappeId: '14'  },  // 14 Haukeliseter → Ljosland
+  { etappeId: '15'  },  // 15 Ljosland → Lindesnes
+]
+
+const WAYPOINTS = [
+  { name: 'Nordkapp',     cx: 74.984, cy:  -5.225, r: 3.5, isEnd: true,  delay: '0.15s'  },
+  { name: 'Skaidi',       cx: 74.124, cy:   3.591, r: 2.5, isEnd: false, delay: '0.267s' },
+  { name: 'Kautokeino',   cx: 77.7,   cy:  19.446, r: 2.5, isEnd: false, delay: '0.48s'  },
+  { name: 'Abisko',       cx: 63.642, cy:  35.957, r: 2.5, isEnd: false, delay: '0.762s' },
+  { name: 'Fauske',       cx: 55.36,  cy:  53.116, r: 2.5, isEnd: false, delay: '1.012s' },
+  { name: 'Lønsdal',      cx: 55.669, cy:  59.648, r: 2.5, isEnd: false, delay: '1.097s' },
+  { name: 'Umbukta',      cx: 54.928, cy:  65.931, r: 2.5, isEnd: false, delay: '1.181s' },
+  { name: 'Nordli',       cx: 56.327, cy:  87.645, r: 2.5, isEnd: false, delay: '1.467s' },
+  { name: 'Hegra',        cx: 49.266, cy: 102.087, r: 2.5, isEnd: false, delay: '1.678s' },
+  { name: 'Gressli',      cx: 52.275, cy: 109.011, r: 2.5, isEnd: false, delay: '1.776s' },
+  { name: 'Elgå',         cx: 56.157, cy: 116.560, r: 2.5, isEnd: false, delay: '1.888s' },
+  { name: 'Ringebu',      cx: 50.767, cy: 122.935, r: 2.5, isEnd: false, delay: '1.997s' },
+  { name: 'Fagernes',     cx: 44.781, cy: 130.561, r: 2.5, isEnd: false, delay: '2.123s' },
+  { name: 'Geilo',        cx: 40.426, cy: 137.712, r: 2.5, isEnd: false, delay: '2.233s' },
+  { name: 'Haukeliseter', cx: 38.584, cy: 148.744, r: 2.5, isEnd: false, delay: '2.38s'  },
+  { name: 'Ljosland',     cx: 39.484, cy: 159.427, r: 2.5, isEnd: false, delay: '2.521s' },
+  { name: 'Lindesnes',    cx: 41.46,  cy: 169.000, r: 3.5, isEnd: true,  delay: '2.649s' },
+]
+
+// viewBox constants
+const VB_X      = 9.784
+const VB_Y      = -17.297
+const VB_W      = 103.026
+const VB_BOTTOM = VB_Y + 202.210  // 184.913
+
+const LABEL_GAP      = 6
+const FONT_SIZE      = 4
+const LABEL_WEIGHT   = 700
+const VB_RIGHT_THRESH = VB_X + VB_W * 0.6
+
+// Hit-rect geometry: each segment spans VB_X..VB_X+VB_W vertically.
+// First segment extends to viewBox top; last to viewBox bottom.
+const SEGMENT_RECTS = SEGMENTS.map((_, i) => {
+  const y   = i === 0                  ? VB_Y      : WAYPOINTS[i].cy
+  const bot = i === SEGMENTS.length - 1 ? VB_BOTTOM : WAYPOINTS[i + 1].cy
+  return { y, height: bot - y }
+})
+
+export default function NorwayMap({ interactive = false }) {
   const wrapperRef = useRef(null)
+
+  // On desktop (≥960px) animation starts immediately.
+  // On mobile, IntersectionObserver starts it when map top reaches viewport center.
   const [started, setStarted] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(min-width: 960px)').matches
   )
 
+  // Becomes true when the intro animation finishes:
+  // last waypoint delay (2.649s) + flash duration (0.6s) + 50ms buffer = 3300ms
+  const [animationDone, setAnimationDone] = useState(false)
+
+  // Hover state: which segment (0-15) the mouse is over, and whether the SVG itself is hovered
+  const [hoveredSegment, setHoveredSegment] = useState(null)
+  const [svgHovered, setSvgHovered]         = useState(false)
+
+  // Set of segment indices that are fully visible in the viewport (threshold 1.0)
+  const [viewportSegments, setViewportSegments] = useState(new Set())
+
+  // ─── Mobile scroll-trigger (unchanged) ───────────────────────────────────────
   useEffect(() => {
     if (started) return
     const el = wrapperRef.current
     if (!el) return
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setStarted(true)
-          observer.disconnect()
-        }
+        if (entry.isIntersecting) { setStarted(true); observer.disconnect() }
       },
-      // Fires when top of map enters the top 50% of viewport (= top reaches center)
       { rootMargin: '0px 0px -50% 0px', threshold: 0 }
     )
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
+
+  // ─── Animation-done gate ─────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!started || !interactive) return
+    const t = setTimeout(() => setAnimationDone(true), 3300)
+    return () => clearTimeout(t)
+  }, [started, interactive])
+
+  // ─── Viewport observer: watches etappe entries in the left column ─────────────
+  useEffect(() => {
+    if (!animationDone || !interactive) return
+    if (!window.matchMedia('(min-width: 960px)').matches) return
+
+    const observers = []
+    SEGMENTS.forEach((seg, i) => {
+      const el = document.querySelector(`[data-etappe="${seg.etappeId}"]`)
+      if (!el) return
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          setViewportSegments(prev => {
+            const next = new Set(prev)
+            entry.isIntersecting ? next.add(i) : next.delete(i)
+            return next
+          })
+        },
+        { threshold: 1.0 }
+      )
+      obs.observe(el)
+      observers.push(obs)
+    })
+    return () => observers.forEach(obs => obs.disconnect())
+  }, [animationDone, interactive])
+
+  // ─── Click → scroll to etappe ─────────────────────────────────────────────────
+  const handleSegmentClick = (i) => {
+    if (!animationDone || !interactive) return
+    if (!window.matchMedia('(min-width: 960px)').matches) return
+    const el = document.querySelector(`[data-etappe="${SEGMENTS[i].etappeId}"]`)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
+  // ─── Derived highlight state ──────────────────────────────────────────────────
+  const highlightedSegs = new Set(viewportSegments)
+  if (hoveredSegment !== null) highlightedSegs.add(hoveredSegment)
+
+  // A waypoint is highlighted if it is the top or bottom boundary of a highlighted segment
+  const isDotHighlighted = (wpIdx) =>
+    highlightedSegs.has(wpIdx - 1) || highlightedSegs.has(wpIdx)
+
+  // Inline styles override CSS animation fills once animationDone is true.
+  // Setting animation:'none' cancels the keyframe so inline fill takes effect.
+  const dotStyle = (wpIdx) => {
+    if (!animationDone) return {}
+    return {
+      animation: 'none',
+      fill: isDotHighlighted(wpIdx) ? '#fb923c' : '#94a3b8',
+      transform: svgHovered ? 'scale(0.8)' : 'scale(1)',
+    }
+  }
+  const labelStyle = (wpIdx) => {
+    if (!animationDone) return {}
+    return {
+      animation: 'none',
+      fill: isDotHighlighted(wpIdx) ? '#f8fafc' : '#94a3b8',
+    }
+  }
 
   return (
     <div
@@ -169,11 +307,13 @@ export default function NorwayMap() {
         xmlns="http://www.w3.org/2000/svg"
         className="w-full"
         focusable="false"
+        onMouseEnter={animationDone && interactive ? () => setSvgHovered(true)  : undefined}
+        onMouseLeave={animationDone && interactive ? () => { setSvgHovered(false); setHoveredSegment(null) } : undefined}
       >
         {/* Norway silhouette — slate-600 at 60% opacity */}
         <g opacity="0.6" dangerouslySetInnerHTML={{ __html: SILHOUETTE }} />
 
-        {/* Route line draws north → south on page load */}
+        {/* Full-route animated path (intro draw). Fades out when animationDone. */}
         <path
           d={ROUTE}
           stroke="#fb923c"
@@ -182,38 +322,71 @@ export default function NorwayMap() {
           strokeLinecap="round"
           strokeLinejoin="round"
           pathLength="1"
-          strokeOpacity={0.5}
           className="norway-map-route"
+          style={{
+            strokeOpacity: animationDone ? 0 : 0.5,
+            transition: 'stroke-opacity 0.4s ease',
+          }}
         />
 
-        {/* Circle + label animate separately so each can white-flash to its own final color */}
-        {WAYPOINTS.map((wp) => {
+        {/* 16 individual segment paths — invisible during animation, fade in after.
+            Controlled via inline strokeOpacity so CSS transition (.norway-map-segment) applies. */}
+        {SEGMENT_PATHS.map((d, i) => (
+          <path
+            key={i}
+            d={d}
+            stroke="#fb923c"
+            strokeWidth="1.5"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="norway-map-segment"
+            style={{ strokeOpacity: !animationDone ? 0 : highlightedSegs.has(i) ? 1.0 : 0.3 }}
+          />
+        ))}
+
+        {/* Waypoint circles + labels — animate with intro, then controlled by inline styles */}
+        {WAYPOINTS.map((wp, wpIdx) => {
           const leftSide = wp.cx > VB_RIGHT_THRESH
           const labelX = leftSide ? wp.cx - wp.r - LABEL_GAP : wp.cx + wp.r + LABEL_GAP
           return (
             <g key={wp.name}>
               <circle
-                cx={wp.cx} cy={wp.cy} r={wp.r} fill="#fb923c"
+                cx={wp.cx} cy={wp.cy} r={wp.r}
+                fill="#fb923c"
                 className="norway-map-circle"
-                style={{ animationDelay: wp.delay }}
+                style={{ animationDelay: wp.delay, ...dotStyle(wpIdx) }}
               />
               <text
-                x={labelX}
-                y={wp.cy}
-                fontSize={FONT_SIZE}
-                fontWeight={LABEL_WEIGHT}
-                fill="#94a3b8"
-                fontFamily="inherit"
+                x={labelX} y={wp.cy}
+                fontSize={FONT_SIZE} fontWeight={LABEL_WEIGHT}
+                fill="#94a3b8" fontFamily="inherit"
                 dominantBaseline="middle"
                 textAnchor={leftSide ? 'end' : 'start'}
                 className="norway-map-label"
-                style={{ animationDelay: wp.delay }}
+                style={{ animationDelay: wp.delay, ...labelStyle(wpIdx) }}
               >
                 {wp.name}
               </text>
             </g>
           )
         })}
+
+        {/* Invisible hit rects — rendered last (on top) so they intercept pointer events.
+            Only active after animationDone and only on the interactive (desktop) instance. */}
+        {animationDone && interactive && SEGMENT_RECTS.map((rect, i) => (
+          <rect
+            key={i}
+            x={VB_X}
+            y={rect.y}
+            width={VB_W}
+            height={rect.height}
+            fill="transparent"
+            style={{ cursor: 'pointer' }}
+            onMouseEnter={() => setHoveredSegment(i)}
+            onClick={() => handleSegmentClick(i)}
+          />
+        ))}
       </svg>
     </div>
   )

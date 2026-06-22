@@ -577,6 +577,11 @@
 /* Dots flash white, then settle to orange-400. Labels flash white, then settle to slate-400. */
 .norway-map-circle {
   opacity: 0;
+  /* SVG transform-origin: use fill-box so scale() is relative to the circle's own center */
+  transform-box: fill-box;
+  transform-origin: center;
+  /* Transitions apply after animationDone when inline styles take over from the animation */
+  transition: fill 0.25s ease, transform 0.25s ease;
 }
 
 .norway-map-started .norway-map-circle {
@@ -585,10 +590,17 @@
 
 .norway-map-label {
   opacity: 0;
+  transition: fill 0.25s ease;
 }
 
 .norway-map-started .norway-map-label {
   animation: norway-dot-label-appear 0.6s ease-out forwards;
+}
+
+/* Individual route segments (interactive mode). Inline strokeOpacity drives highlighting;
+   this transition smooths changes between dimmed (0.3) and highlighted (1.0). */
+.norway-map-segment {
+  transition: stroke-opacity 0.25s ease;
 }
 
 @keyframes norway-dot-circle-appear {

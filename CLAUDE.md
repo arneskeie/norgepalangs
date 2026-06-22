@@ -904,16 +904,16 @@ Elgå 1.888s · Ringebu 1.997s · Fagernes 2.123s · Geilo 2.233s · Haukelisete
 Ljosland 2.521s · Lindesnes 2.649s
 
 **Labels implementation:**
-- Font-size: `4` SVG units, `fontWeight={700}`, `letterSpacing="0.1em"`, `textTransform="uppercase"`.
-  Constants: `FONT_SIZE = 4`, `LABEL_WEIGHT = 700`, `LABEL_LETTER_SPACING = '0.1em'`.
-- Color: `#94a3b8` (slate-400) — muted, does not compete with orange dots.
-  Color animates from white → #94a3b8 via `norway-dot-label-appear` keyframe.
+- Font-size: `4` SVG units, `fontWeight={700}`. No uppercase, no letter-spacing (removed Batch 14).
+  Constants: `FONT_SIZE = 4`, `LABEL_WEIGHT = 700`. (`LABEL_LETTER_SPACING` deleted in Batch 14.)
+- Default fill: `#94a3b8` (slate-400) — muted. Animates from white → #94a3b8 via keyframe.
+  After `animationDone` (interactive mode): white (#f8fafc) when highlighted, slate-400 otherwise.
 - `fontFamily="inherit"` → Work Sans (loaded on page).
 - `dominantBaseline="middle"` → vertically centered with dot.
 - Right-side labels (14 waypoints): `textAnchor="start"`, `x = cx + r + 6`.
   Gap of 6 SVG units ≈ 1 CSS rem.
 - **Left-side labels:** Nordkapp, Skaidi, Kautokeino (cx > 71.6 threshold). `textAnchor="end"`, `x = cx − r − 6`.
-- Threshold: `wp.cx > VB_RIGHT_THRESH` where `VB_RIGHT_THRESH = 9.784 + 103.026 × 0.6 ≈ 71.6`.
+- Threshold: `wp.cx > VB_RIGHT_THRESH` where `VB_RIGHT_THRESH = VB_X + VB_W × 0.6 ≈ 71.6`.
 
 **CSS keyframes:** `norway-draw-route`, `norway-dot-circle-appear`, `norway-dot-label-appear`
 defined in `main.css` outside any `@layer`. Not in Tailwind utilities — named keyframes
@@ -924,18 +924,96 @@ need global scope. Old `norway-dot-appear` keyframe removed in Batch 10f.
 fill #fb923c, no animation), `.norway-map-label` (opacity 1, fill #94a3b8, no animation)
 — instant show of everything in final colors, consistent with BottomSheet treatment.
 
-**Layout on Reiserute page:**
-- Map is displayed BELOW the `section-description` on ALL screen sizes (no desktop
-  side-by-side layout). The old `flex flex-col sm:flex-row` wrapper was replaced with:
-  `<p class="section-description mb-8">` + `<div class="flex justify-center mb-16"><div class="w-80"><NorwayMap /></div></div>`
-- Width: **320px** (`w-80` = 80 × 4px). On the 4/8pt grid. Chosen as the largest value
-  within the 280–320px target range, prominent but not overwhelming.
-- Centered horizontally via `flex justify-center`.
-- `mb-16` (64px) separates the map from the vertical timeline below.
+**Layout on Reiserute page (two-column — Batch 11+):**
+- **Mobile:** `<NorwayMap />` (no `interactive` prop) in `.reiserute-map-mobile` — width 200px,
+  centered, below the intro paragraph and above the timeline. Scroll-triggered animation.
+- **Desktop (≥960px):** `<NorwayMap interactive />` in `.reiserute-right > .reiserute-map-sticky` —
+  sticky, vertically centered in viewport, max-width 22rem. Animation starts immediately.
+- Both instances are always in the DOM; CSS `display:none` hides the inactive one.
+  `display:none` elements don't run CSS animations — no double animation issue.
 
 **Accessibility:** The wrapper `<div>` has `aria-hidden="true" role="presentation"` —
 the map is purely decorative, screen readers skip it entirely. The SVG has
 `focusable="false"` to prevent IE/Edge from making it keyboard-focusable.
+
+**Desktop interactivity (Batch 16 — `interactive` prop, desktop only):**
+
+Three behaviors, all gated on `animationDone` (true 3.3s after `started`):
+
+1. **Hover highlighting:** 16 invisible `<rect>` hit areas span the full SVG width, each
+   covering the y-band between two consecutive waypoints. `onMouseEnter` on each rect sets
+   `hoveredSegment` state (index 0–15). `onMouseLeave` on the SVG clears it.
+
+2. **Click-to-scroll:** `onClick` on a hit rect calls `document.querySelector('[data-etappe="…"]')`
+   and `scrollIntoView({ behavior:'smooth', block:'center' })`. Guarded with
+   `matchMedia('(min-width:960px)')` so it never fires on mobile.
+
+3. **Viewport highlighting:** `IntersectionObserver` (threshold:1.0) watches each
+   `[data-etappe="…"]` div in the left column. Fully-visible entries add their segment
+   index to `viewportSegments` (a Set); partially/non-visible entries remove their index.
+   Multiple segments can be in `viewportSegments` simultaneously.
+
+**`data-etappe` attribute:** Set on `EtappeContent`'s outer `<div>` via
+`{...(!isOpp && { 'data-etappe': String(etappe.nr) })}`. Values: `'1'`–`'10'`,
+`'11a'`, `'11b'`, `'12'`–`'15'`. Oppvarmingstur entry gets no attribute (no map segment).
+
+**SEGMENTS array (16 entries, geographic order):**
+```
+0  Nordkapp→Skaidi       etappeId:'1'
+1  Skaidi→Kautokeino     etappeId:'2'
+2  Kautokeino→Abisko     etappeId:'3'
+3  Abisko→Fauske         etappeId:'4'
+4  Fauske→Lønsdal        etappeId:'5'
+5  Lønsdal→Umbukta       etappeId:'7'  ← spring E7 (geographic)
+6  Umbukta→Nordli        etappeId:'8'  ← spring E8
+7  Nordli→Hegra          etappeId:'9'  ← spring E9
+8  Hegra→Gressli         etappeId:'6'  ← autumn detour E6
+9  Gressli→Elgå          etappeId:'10'
+10 Elgå→Ringebu          etappeId:'11a'
+11 Ringebu→Fagernes      etappeId:'11b'
+12 Fagernes→Geilo        etappeId:'12'
+13 Geilo→Haukeliseter    etappeId:'13'
+14 Haukeliseter→Ljosland etappeId:'14'
+15 Ljosland→Lindesnes    etappeId:'15'
+```
+
+**Three visual states (applied only after `animationDone`):**
+- **HIGHLIGHTED** (hovered OR fully in viewport): boundary dots fill #fb923c, boundary labels fill
+  #f8fafc (white), route segment stroke-opacity 1.0. A dot is highlighted if EITHER adjacent
+  segment is highlighted (shared boundary logic in `isDotHighlighted`).
+- **DIMMED** (animationDone, not highlighted): all dots fill #94a3b8, all labels fill #94a3b8,
+  all segments stroke-opacity 0.3.
+- **PRE-INTERACTION** (animationDone=false): CSS animation controls everything — no inline
+  style overrides. `dotStyle`/`labelStyle` return `{}` when animationDone is false.
+
+**Dot scale:** ALL dots scale to 0.8 when `svgHovered` is true (mouse anywhere in SVG).
+Scale 1.0 when mouse leaves SVG. Driven by `transform: scale(0.8|1)` in inline style.
+CSS: `.norway-map-circle { transform-box: fill-box; transform-origin: center; }` ensures
+scale is relative to each dot's own center, not the SVG origin.
+
+**Animation cancel:** When `animationDone` becomes true, `dotStyle`/`labelStyle` include
+`animation: 'none'` via inline style, which overrides `.norway-map-started .norway-map-circle`'s
+`animation` declaration (inline style specificity > class). This cancels `forwards`-fill from
+the keyframe, allowing inline `fill` to take effect. CSS `transition: fill 0.25s ease` on
+`.norway-map-circle` and `.norway-map-label` then animates state changes smoothly.
+
+**Route switch:** The full-route `<path className="norway-map-route">` drives the intro
+animation. When `animationDone`, its inline `strokeOpacity` changes 0.5→0 (0.4s transition).
+Simultaneously, 16 individual `<path className="norway-map-segment">` paths fade in to 0.3
+(dimmed) or 1.0 (highlighted). Both path sets are always in the DOM — no conditional mount flash.
+
+**`animationDone` gate:** `setTimeout(() => setAnimationDone(true), 3300)` fires when
+`started` becomes true (and `interactive=true`). 3300ms = last waypoint delay (2.649s) +
+flash duration (0.6s) + 50ms buffer. Only one timeout, cleaned up on unmount.
+
+**SEGMENT_RECTS (hit area geometry):**
+First rect extends to viewBox top (VB_Y = -17.297); last rect extends to viewBox bottom
+(VB_BOTTOM = 184.913). All rects span full viewBox width (VB_X=9.784, VB_W=103.026).
+
+**CSS additions in main.css:**
+- `.norway-map-circle`: `transform-box: fill-box; transform-origin: center; transition: fill 0.25s ease, transform 0.25s ease`
+- `.norway-map-label`: `transition: fill 0.25s ease`
+- `.norway-map-segment`: `transition: stroke-opacity 0.25s ease`
 
 ## Reiserute — participant interaction and links
 
@@ -2260,6 +2338,22 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 16: NorwayMap — desktop interactive mode (hover, click-to-scroll, viewport highlighting).
+  **`interactive` prop** added to `NorwayMap`. Passed as `<NorwayMap interactive />` to the desktop
+  sticky instance in Reiserute.jsx; mobile instance stays `<NorwayMap />` (no prop, no interactivity).
+  **`data-etappe`** attribute added to each `EtappeContent` outer div (values `'1'`–`'15'`, `'11a'`,
+  `'11b'`; Oppvarmingstur omitted). Used by both the viewport IntersectionObserver and click-to-scroll.
+  **SEGMENTS array (16):** maps each SVG waypoint band to an etappe entry by geographic
+  correspondence — E6 (autumn detour Hegra→Gressli) maps to band 9 which is geographically out of
+  sequential order. **SEGMENT_RECTS:** invisible `<rect>` hit areas; first extends to viewBox top,
+  last to viewBox bottom. **animationDone gate:** 3300ms setTimeout after `started`.
+  **Three visual states:** PRE_INTERACTION (animation running) → DIMMED (done, all grey/0.3 opacity)
+  → HIGHLIGHTED (hovered or in-viewport: dots orange, labels white, segment opacity 1.0). Dot scale:
+  0.8 while SVG hovered (all dots together), 1.0 on mouse leave. **Route switch:** full path fades
+  out (strokeOpacity 0.5→0, 0.4s), 16 segment paths fade in to 0.3/1.0. Both always in DOM.
+  **Animation cancel:** `animation:'none'` in inline style overrides keyframe forwards-fill, enabling
+  inline fill + CSS transition to take over. CSS: `transform-box:fill-box; transform-origin:center`
+  on `.norway-map-circle` for correct SVG scale behavior.
 - 2026-06-22 Batch 15: NorwayMap — halve route animation duration.
   Route draw: 5s → 2.5s; CSS initial delay: 0.3s → 0.15s (`norway-draw-route 2.5s linear 0.15s`).
   All 17 waypoint dot/label `animationDelay` values multiplied ×0.5 so dots remain in sync with

@@ -218,7 +218,10 @@ function EtappeContent({ etappe, participants, base, onSelectPerson, isOpp = fal
   const reisebrevNr = isOpp ? null : getReisebrevNr(etappe)
 
   return (
-    <div className="pl-7 pb-10">
+    <div
+      className="pl-7 pb-10"
+      {...(!isOpp && { 'data-etappe': String(etappe.nr) })}
+    >
       <p className="font-sans font-medium text-xs uppercase tracking-widest text-orange-400 mb-1">
         {eyebrow}
       </p>
@@ -382,7 +385,7 @@ export default function Reiserute() {
           {/* RIGHT COLUMN: desktop only — map sticky-centered in viewport */}
           <div className="reiserute-right" aria-hidden="true">
             <div className="reiserute-map-sticky">
-              <NorwayMap />
+              <NorwayMap interactive />
             </div>
           </div>
 
