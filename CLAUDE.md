@@ -779,11 +779,26 @@ Single `<button>` spanning the full row. Internal layout is responsive:
 - Photo count line uses `text-xs text-slate-600` with `group-hover:text-slate-500` transition.
 - 3 random images per section, selected from `section.images` on mount via `useMemo` (stable per page load).
 
-**Full grid fade-in** (expanded state):
-- Full grid mounts when `isOpen` becomes true.
-- `showFull` state: set to `true` via 16ms `setTimeout` after mount → allows React to render
-  the grid at `opacity-0` before the transition fires, producing a visible fade-in.
-- Grid uses `transition-opacity duration-300`.
+**Accordion fade transitions** (updated 2026-06-22 Batch 9):
+- **Both** the preview thumbs and the full grid are **always in the DOM** — no conditional rendering.
+  Visibility is controlled via opacity + max-height CSS transitions, enabling smooth crossfades.
+- **Preview thumbs** (collapsed-state thumbs): `transition-[opacity,max-height] duration-200`.
+  - Open (accordion expanded): `max-h-0 sm:max-h-none opacity-0 pointer-events-none` — on mobile,
+    `max-h-0 overflow-hidden` collapses the height to 0 so invisible thumbs don't leave a blank gap.
+    On desktop (flex-row), `sm:max-h-none` keeps natural height; only opacity changes (invisible
+    but in-flow — the heading's `flex-1` fills the available width, so no visible gap on desktop).
+  - Closed: `max-h-20 sm:max-h-none opacity-100` — mobile shows full 80px (h-16 = 64px + pt-3 = 12px ≤ 80px).
+  - Inner div uses `pt-3 sm:pt-0` instead of `mt-3 sm:mt-0` (padding vs margin) so `max-h-0
+    overflow-hidden` clips the top spacing too — no gap left below the heading when collapsed.
+- **Full photo grid**: `transition-[opacity,max-height] duration-300`.
+  - Open: `opacity-100 max-h-[8000px]` (covers even very large sections with 100+ images).
+  - Closed: `opacity-0 max-h-0 pointer-events-none` — height collapses, no blank space.
+  - Grid buttons: `tabIndex={isOpen ? 0 : -1}` — hidden grid buttons are removed from tab order.
+  - `aria-hidden={!isOpen}` — hidden grid excluded from screen readers.
+- **prefers-reduced-motion**: `motion-reduce:transition-none` on both transitioning elements —
+  Tailwind v3 built-in variant; applies `transition: none` when user has reduced motion enabled.
+  Instant show/hide with no animation (CSS-only, no React state involved).
+- `showFull` state and its `useEffect` removed — no longer needed; pure CSS handles all transitions.
 
 ## Reiserute — participant interaction and links
 
@@ -802,12 +817,19 @@ Single `<button>` spanning the full row. Internal layout is responsive:
 
 **Participant sizing** (updated 2026-06-22):
 - Thumbnail: `w-6 h-6` (24px) → `w-8 h-8` (32px). On the 4/8pt grid. Proportional to name size increase.
-- Name (last name only): `text-xs` (12px) → `text-base` (16px).
+- Name (first name only): `text-xs` (12px) → `text-base` (16px). Display via `p.name.split(' ')[0]`.
 - `mt-4` moved from `ParticipantList` outer div to the wrapper in `EtappeContent`.
-- Gap between participant chips: `gap-3` → `gap-4` (16px, on grid).
+- Gap between participant chips: `gap-4` (16px, on grid). **Root cause of previous gap not showing:**
+  The participant `<button>` had `-mx-3 -my-1` negative margins (to extend the hover hit area). In
+  a `flex-wrap gap-4` container, gap is measured between margin boxes — so `-0.75rem` on each side
+  of each button meant effective visual gap = `1rem - 2×0.75rem = -0.5rem` (overlap, not gap). Fix:
+  removed `-mx-3 -my-1` from the button. The hover background now renders within the `px-3 py-1`
+  padding, which is still a sufficient tap target and correct pill appearance.
 
 **Etappe note text** (updated 2026-06-22):
 - `font-sans text-sm text-slate-400 leading-relaxed text-pretty` → `text-sm` changed to `text-base` (1rem).
+- Color: `text-slate-400` → `text-slate-50` (2026-06-22 Batch 9) — note text is now white, matching
+  the page's base prose color. `text-slate-50` is consistent with `html { color: #f8fafc }` baseline.
 
 **"Les reisebrev →" and "Se bilder →" links** (added 2026-06-22, layout fixed 2026-06-22):
 - Outer wrapper: `flex flex-col sm:flex-row sm:items-start gap-4 mt-4` — on mobile: participants
@@ -2088,4 +2110,24 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      Sverre, Rasmus, Anders, Karin). Display-only change: underlying data (full names in people.js)
      unchanged. The BottomSheet profile still shows the full name via `selectedPerson.name` — the
      lookup is by object reference, not name string, so the profile is unaffected.
+- 2026-06-22 Batch 9: Three fixes across Reiserute and Galleri.
+  1. **Participant gap root cause and fix.** `gap-4` (1rem) between participant chips was visually
+     absent because the `<button>` had `-mx-3 -my-1` negative margins (intended to extend the hover
+     hit area beyond the visible pill). In a flex container, `gap` is measured between margin boxes,
+     not border boxes — so `-0.75rem` on each side of every button meant `1rem - 2×0.75rem = -0.5rem`
+     effective visual gap (buttons overlapping). Fix: removed `-mx-3 -my-1` from the button
+     `className`. The hover background now fills the `px-3 py-1` pill padding, which remains a
+     sufficient interactive area. All participant chips now show a visible 1rem gap between them.
+  2. **Etappe note text color.** Changed from `text-slate-400` to `text-slate-50` (white). Applies
+     to all etappe note paragraphs on the Reiserute page. Consistent with the page's base text color
+     (`html { color: #f8fafc }` = slate-50); previous slate-400 was unintentionally muted.
+  3. **Galleri accordion fade transitions.** Preview thumbs and full photo grid now crossfade on
+     expand/collapse. Both elements are always in the DOM (no conditional rendering) — opacity +
+     max-height CSS transitions handle all state changes. Preview thumbs: `duration-200`, fade out
+     + max-height collapse to 0 on mobile (no blank gap), opacity-only on desktop. Full grid:
+     `duration-300`, max-h-[8000px] when open / max-h-0 when closed, pointer-events-none + aria-hidden
+     when closed, tabIndex={-1} on grid buttons when closed. `motion-reduce:transition-none` (Tailwind
+     v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
+     `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
+     `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
 

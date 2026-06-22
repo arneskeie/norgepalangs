@@ -179,18 +179,6 @@ function Lightbox({ section, index, onClose, onNavigate }) {
 
 function GalleriSection({ section, isOpen, onToggle, previews, onOpen }) {
   const base = import.meta.env.BASE_URL
-  // Delay full-grid opacity-0→1 slightly so it fades in after mounting
-  const [showFull, setShowFull] = useState(false)
-
-  useEffect(() => {
-    if (isOpen) {
-      const t = setTimeout(() => setShowFull(true), 16)
-      return () => clearTimeout(t)
-    } else {
-      setShowFull(false)
-    }
-  }, [isOpen])
-
   const ChevronIcon = isOpen ? ChevronUp : ChevronDown
 
   return (
@@ -218,53 +206,66 @@ function GalleriSection({ section, isOpen, onToggle, previews, onOpen }) {
             </div>
           </div>
 
-          {/* Preview thumbs: right on desktop, below heading on mobile */}
+          {/* Preview thumbs — always in DOM. Mobile: collapses via max-height when open.
+              Desktop: stays at natural height, fades out via opacity only. */}
           {previews.length > 0 && (
-            <div className="flex gap-2 mt-3 sm:mt-0 sm:flex-shrink-0">
-              {previews.map((img) => (
-                <div
-                  key={img}
-                  className="w-16 h-16 rounded overflow-hidden flex-shrink-0"
-                >
-                  <img
-                    src={`${base}images/galleri/${section.folder}/${img}`}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                  />
-                </div>
-              ))}
+            <div
+              className={`overflow-hidden sm:flex-shrink-0 transition-[opacity,max-height] duration-200 motion-reduce:transition-none ${
+                isOpen
+                  ? 'max-h-0 sm:max-h-none opacity-0 pointer-events-none'
+                  : 'max-h-20 sm:max-h-none opacity-100'
+              }`}
+            >
+              {/* pt-3/sm:pt-0 replaces mt-3/sm:mt-0 so max-height collapses the spacing too */}
+              <div className="flex gap-2 pt-3 sm:pt-0">
+                {previews.map((img) => (
+                  <div
+                    key={img}
+                    className="w-16 h-16 rounded overflow-hidden flex-shrink-0"
+                  >
+                    <img
+                      src={`${base}images/galleri/${section.folder}/${img}`}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
       </button>
 
-      {/* Full photo grid — rendered only when open, fades in */}
-      {isOpen && (
-        <div
-          className={`grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1.5 transition-opacity duration-300 ${
-            showFull ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          {section.images.map((img, idx) => (
-            <button
-              key={img}
-              onClick={() => onOpen(section, idx)}
-              className="relative aspect-square overflow-hidden rounded group focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400"
-              aria-label={`Åpne bilde ${idx + 1} av ${section.images.length} fra ${section.label}`}
-            >
-              <img
-                src={`${base}images/galleri/${section.folder}/${img}`}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Full photo grid — always in DOM. Fades in on expand, fades out on collapse.
+          max-height collapses layout when closed; pointer-events-none prevents clicks. */}
+      <div
+        aria-hidden={!isOpen}
+        className={`grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1.5 overflow-hidden transition-[opacity,max-height] duration-300 motion-reduce:transition-none ${
+          isOpen
+            ? 'opacity-100 max-h-[8000px]'
+            : 'opacity-0 max-h-0 pointer-events-none'
+        }`}
+      >
+        {section.images.map((img, idx) => (
+          <button
+            key={img}
+            onClick={() => onOpen(section, idx)}
+            tabIndex={isOpen ? 0 : -1}
+            className="relative aspect-square overflow-hidden rounded group focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400"
+            aria-label={`Åpne bilde ${idx + 1} av ${section.images.length} fra ${section.label}`}
+          >
+            <img
+              src={`${base}images/galleri/${section.folder}/${img}`}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          </button>
+        ))}
+      </div>
     </section>
   )
 }

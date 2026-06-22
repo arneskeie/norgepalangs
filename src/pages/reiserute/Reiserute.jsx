@@ -177,7 +177,7 @@ function ParticipantList({ people, base, onSelectPerson }) {
         <button
           key={p.id}
           onClick={() => onSelectPerson(p)}
-          className="flex items-center gap-2 rounded-full px-3 py-1 -mx-3 -my-1 hover:bg-white/[.06] transition-colors"
+          className="flex items-center gap-2 rounded-full px-3 py-1 hover:bg-white/[.06] transition-colors"
         >
           <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
             <img
@@ -229,7 +229,7 @@ function EtappeContent({ etappe, participants, base, onSelectPerson, isOpp = fal
           {statParts.join(' · ')}
         </p>
       )}
-      <p className="font-sans text-base text-slate-400 leading-relaxed text-pretty">
+      <p className="font-sans text-base text-slate-50 leading-relaxed text-pretty">
         {etappe.note}
       </p>
       <div className="flex flex-col sm:flex-row sm:items-start gap-4 mt-4">
