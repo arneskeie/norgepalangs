@@ -628,11 +628,14 @@
 /* ─── Reiserute two-column layout ─────────────────────────────────────────────
    Breakpoint: 960px = 560px (left) + 352px (right) + 48px (px-6 outer padding).
    Right column: 352px total, map has 1rem padding each side → 320px SVG width.
-   Map height: 320 × (202.210 / 103.026) ≈ 628px → sticky top: calc(50vh - 314px). */
+   Map height: 320 × (202.210 / 103.026) ≈ 628px → sticky top: calc(50vh - 314px).
+   Sticky root cause fix: align-items must be stretch (default) on .reiserute-layout so
+   .reiserute-right stretches to the full height of .reiserute-left — without this the
+   right column is only as tall as the map and position:sticky has nowhere to scroll. */
 
 /* Mobile: single column */
 .reiserute-map-mobile {
-  width: 160px; /* 50% of 320px desktop map width */
+  width: 200px; /* 25% larger than original 160px */
   margin: 0 auto 3rem;
 }
 
@@ -643,7 +646,8 @@
 @media (min-width: 960px) {
   .reiserute-layout {
     display: flex;
-    align-items: flex-start;
+    /* no align-items override — default stretch makes .reiserute-right as tall as
+       .reiserute-left, giving position:sticky the parent height it needs to scroll */
   }
 
   .reiserute-left {
@@ -657,7 +661,9 @@
 
   .reiserute-right {
     flex: 1;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     min-width: 0;
   }
 
@@ -665,5 +671,6 @@
     position: sticky;
     top: calc(50vh - 314px);
     padding: 0 1rem;
+    width: 100%;
   }
 }

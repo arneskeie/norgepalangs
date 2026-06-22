@@ -2259,6 +2259,30 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 12: Reiserute map — y-compression, sticky fix, centering, mobile size.
+  **SVG y-compression:** Route extends too far south. Fix: linear compression of all y-coords
+  between Nordkapp (anchor, stays fixed) and Lindesnes (old cy=173.414 → target=169.0).
+  Formula: `factor = (169.0 - nordkapp_cy) / (173.414 - nordkapp_cy) = 174.225/178.639 = 0.975291`.
+  Applied to every point in ROUTE path and all WAYPOINTS cy values. Only route/dots/labels
+  are compressed — Norway silhouette paths left untouched (they fit the viewBox correctly).
+  Before→after: Nordkapp -5.225→-5.225 (fixed), Skaidi 3.814→3.591, Kautokeino 20.071→19.446,
+  Abisko 37.0→35.957, Fauske 54.594→53.116, Lønsdal 61.292→59.648, Umbukta 67.734→65.931,
+  Nordli 89.998→87.645, Hegra 104.806→102.087, Gressli 111.905→109.011, Elgå 119.645→116.560,
+  Ringebu 126.182→122.935, Fagernes 134.001→130.561, Geilo 141.333→137.712,
+  Haukeliseter 152.645→148.744, Ljosland 163.598→159.427, Lindesnes 173.414→169.000.
+  Route y-values compressed with same formula (they differ slightly from waypoint cy due to
+  original path computation); route Lindesnes y → 169.066 (0.066 units off dot, imperceptible).
+  **Sticky root cause:** `align-items: flex-start` on `.reiserute-layout` caused `.reiserute-right`
+  to be only as tall as the map itself (its in-flow content = position:sticky element's margin box).
+  With no scroll room in the parent, position:sticky never activated. Fix: removed
+  `align-items: flex-start` from `.reiserute-layout` — default `stretch` makes `.reiserute-right`
+  grow to match `.reiserute-left` height (the full timeline), giving sticky room to scroll.
+  **Desktop map centering:** Changed `.reiserute-right` from `display:block` to
+  `display:flex; justify-content:center; align-items:flex-start`. Added `width:100%` to
+  `.reiserute-map-sticky` so the SVG fills the right column; 1rem padding retained on the
+  wrapper (not replaced by margin). The 16px visual space on each side of the 320px map
+  comes from the padding within the 352px-wide sticky wrapper.
+  **Mobile map width:** 160px → 200px (160 × 1.25 = 200px, 25% larger).
 - 2026-06-22 Batch 11: Reiserute two-column layout + scroll-triggered mobile animation.
   **Route opacity:** strokeOpacity 0.8 → 0.5 (NorwayMap.jsx).
   **Mobile map (50%):** `reiserute-map-mobile` CSS class, width 160px (half of 320px desktop),
