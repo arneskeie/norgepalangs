@@ -631,7 +631,11 @@
    Map height: 320 × (202.210 / 103.026) ≈ 628px → sticky top: calc(50vh - 314px).
    Sticky root cause fix: align-items must be stretch (default) on .reiserute-layout so
    .reiserute-right stretches to the full height of .reiserute-left — without this the
-   right column is only as tall as the map and position:sticky has nowhere to scroll. */
+   right column is only as tall as the map and position:sticky has nowhere to scroll.
+   Viewport-edge extension: negative right margin on .reiserute-right pulls the column out
+   to the viewport edge. Formula: -(auto right margin + px-6 right padding) =
+   -((100vw - 960px) / 2 + 1.5rem). Guard: min-width:960px only (below breakpoint the
+   container has no auto margins and the formula would produce negative pixel values). */
 
 /* Mobile: single column */
 .reiserute-map-mobile {
@@ -665,6 +669,10 @@
     justify-content: center;
     align-items: flex-start;
     min-width: 0;
+    /* Pull right column to viewport edge, cancelling the container's auto right margin
+       and px-6 (1.5rem) right padding. padding-right keeps the map off the edge. */
+    margin-right: calc(-1 * ((100vw - 960px) / 2 + 1.5rem));
+    padding-right: 1.5rem;
   }
 
   .reiserute-map-sticky {

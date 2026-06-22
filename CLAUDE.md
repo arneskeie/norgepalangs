@@ -2259,6 +2259,24 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 13: Reiserute — extend right column to viewport edge.
+  **Approach:** Negative right margin on `.reiserute-right` within the 960px media query.
+  Formula: `margin-right: calc(-1 * ((100vw - 960px) / 2 + 1.5rem))`.
+  Explanation: the max-w-content container (960px, mx-auto) is centered by the browser
+  distributing remaining viewport width equally as left/right auto margins: each =
+  `(100vw - 960px) / 2`. The px-6 class adds a further 1.5rem (24px) right padding.
+  The negative margin exactly cancels both, pulling .reiserute-right to the viewport edge.
+  Guard: rule is inside `@media (min-width: 960px)` only — below this the container has
+  no auto margins and the formula would produce negative pixel values (e.g. at 800px:
+  `-((-160px)/2 + 24px) = +56px` — wrong direction). Two-column layout only activates
+  at 960px, so the guard is the same breakpoint.
+  `padding-right: 1.5rem` added to `.reiserute-right` to keep the map off the viewport edge.
+  The `justify-content: center` already on `.reiserute-right` centers the map in the
+  full extended space automatically — no other changes needed.
+  **Grid note:** `margin-right: calc(...)` is a dynamic viewport-derived value (not a
+  fixed px amount) — exempt from the 4/8pt grid rule (same class of exception as
+  `.strip-wrapper` top/height). `padding-right: 1.5rem = 24px` is on the grid ✓.
+  **Unchanged:** Layout structure, left column, sticky behavior, mobile layout.
 - 2026-06-22 Batch 12: Reiserute map — y-compression, sticky fix, centering, mobile size.
   **SVG y-compression:** Route extends too far south. Fix: linear compression of all y-coords
   between Nordkapp (anchor, stays fixed) and Lindesnes (old cy=173.414 → target=169.0).
