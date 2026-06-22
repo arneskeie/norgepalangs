@@ -324,10 +324,13 @@
   }
   /* Bug fix: use header.inner-header selector (specificity 0,2,1) instead of
      .inner-header alone (0,2,0) — PostCSS was not reliably honoring (0,2,0) over
-     the .strip-wrapper { top: 98px } rule (0,1,0) in the same media query. */
+     the .strip-wrapper { top: 98px } rule (0,1,0) in the same media query.
+     top: 61px = center of the compact card (padding-top 24 + card-height/2 37).
+     height: 64px — reduced from 122px; strip is shorter than the inner-header
+     (intentional: dark background shows above/below the strip). */
   header.inner-header .strip-wrapper {
     top: 61px;
-    height: 122px;
+    height: 64px;
   }
 
   /* Hero text block: stays in flex flow on mobile (position:relative, not absolute)
@@ -365,15 +368,12 @@
   padding: 0 1.5rem;
 }
 
-/* Pill background — fills nav-inner's padded content area naturally:
-   960px - 2×24px = 912px, exactly matching content section text width. */
+/* Transparent nav container — no pill background, no border-radius. */
 .nav-pill {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 48px;
-  background: #0f172a;
-  border-radius: 9999px;
 }
 
 .nav-links {
@@ -382,15 +382,15 @@
   margin: 0;
   padding: 0;
   justify-content: center;
-  gap: 2rem; /* 32px — centered cluster; reduced from 3rem when nav went from 4→5 items (Batch 5) */
+  gap: 4rem; /* 64px */
 }
 
 .nav-link {
   font-family: 'Work Sans', system-ui, sans-serif;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 1.125rem;
   letter-spacing: 0.02em;
-  color: rgba(148, 163, 184, 0.80);
+  color: rgba(248, 250, 252, 0.75);
   text-decoration: none;
   padding: 0.25rem 0;
   border-bottom: 2px solid transparent;

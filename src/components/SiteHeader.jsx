@@ -33,6 +33,19 @@ const SIZE_BUCKETS = [
   { w: 136, h: 102 },
 ]
 
+// Compact buckets for mobile inner-page strip (64px tall, track padding 8px×2 = 48px inner).
+// Scale factor 46/102 ≈ 0.451 applied to w and h — preserves ~4:3 aspect ratio and
+// the same max/min variety ratio as SIZE_BUCKETS (46/22 ≈ 2.09 vs 102/48 ≈ 2.13).
+// Max h 46px → track height 62px < 64px wrapper (2px safety margin).
+const SMALL_SIZE_BUCKETS = [
+  { w: 29, h: 22 },
+  { w: 34, h: 26 },
+  { w: 41, h: 31 },
+  { w: 48, h: 36 },
+  { w: 54, h: 41 },
+  { w: 61, h: 46 },
+]
+
 // Wide rotation range — real scrapbook scatter
 const ROTATIONS = [-9, -6.5, -4.8, -3.2, -1.5, 0.8, 2.5, 4.2, 6.0, 8.5]
 
@@ -53,12 +66,14 @@ function randomFrom(arr) {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-function PhotoStrip({ base, count = 18 }) {
+function PhotoStrip({ base, count = 18, compact = false }) {
   const items = useMemo(() => {
+    const isMobileCompact = compact && window.matchMedia('(max-width: 639px)').matches
+    const buckets = isMobileCompact ? SMALL_SIZE_BUCKETS : SIZE_BUCKETS
     const picked = pickRandom(PHOTO_POOL, Math.min(count, PHOTO_POOL.length))
     return picked.map((slug) => ({
       src: `${base}strip-thumbs/${slug}.jpg`,
-      size: randomFrom(SIZE_BUCKETS),
+      size: randomFrom(buckets),
       rotate: randomFrom(ROTATIONS),
     }))
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,7 +186,7 @@ export function InnerHeader({ base, currentPage = '' }) {
     <>
       <header className="inner-header">
         <div className="strip-wrapper" aria-hidden="true">
-          <PhotoStrip base={base} count={14} />
+          <PhotoStrip base={base} count={14} compact />
         </div>
         <div className="hero-content">
           <TitleCard href={`${base}index.html`} />

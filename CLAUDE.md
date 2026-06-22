@@ -125,13 +125,12 @@ current session.
   via the homepage.
   `NAV_LINKS` is exported from `SiteNav.jsx` and imported by `MobileNav.jsx` — single
   source of truth for both the desktop nav and the mobile overlay.
-- **Desktop nav (≥ 768px):** Renders as a 912px-wide rounded pill. Items use
-  `justify-content: center; gap: 2rem` (32px) — centered cluster, items sit close together
-  rather than stretching across the full pill width. Gap was 3rem with 4 items (after Reisebrev
-  removal); reduced back to 2rem with 5 items (Batch 5) for proportional fit.
-  Font size: 16px (1rem). Letter-spacing: 0.02em. Sentence case.
-  Active state: orange-400 2px `border-bottom` (border only, no fill).
-  **This replaces the prior `space-evenly + width: 100%` layout** (see 2026-06-21 changelog).
+- **Desktop nav (≥ 768px):** Fully transparent — no pill background, no border-radius.
+  Items use `justify-content: center; gap: 4rem` (64px).
+  Font size: 1.125rem (18px). Letter-spacing: 0.02em. Sentence case.
+  Default link color: `rgba(248, 250, 252, 0.75)` (75% white). Hover: `#f8fafc` (full white).
+  Active state: `#f8fafc` + orange-400 2px `border-bottom` (border only, no fill).
+  **This replaces the prior dark pill (#0f172a, 9999px radius, 2rem gap, 1rem, slate-400 links)** (see Batch 19 changelog).
 - **Mobile nav (< 768px) — floating hamburger + full-screen overlay:**
   The inline nav bar is **completely hidden** on mobile (`display: none`). Two new elements
   implemented in `src/components/MobileNav.jsx`, rendered by `SiteHeader` default export:
@@ -194,12 +193,26 @@ current session.
     accessibility or re-introduce pointer-click rings on the button or the first link.
   - **This REVERSES the 2026-06-19 hamburger-removal decision** — deliberate, see 2026-06-21
     changelog entry.
+- **Photo strip height control:** Photo sizes are driven by `SIZE_BUCKETS` in `SiteHeader.jsx` —
+  an array of 6 `{w, h}` objects picked randomly per-photo at mount via `useMemo`. These are
+  applied as inline `style={{ width, height }}` on each `<img>`. Two sets exist:
+  - **`SIZE_BUCKETS`** (default): min h=48, max h=102. Used by the hero strip (all viewports)
+    and by inner-page strips on desktop (≥ 640px).
+  - **`SMALL_SIZE_BUCKETS`** (compact mode): min h=22, max h=46. Scale factor 46/102 ≈ 0.451
+    applied to both w and h, preserving the ~4:3 aspect ratio and variety ratio (46/22 ≈ 2.09
+    vs 102/48 ≈ 2.13). Used only by inner-page strips on mobile (< 640px). Max h=46 → track
+    height 62px < 64px wrapper (2px safety margin, no clipping).
+  - **`compact` prop on `PhotoStrip`:** Passed as `compact={true}` from `InnerHeader`. The
+    `useMemo` checks `compact && window.matchMedia('(max-width: 639px)').matches` at mount and
+    picks the appropriate bucket set. The hero (`HeroHeader`) never passes `compact` — always
+    uses `SIZE_BUCKETS`. Desktop inner pages (`compact=true` but media query false) also use
+    `SIZE_BUCKETS`. Only mobile inner pages use `SMALL_SIZE_BUCKETS`.
+  - **Do NOT re-audit `SIZE_BUCKETS` widths/heights against the 4/8pt grid** — confirmed
+    exception (aesthetic scrapbook variety; not spacing values).
 - **Nav two-layer structure (desktop):** `.nav-inner` is an invisible layout wrapper
   (`max-width: 960px; margin: 0 auto; padding: 0 1.5rem` — no background, no border-radius).
-  Inside it sits `.nav-pill`, which gets the background and border-radius. Since `.nav-pill`
-  fills `.nav-inner`'s content area, it naturally renders at 912px (960 − 2 × 24px), exactly
-  matching content sections that use `max-w-content mx-auto px-6`.
-  Do NOT put background or border-radius on `.nav-inner` — that would make the pill 960px.
+  Inside it sits `.nav-pill` — a transparent flex container (no background, no border-radius since Batch 19).
+  Both are purely layout wrappers; no visible container around the nav links.
 - **No Turlogg page or nav item.** Reisebrev is the de facto "log" of the
   trip now.
 - **No Gjestebok page, nav item, or footer/contact link anywhere.**
@@ -254,11 +267,10 @@ current session.
     - Subtitle "med Montarou & co": **8px**, `leading-4` = 16px, **margin-top: 0**
     - **Strip centering math:** padding 12px + eyebrow 16px (lh) + mb 0 + h1 18px
       (leading-none) + mt 0 + subtitle 16px (lh) + padding 12px = **card height 74px**.
-      Strip top = hero-content padding-top(24) + card-height/2(37) = **61px**.
-      Strip height reduced to **122px** (= 2×61) so the strip exactly fills the
-      inner-header (total header height = 24+74+24 = 122px) with zero overflow above
-      or below. All photos fit: max photo 102px + 8px track padding each side =
-      118px track height < 122px wrapper ✓.
+      Strip top = hero-content padding-top(24) + card-height/2(37) = **61px**
+      (`top` is the center of the strip due to `transform: translateY(-50%)`).
+      Strip height: **64px** (Batch 19 — reduced from 122px; dark background shows
+      above/below the strip, which is intentional). `top: 61px` unchanged.
     - CSS selector for subtitle override: `.inner-header .title-card p:last-child` —
       the subtitle `<p>` is always the last child of `.title-card`; specificity
       (0,3,1) wins over Tailwind's `mt-4` utility (0,1,0). The `<p>` eyebrow uses
@@ -2377,6 +2389,27 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 20: Mobile inner-page photo strip — SMALL_SIZE_BUCKETS for compact strip.
+  **Problem:** Strip height reduced to 64px (Batch 19) but photos still used SIZE_BUCKETS (max h=102),
+  causing clipping inside the 64px wrapper. CSS max-height override was rejected because it would
+  eliminate height variety (all photos capped at the same height). **Fix:** Added `SMALL_SIZE_BUCKETS`
+  (6 buckets, scale factor 46/102 ≈ 0.451 applied to both w and h): min {w:29, h:22} → max {w:61, h:46}.
+  Max h=46 → track height=62px < 64px wrapper (no clipping). Variety ratio 46/22 ≈ 2.09 matches the
+  original 102/48 ≈ 2.13. Added `compact` prop to `PhotoStrip`; `useMemo` checks
+  `compact && matchMedia('(max-width:639px)')` at mount to pick the bucket set. `InnerHeader` passes
+  `compact={true}`; `HeroHeader` never does. Desktop inner pages: compact=true but media query false →
+  SIZE_BUCKETS used (desktop strip unchanged). Mobile inner pages: compact=true + media query true →
+  SMALL_SIZE_BUCKETS.
+- 2026-06-22 Batch 19: Desktop nav pill removed; nav link color/size updated; mobile inner-page strip height 64px.
+  **Nav:** `.nav-pill` background (#0f172a) and border-radius (9999px) removed — fully transparent on all pages
+  (hero and inner). `.nav-links` gap: 2rem → 4rem (64px). `.nav-link` font-size: 1rem → 1.125rem; color:
+  rgba(148,163,184,0.80) → rgba(248,250,252,0.75) (75% white, brightens to full #f8fafc on hover).
+  Active state unchanged: #f8fafc + orange-400 border-bottom. Hover previously brightened slate-400→white;
+  now brightens 75%white→100%white — same directional effect, functional feedback preserved.
+  **Strip:** `header.inner-header .strip-wrapper { height: 122px }` → `64px`. `top: 61px` unchanged
+  (center of the 74px compact mobile card = padding-top 24 + card-height/2 37 = 61; `translateY(-50%)`
+  makes `top` the center point, not the top edge). Strip is now shorter than the inner-header total height
+  (122px); dark background shows above/below — intentional.
 - 2026-06-22 Batch 18: Galleri — three-tier image system for thumbnail performance.
   **Problem:** All 944 gallery images served at 900px max dimension even for 64px preview thumbs and
   ~147px grid thumbnails. 70MB total; collapsed accordions still trigger lazy-loads for oversized images.
