@@ -2259,6 +2259,40 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 11: Reiserute two-column layout + scroll-triggered mobile animation.
+  **Route opacity:** strokeOpacity 0.8 → 0.5 (NorwayMap.jsx).
+  **Mobile map (50%):** `reiserute-map-mobile` CSS class, width 160px (half of 320px desktop),
+  centered with `margin: 0 auto 3rem`. Shown only on mobile; hidden via `display:none` ≥960px.
+  **Desktop two-column layout (960px breakpoint):**
+  Breakpoint calculation: 560px (left) + 352px (right) + 48px (px-6 outer padding) = 960px.
+  Right column = 912px content − 560px = 352px. Map = 352 − 32px (1rem×2 padding) = 320px wide.
+  CSS Grid alternative rejected; using flexbox: `display:flex; align-items:flex-start` on
+  `.reiserute-layout`. Left: `flex:0 0 560px`. Right: `flex:1; min-width:0`.
+  Reiserute.jsx: h1 stays full-width above the layout div. Left column contains intro +
+  mobile-map-placeholder + full timeline. Right column contains desktop-only sticky map.
+  **Sticky map:** `position:sticky; top:calc(50vh - 314px)` on `.reiserute-map-sticky`.
+  Map height calculation: 320px × (202.210/103.026) ≈ 628px → half = 314px.
+  When map top is at 50vh−314px, map center is at 50vh = viewport center.
+  **Two NorwayMap instances:** mobile instance in `.reiserute-map-mobile`, desktop instance
+  in `.reiserute-right`. CSS hides the appropriate one per breakpoint. Since `display:none`
+  elements don't run CSS animations, both instances are inert when hidden.
+  **Scroll-triggered mobile animation (IntersectionObserver):** NorwayMap now uses
+  `useRef + useState(started) + useEffect`. Initial started state reads matchMedia at
+  component creation: true on desktop (≥960px), false on mobile. On mobile, an
+  IntersectionObserver with `rootMargin:'0px 0px -50% 0px'` watches the wrapper div;
+  fires when the wrapper's top edge reaches the viewport center. On fire: started=true,
+  observer disconnects. On desktop, useEffect sees started=true and returns early.
+  **Animation gating (CSS):** Animations moved from unconditional class selectors to
+  `.norway-map-started` descendants. Base `.norway-map-route` keeps dasharray/dashoffset=1
+  (invisible). `.norway-map-started .norway-map-route` gets the 5s linear animation.
+  Same pattern for `.norway-map-circle` and `.norway-map-label`. The `.norway-map-started`
+  class is added to the wrapper div when started=true.
+  **Reduced motion fix (specificity):** `.norway-map-started .X` has specificity (0,2,0),
+  beating the old single-class reduced-motion override (0,1,0). Both selectors now appear
+  in the reduced-motion block: `.norway-map-route, .norway-map-started .norway-map-route { ... }`.
+  **Links below participants:** Removed `sm:flex-row sm:items-start` from EtappeContent
+  links container (line 236 area) and `sm:ml-auto` from links div. Links are now always
+  in a flex-col stack below the participant buttons, on both mobile and desktop.
 - 2026-06-22 Batch 10g: NorwayMap timing fix, white-flash tweak, participant button spacing.
   **Root cause (animation desync):** Route used `ease-in-out` timing. Dot delays assumed
   linear progress (fraction-drawn = elapsed/duration). With ease-in-out, the path draws

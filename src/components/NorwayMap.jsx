@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 // Silhouette inlined from public/norway-map-rotated.svg.
 // Coordinates rotated -20° (CCW) around viewBox center from norway-map-route.svg.
@@ -133,8 +133,38 @@ const LABEL_LETTER_SPACING = '0.1em'
 const VB_RIGHT_THRESH = 9.784 + 103.026 * 0.6
 
 export default function NorwayMap() {
+  // On desktop (≥960px) animation starts immediately.
+  // On mobile, IntersectionObserver starts it when the map top reaches viewport center.
+  const wrapperRef = useRef(null)
+  const [started, setStarted] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(min-width: 960px)').matches
+  )
+
+  useEffect(() => {
+    if (started) return
+    const el = wrapperRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true)
+          observer.disconnect()
+        }
+      },
+      // Fires when top of map enters the top 50% of viewport (= top reaches center)
+      { rootMargin: '0px 0px -50% 0px', threshold: 0 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <div aria-hidden="true" role="presentation" className="norway-map-wrapper">
+    <div
+      ref={wrapperRef}
+      aria-hidden="true"
+      role="presentation"
+      className={`norway-map-wrapper${started ? ' norway-map-started' : ''}`}
+    >
       <svg
         viewBox="9.784 -17.297 103.026 202.210"
         xmlns="http://www.w3.org/2000/svg"
@@ -153,7 +183,7 @@ export default function NorwayMap() {
           strokeLinecap="round"
           strokeLinejoin="round"
           pathLength="1"
-          strokeOpacity={0.8}
+          strokeOpacity={0.5}
           className="norway-map-route"
         />
 

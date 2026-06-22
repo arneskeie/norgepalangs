@@ -233,9 +233,9 @@ function EtappeContent({ etappe, participants, base, onSelectPerson, isOpp = fal
       <p className="font-sans text-base text-slate-50 leading-relaxed text-pretty">
         {etappe.note}
       </p>
-      <div className="flex flex-col sm:flex-row sm:items-start gap-4 mt-4">
+      <div className="flex flex-col gap-4 mt-4">
         <ParticipantList people={participants} base={base} onSelectPerson={onSelectPerson} />
-        <div className="flex flex-row items-center gap-4 sm:ml-auto flex-shrink-0">
+        <div className="flex flex-row items-center gap-4 flex-shrink-0">
           {reisebrevNr && (
             <a
               href={`${base}reisebrev${reisebrevNr}.html`}
@@ -315,65 +315,77 @@ export default function Reiserute() {
           Reiserute
         </h1>
 
-        {/* Intro description — full width on all screen sizes */}
-        <p className="section-description mb-8 text-pretty">{INTRO}</p>
+        {/* Two-column layout: 560px left (intro + timeline) + sticky map right.
+            Mobile: single column, map at 50% size (160px) between intro and timeline.
+            Breakpoint: 960px = 560px left + 352px right (320px map + 32px padding) + 48px outer padding. */}
+        <div className="reiserute-layout">
 
-        {/* Animated Norway map — centered, prominent, below description on all screen sizes */}
-        <div className="flex justify-center mb-16">
-          <div className="w-80">
-            <NorwayMap />
+          {/* LEFT COLUMN: always visible */}
+          <div className="reiserute-left">
+            <p className="section-description mb-8 text-pretty">{INTRO}</p>
+
+            {/* Mobile map: 50% of desktop width (160px), hidden above 960px breakpoint */}
+            <div className="reiserute-map-mobile">
+              <NorwayMap />
+            </div>
+
+            {/* ─── Vertical timeline ─── */}
+            <div className="relative">
+              {/* Continuous vertical line */}
+              <div className="absolute left-3 top-0 bottom-0 w-[1.5px] bg-orange-400/15" aria-hidden="true" />
+
+              {/* Oppvarmingstur — above the main høst/vår timeline */}
+              <SeasonDivider label="Oppvarmingstur" />
+              <Waypoint name="Nord-Finland" />
+              <EtappeContent
+                etappe={OPPVARMINGSTUR}
+                participants={oppParticipants}
+                base={base}
+                onSelectPerson={setSelectedPerson}
+                isOpp
+              />
+
+              {/* Høst-etapper */}
+              <SeasonDivider label="Høst-etapper 2008" />
+              <Waypoint name="Nordkapp" coords="71°10′N" isStart />
+
+              {hostEtapper.map((e) => {
+                const participants = getParticipants(e)
+                return (
+                  <React.Fragment key={e.slug + e.nr}>
+                    <EtappeContent etappe={e} participants={participants} base={base} onSelectPerson={setSelectedPerson} />
+                    <Waypoint name={e.til} />
+                  </React.Fragment>
+                )
+              })}
+
+              {/* Vår-etapper — resume from Lønsdal */}
+              <SeasonDivider label="Vår-etapper 2009" />
+              <Waypoint name="Lønsdal" isResumption />
+
+              {varEtapper.map((e) => {
+                const participants = getParticipants(e)
+                return (
+                  <React.Fragment key={e.slug + e.nr}>
+                    <EtappeContent etappe={e} participants={participants} base={base} onSelectPerson={setSelectedPerson} />
+                    {e.nr === 15 ? (
+                      <Waypoint name="Lindesnes" coords="57°58′N" isEnd />
+                    ) : (
+                      <Waypoint name={e.til} />
+                    )}
+                  </React.Fragment>
+                )
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* ─── Vertical timeline ───────────────────────────────────────────────── */}
-        {/* Container pl-7 (28px). Line at left-3 (12px). Dots centered on line via
-            absolute left-3 + -translate-x-1/2 = center at 12px regardless of dot size. */}
-        <div className="relative">
-          {/* Continuous vertical line */}
-          <div className="absolute left-3 top-0 bottom-0 w-[1.5px] bg-orange-400/15" aria-hidden="true" />
+          {/* RIGHT COLUMN: desktop only — map sticky-centered in viewport */}
+          <div className="reiserute-right" aria-hidden="true">
+            <div className="reiserute-map-sticky">
+              <NorwayMap />
+            </div>
+          </div>
 
-          {/* Oppvarmingstur — above the main høst/vår timeline */}
-          <SeasonDivider label="Oppvarmingstur" />
-          <Waypoint name="Nord-Finland" />
-          <EtappeContent
-            etappe={OPPVARMINGSTUR}
-            participants={oppParticipants}
-            base={base}
-            onSelectPerson={setSelectedPerson}
-            isOpp
-          />
-
-          {/* Høst-etapper */}
-          <SeasonDivider label="Høst-etapper 2008" />
-          <Waypoint name="Nordkapp" coords="71°10′N" isStart />
-
-          {hostEtapper.map((e) => {
-            const participants = getParticipants(e)
-            return (
-              <React.Fragment key={e.slug + e.nr}>
-                <EtappeContent etappe={e} participants={participants} base={base} onSelectPerson={setSelectedPerson} />
-                <Waypoint name={e.til} />
-              </React.Fragment>
-            )
-          })}
-
-          {/* Vår-etapper — resume from Lønsdal */}
-          <SeasonDivider label="Vår-etapper 2009" />
-          <Waypoint name="Lønsdal" isResumption />
-
-          {varEtapper.map((e) => {
-            const participants = getParticipants(e)
-            return (
-              <React.Fragment key={e.slug + e.nr}>
-                <EtappeContent etappe={e} participants={participants} base={base} onSelectPerson={setSelectedPerson} />
-                {e.nr === 15 ? (
-                  <Waypoint name="Lindesnes" coords="57°58′N" isEnd />
-                ) : (
-                  <Waypoint name={e.til} />
-                )}
-              </React.Fragment>
-            )
-          })}
         </div>
 
       </main>
