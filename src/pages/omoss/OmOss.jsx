@@ -45,7 +45,7 @@ function PersonCard({ person, onSelect }) {
           />
         </div>
         <div className="min-w-0">
-          <h3 className="font-serif font-medium text-[1.25rem] md:text-[1.5rem] text-slate-100 leading-tight">
+          <h3 className="card-title text-slate-100">
             {person.name}
           </h3>
           <div className="mt-2 space-y-1">

@@ -185,7 +185,7 @@ function SponsorRow({ sponsor, base }) {
         ) : logo}
       </div>
       <div className="min-w-0">
-        <h3 className="font-serif text-xl text-slate-100 mb-2">{name}</h3>
+        <h3 className="card-title text-slate-100 mb-2">{name}</h3>
         <p className="font-sans text-[1.125rem] text-slate-400 leading-normal text-pretty">{desc}</p>
       </div>
     </div>
@@ -230,7 +230,7 @@ export default function Sponsorer() {
                 <span className="font-serif text-xs text-slate-600 leading-tight">Rui Fjellstoge</span>
               </div>
               <div className="min-w-0">
-                <h3 className="font-serif text-xl text-slate-100 mb-2">Rui Fjellstoge, Haukeli</h3>
+                <h3 className="card-title text-slate-100 mb-2">Rui Fjellstoge, Haukeli</h3>
                 <p className="font-sans text-[1.125rem] text-slate-400 leading-normal text-pretty">{RUI_FJELLSTOGE}</p>
               </div>
             </div>

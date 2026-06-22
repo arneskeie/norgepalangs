@@ -19,7 +19,7 @@ function CategorySection({ cat, isOpen, onToggle, onItemClick }) {
         onClick={onToggle}
         aria-expanded={isOpen}
       >
-        <span className="font-serif font-medium text-[1.5rem] text-slate-100">{cat.label}</span>
+        <span className="card-title text-slate-100">{cat.label}</span>
         <span className="font-sans text-xs text-slate-600">
           {cat.items.length} gjenstander {isOpen ? '↑' : '↓'}
         </span>
@@ -33,7 +33,7 @@ function CategorySection({ cat, isOpen, onToggle, onItemClick }) {
                 onClick={() => onItemClick(item)}
               >
                 <span className="text-orange-400/60 mt-[0.35rem] flex-shrink-0 text-xs">—</span>
-                <span className="font-sans text-sm text-slate-300 leading-relaxed group-hover:text-slate-100 transition-colors">
+                <span className="font-sans text-base text-slate-300 leading-relaxed group-hover:text-slate-100 transition-colors">
                   {item.name}
                 </span>
               </button>
@@ -74,7 +74,7 @@ export default function Utstyr() {
           Utstyr
         </h1>
         <p className="section-description mb-4 text-pretty">{INTRO_DESC}</p>
-        <p className="font-sans text-[1.125rem] text-slate-300 leading-normal text-pretty mb-4">{INTRO_BODY}</p>
+        <p className="font-sans text-[1.125rem] text-slate-400 leading-normal text-pretty mb-4">{INTRO_BODY}</p>
 
         <div className="flex justify-end mb-6">
           <button onClick={toggleAll} className="btn-outline">

@@ -144,7 +144,7 @@ export default function SheetContent({
           )}
           <div className="min-w-0 w-full sm:w-auto sm:pt-1">
             {subtitle && <p className="eyebrow mb-2">{subtitle}</p>}
-            <h3 className="font-serif text-[1.5rem] leading-tight text-slate-50 text-pretty">
+            <h3 className="card-title text-slate-50 text-pretty">
               {title}
             </h3>
             {meta && meta.length > 0 && (
@@ -207,7 +207,7 @@ export default function SheetContent({
         )}
 
         {/* Title */}
-        <h3 className="font-serif text-[1.5rem] leading-tight text-slate-50 mb-4 text-pretty">
+        <h3 className="card-title text-slate-50 mb-4 text-pretty">
           {title}
         </h3>
 

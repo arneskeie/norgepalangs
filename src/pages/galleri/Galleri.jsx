@@ -131,7 +131,7 @@ function GalleriSection({ section, onOpen }) {
   const base = import.meta.env.BASE_URL
   return (
     <section className="mb-16">
-      <p className="eyebrow mb-4">{section.label}</p>
+      <p className="card-title text-slate-100 mb-4">{section.label}</p>
       <p className="font-sans text-xs text-slate-600 mb-6">{section.images.length} bilder</p>
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1.5">
         {section.images.map((img, idx) => (

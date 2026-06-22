@@ -43,6 +43,14 @@
     @apply font-sans leading-normal text-slate-400;
     font-size: clamp(1.25rem, calc(3.5vw + 0.5rem), 1.5rem);
   }
+
+  /* Card/item title — applied to named titles on cards, sheets, accordions, and
+     list rows wherever the element carries the primary identity of an item.
+     line-height: leading-tight = 1.25. Per-instance color and spacing stay in JSX. */
+  .card-title {
+    @apply font-serif font-medium leading-tight;
+    font-size: 1.5rem;
+  }
 }
 
 /* ─── SiteHeader ──────────────────────────────── */

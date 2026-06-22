@@ -154,7 +154,10 @@ export default function Home() {
             ))}
           </div>
 
-          <a href={`${base}reiserute.html`} className="btn-outline">Se hele ruta</a>
+          <div className="flex flex-wrap gap-4">
+            <a href={`${base}reiserute.html`} className="btn-solid">Se hele ruta</a>
+            <a href={`${base}omoss.html`} className="btn-outline">Møt vandrerne</a>
+          </div>
         </div>
       </section>
 
@@ -180,12 +183,15 @@ export default function Home() {
                   />
                 </div>
                 <p className="font-sans text-xs text-slate-500 tracking-wider mb-2">{letter.date}</p>
-                <h3 className="font-serif text-xl leading-snug text-slate-100">
+                <h3 className="card-title text-slate-100">
                   <span className="font-sans font-normal text-slate-500 mr-2">{String(letter.n).padStart(2, '0')}</span>
                   {letter.title}
                 </h3>
               </a>
             ))}
+          </div>
+          <div className="mt-10">
+            <a href={`${base}galleri.html`} className="btn-outline">Se bildene →</a>
           </div>
         </div>
       </section>
@@ -194,7 +200,7 @@ export default function Home() {
       <section id="sponsorer" className="py-12 md:py-20">
         <div className="max-w-content mx-auto px-6">
           <h2 className="font-serif text-[2.5rem] md:text-5xl leading-[0.95] text-slate-50 mb-4">
-            Sponsorer.
+            Sponsorer
           </h2>
           <p className="section-description mb-10">
             Uten støtte fra sponsorene hadde ikke dette vært mulig.

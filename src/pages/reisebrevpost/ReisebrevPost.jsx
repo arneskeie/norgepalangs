@@ -72,13 +72,13 @@ export default function ReisebrevPost({ n }) {
               </div>
               {letter.kadaver.map((row) => (
                 <React.Fragment key={row.label}>
-                  <div className="font-sans font-medium text-xs text-slate-500 uppercase tracking-widest px-4 py-3 border-t border-white/[.06]">
+                  <div className="font-sans font-medium text-base text-slate-500 uppercase tracking-widest px-4 py-3 border-t border-white/[.06]">
                     {row.label}
                   </div>
-                  <div className="font-sans text-sm text-slate-300 px-4 py-3 border-t border-l border-white/[.06]">
+                  <div className="font-sans text-base text-slate-300 px-4 py-3 border-t border-l border-white/[.06]">
                     {row.marius}
                   </div>
-                  <div className="font-sans text-sm text-slate-300 px-4 py-3 border-t border-l border-white/[.06]">
+                  <div className="font-sans text-base text-slate-300 px-4 py-3 border-t border-l border-white/[.06]">
                     {row.emil}
                   </div>
                 </React.Fragment>

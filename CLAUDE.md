@@ -80,6 +80,17 @@ current session.
     The per-instance max-w was removed from all 3 inner pages (OmOss had 560px,
     Utstyr and Sponsorer page had 640px each). Reiserute INTRO previously had
     max-w-[640px] and text-slate-300; both removed/updated when class was applied.
+  - `.card-title` — `font-serif font-medium` with `font-size: 1.5rem; line-height: 1.25`
+    (`leading-tight`). The primary title style for named items on cards, accordion rows,
+    list entries, and sheet headers — wherever an item's identity label (name, title,
+    category) is the focal point of a card-like layout. Per-instance color and spacing
+    stay in JSX. Applied to: Home #reisebrev card h3 (post titles), OmOss card h3
+    (person names), SheetContent h3 in both 'profile' and 'header' layouts (added
+    `font-medium` — previously only `font-serif`), Reiserute timeline EtappeContent h3
+    (etappe titles — increased from 1.125rem to 1.5rem), Galleri GalleriSection label p
+    (section headings — changed from `.eyebrow` to `.card-title`), Utstyr CategorySection
+    accordion title span (was inline `font-serif font-medium text-[1.5rem]`), Sponsorer
+    SponsorRow h3 and Rui Fjellstoge h3 (increased from 1.25rem/text-xl to 1.5rem).
 - Accent color: **orange-400** (`#fb923c`). Confirmed via real color
   analysis of 60 sampled trip photos — teal (the original logo color) was
   the weakest hue present in the actual photography; orange-400 matches
@@ -316,21 +327,24 @@ current session.
    "Nordkapp til Lindesnes." portion of the h2 only — section h2s are not
    subject to the "inner-page h1s are fully white" rule) + short description
    (1.5rem / ingress size, full-width, no max-w constraint) + route-line SVG
-   + 3 stats (2 500 km / 6 måneder / 15 etapper — NOT 4) + "Se hele ruta" button.
+   + 3 stats (2 500 km / 6 måneder / 15 etapper — NOT 4) + two buttons side-by-side
+   in a `flex flex-wrap gap-4` wrapper: "Se hele ruta" (`.btn-solid`, primary CTA,
+   links to reiserute.html) + "Møt vandrerne" (`.btn-outline`, links to omoss.html).
 4. **Reisebrev** — id="reisebrev". Eyebrow "Reisebrev", section h2
    "Oppdateringer underveis". Full 3-column grid of all 6 reisebrev entries
    (1 col mobile, 2 col sm, 3 col lg). Each card: cover image (aspect-[4/3],
    hover:scale-105 via .reisebrev-cover-img), date label, then h3 with
    zero-padded entry number (muted, font-sans font-normal) + title text
-   (font-serif, text-xl). No excerpt, no "Les mer" link, no "Alle reisebrev"
-   button — all entries shown directly. Each card is a single `<a>` block link
-   pointing to `reisebrevN.html`. The old list page (reisebrev.html) is deleted.
+   (`.card-title`). No excerpt, no "Les mer" link — all entries shown directly.
+   Each card is a single `<a>` block link pointing to `reisebrevN.html`.
+   Below the grid: "Se bildene →" (`.btn-outline`) in a `mt-10` wrapper, linking
+   to `galleri.html`. The old list page (reisebrev.html) is deleted.
 5. **Sponsor logos** — own dedicated section, NOT inside the footer.
    Logo grid, all 20 real sponsors (see Content inventory). Logos sit
    directly on the dark background with `mix-blend-mode: screen`. Default:
    grayscale (`grayscale` Tailwind). Hover: full color (`group-hover:grayscale-0`) +
    scale-105. No opacity treatment — logos are fully opaque at all times.
-   Section title h2/font-serif ("Sponsorer."). Description line below title
+   Section title h2/font-serif ("Sponsorer" — no trailing period). Description line below title
    uses `.section-description` class. Grid: 4 columns mobile, 5 columns md+
    (`grid-cols-4 md:grid-cols-5`). "Les mer om sponsorene" btn-outline below
    grid in a `<div className="mt-4">` wrapper (16px extra spacing above button,
@@ -908,8 +922,9 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
 2. ✅ **Vertical etappe timeline** — DONE 2026-06-21. Accordion (EtappeRow) fully replaced
    by a vertical dot-and-line timeline. Dots at left-3 centered via -translate-x-1/2.
    Each entry: season label, etappe eyebrow/title, stats, restored note, participants
-   (via getParticipants() cross-referencing people.js). Saltfjellet pause callout inserted
-   after E5. Oppvarmingstur as top entry. h1 updated to "Reiserute" (nav rename = Batch 5).
+   (via getParticipants() cross-referencing people.js). Oppvarmingstur as top entry.
+   h1 updated to "Reiserute" (nav rename = Batch 5).
+   Saltfjellet pause text merged into E5's note — see Decision changelog 2026-06-22.
 3. ✅ **Illustrative SVG map** — DONE 2026-06-21. Static Norway silhouette created as
    public/norway-map.svg (derived from favicon.svg: orange rect removed, class="st0"
    replaced with fill="#475569" = slate-600, defs/style block stripped). Referenced as
@@ -1886,4 +1901,31 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   height-independent. Added `h-[93dvh]` to Drawer.Content — explicit near-full height,
   7% gap at top, `dvh` accounts for mobile browser UI. The snapshot/animation approach
   is now the same on desktop and mobile. `useState(snap)` and `useEffect` removed.
+- 2026-06-22: Typography fixes, .card-title class, and content fixes batch.
+  1. `.card-title` semantic class added to main.css `@layer components` — `font-serif
+     font-medium` + `font-size: 1.5rem; line-height: 1.25` (`leading-tight`). Applied to
+     7 locations (see "Semantic CSS component classes" section for full list). SheetContent
+     h3s in both layouts gained `font-medium` (previously only `font-serif`). Galleri
+     section labels changed from `.eyebrow` (small orange uppercase) to `.card-title`
+     (Fraunces 1.5rem, slate-100). Reiserute etappe title h3s increased from 1.125rem
+     to 1.5rem. Sponsorer sponsor name h3s increased from text-xl (1.25rem) to 1.5rem.
+  2. Home #ruta: "Se hele ruta" changed from `.btn-outline` to `.btn-solid` (primary CTA).
+     Second button "Møt vandrerne" (`.btn-outline`, links omoss.html) added alongside in a
+     `flex flex-wrap gap-4` wrapper.
+  3. Home #reisebrev: "Se bildene →" (`.btn-outline`) added below the grid in a `mt-10`
+     div, linking to `galleri.html`.
+  4. Home #sponsorer: section h2 changed from "Sponsorer." to "Sponsorer" (period removed).
+  5. ReisebrevPost kadaver table: body row cells increased from `text-xs`/`text-sm` to
+     `text-base` (1rem) — labels (category names) and value cells (Marius/Emil columns).
+     Header row (`text-xs` "Marius"/"Emil" column headers) unchanged.
+  6. Utstyr INTRO_BODY: text color changed from `text-slate-300` to `text-slate-400` to
+     match `.section-description` (the preceding INTRO_DESC paragraph).
+  7. Utstyr accordion items: item text (product names) increased from `text-sm` (0.875rem)
+     to `text-base` (1rem).
+  8. Reiserute Saltfjellet callout: the styled italic block between E5 and E6 ("Her stanset
+     høstetappene. Saltfjellet var allerede stengt av vinteren. Vi dro sørover til Hegra for
+     å fullføre den siste høstetappen.") was removed as a separate element and its verbatim
+     text appended to Etappe 5's note. Now renders as plain prose matching other etappe notes
+     (no italic, no border). The `isLastBeforePause` conditional logic also removed (dead code —
+     both branches rendered `<Waypoint name={e.til} />` anyway).
 

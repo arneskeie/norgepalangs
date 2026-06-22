@@ -40,7 +40,7 @@ const ETAPPER = [
     nr: 5, slug: 'e05', sesong: 'høst',
     fra: 'Sulitjelma', til: 'Lønsdal',
     dager: 8, hvile: 1, km: 90,
-    note: 'Deilig etappe! Ikke like stort forflytningspress på denne etappen.',
+    note: 'Deilig etappe! Ikke like stort forflytningspress på denne etappen. Her stanset høstetappene. Saltfjellet var allerede stengt av vinteren. Vi dro sørover til Hegra for å fullføre den siste høstetappen.',
   },
   {
     nr: 6, slug: 'e06', sesong: 'høst',
@@ -188,7 +188,7 @@ function EtappeContent({ etappe, participants, base, isOpp = false }) {
       <p className="font-sans font-medium text-xs uppercase tracking-widest text-orange-400 mb-1">
         {eyebrow}
       </p>
-      <h3 className="font-serif font-medium text-[1.125rem] text-slate-100 leading-snug mb-1">
+      <h3 className="card-title text-slate-100 mb-1">
         {label}
       </h3>
       {statParts.length > 0 && (
@@ -302,26 +302,12 @@ export default function Reiserute() {
           <SeasonDivider label="Høst-etapper 2008" />
           <Waypoint name="Nordkapp" coords="71°10′N" isStart />
 
-          {hostEtapper.map((e, idx) => {
+          {hostEtapper.map((e) => {
             const participants = getParticipants(e)
-            // After E5 (Lønsdal), insert the Saltfjellet pause before E6
-            const isLastBeforePause = e.nr === 5
             return (
               <React.Fragment key={e.slug + e.nr}>
                 <EtappeContent etappe={e} participants={participants} base={base} />
-                {isLastBeforePause ? (
-                  <Waypoint name={e.til} />
-                ) : (
-                  <Waypoint name={e.til} />
-                )}
-                {isLastBeforePause && (
-                  <div className="pl-7 mb-8 max-w-[560px]">
-                    <p className="font-sans text-xs text-slate-600 italic leading-relaxed text-pretty">
-                      Her stanset høstetappene. Saltfjellet var allerede stengt av vinteren.
-                      Vi dro sørover til Hegra for å fullføre den siste høstetappen.
-                    </p>
-                  </div>
-                )}
+                <Waypoint name={e.til} />
               </React.Fragment>
             )
           })}
