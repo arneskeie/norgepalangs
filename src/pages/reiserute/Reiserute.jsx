@@ -3,6 +3,7 @@ import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
 import BottomSheet from '../../components/BottomSheet.jsx'
 import SheetContent from '../../components/SheetContent.jsx'
+import NorwayMap from '../../components/NorwayMap.jsx'
 import { PEOPLE } from '../../data/people.js'
 
 // ─── Text from 01-original-php/Reiserute.php (authoritative) ─────────────────
@@ -314,19 +315,13 @@ export default function Reiserute() {
           Reiserute
         </h1>
 
-        {/* Intro + Norway map: side by side on desktop, stacked on mobile */}
-        <div className="flex flex-col sm:flex-row gap-8 sm:gap-12 items-start mb-16">
-          <div className="flex-1 min-w-0">
-            <p className="section-description mb-4 text-pretty">{INTRO}</p>
-          </div>
-          {/* Illustrative Norway map — static ambient silhouette (Batch 3) */}
-          <div className="flex-shrink-0 w-32 sm:w-36 md:w-44 self-start sm:sticky sm:top-8">
-            <img
-              src={`${base}norway-map.svg`}
-              alt="Illustrativ kart over Norge — Nordkapp til Lindesnes"
-              className="w-full opacity-60"
-              aria-hidden="true"
-            />
+        {/* Intro description — full width on all screen sizes */}
+        <p className="section-description mb-8 text-pretty">{INTRO}</p>
+
+        {/* Animated Norway map — centered, prominent, below description on all screen sizes */}
+        <div className="flex justify-center mb-16">
+          <div className="w-80">
+            <NorwayMap />
           </div>
         </div>
 

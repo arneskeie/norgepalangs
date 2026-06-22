@@ -553,3 +553,59 @@
     display: flex;
   }
 }
+
+/* ─── NorwayMap animated route ────────────────────────────────────────────────
+   Route line draws via stroke-dashoffset; dots fade in at proportional delays.
+   pathLength="1" on the <path> normalises dasharray/dashoffset to 0–1 range,
+   making animation independent of actual SVG path length. */
+@keyframes norway-draw-route {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.norway-map-route {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: norway-draw-route 5s ease-in-out 0.3s forwards;
+}
+
+/* Dots flash white, then settle to orange-400. Labels flash white, then settle to slate-400. */
+.norway-map-circle {
+  opacity: 0;
+  animation: norway-dot-circle-appear 1.5s ease-out forwards;
+}
+
+.norway-map-label {
+  opacity: 0;
+  animation: norway-dot-label-appear 1.5s ease-out forwards;
+}
+
+@keyframes norway-dot-circle-appear {
+  0%   { opacity: 0; fill: white; }
+  8%   { opacity: 1; fill: white; }
+  100% { opacity: 1; fill: #fb923c; }
+}
+
+@keyframes norway-dot-label-appear {
+  0%   { opacity: 0; fill: white; }
+  8%   { opacity: 1; fill: white; }
+  100% { opacity: 1; fill: #94a3b8; }
+}
+
+/* Reduced motion: show route and all dots immediately in final colors, no animation */
+@media (prefers-reduced-motion: reduce) {
+  .norway-map-route {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .norway-map-circle {
+    opacity: 1;
+    fill: #fb923c;
+    animation: none;
+  }
+  .norway-map-label {
+    opacity: 1;
+    fill: #94a3b8;
+    animation: none;
+  }
+}

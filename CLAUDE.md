@@ -800,6 +800,137 @@ Single `<button>` spanning the full row. Internal layout is responsive:
   Instant show/hide with no animation (CSS-only, no React state involved).
 - `showFull` state and its `useEffect` removed — no longer needed; pure CSS handles all transitions.
 
+## NorwayMap component
+
+**File:** `src/components/NorwayMap.jsx`
+
+Inline SVG component rendering an animated route-draw on the Norway silhouette.
+Replaces the `<img src="norway-map.svg">` that was used in the static Batch 3 version.
+
+**Why inline SVG (not `<img>`):** External SVG files referenced via `<img>` cannot be
+targeted by CSS animations or JS — the SVG document is isolated. Inlining the paths
+directly in the React component makes all child elements available to CSS keyframe
+animations.
+
+**Authoritative SVG sources (both kept):**
+- `public/norway-map-rotated.svg` — **current source**. norway-map-route.svg rotated
+  -20° (CCW) by coordinate transformation. Component silhouette, route, and waypoints
+  are extracted from this file.
+- `public/norway-map-route.svg` — **unrotated reference** (manually verified in
+  Illustrator). Used as the input to generate norway-map-rotated.svg. Do not modify it.
+- `public/norway-map.svg` — old file, no longer used by the component.
+
+**Rotation approach (Batch 10e — two-step process):**
+All coordinates in norway-map-route.svg were transformed by a -20° rotation matrix
+(counter-clockwise visually in SVG's y-down coordinate system) around the original
+viewBox centroid (64.8, 81.7). This was done in two steps:
+1. Python script (`transform_path_d`) parsed every SVG path `d` attribute (handling M,
+   Z, H, h, L, l, V, v, C, c, S, s, Q, q), converted all commands to absolute coordinates,
+   rotated each coordinate around the centroid, and output absolute-command paths.
+   Circles were rotated analytically. Result: `norway-map-rotated.svg` (no labels).
+2. Labels re-applied at rotated dot positions (horizontal text — no rotation on text).
+   Label side threshold: cx > viewBox_x + viewBox_w × 0.6 → LEFT, else RIGHT.
+The `<text>` elements are NOT present in norway-map-rotated.svg — they are generated
+in NorwayMap.jsx from the WAYPOINTS array (same approach as pre-rotation).
+
+**viewBox:** `9.784 -17.297 103.026 202.210` (rotated bounding box + 8 SVG unit margin,
+plus label-width buffer on right side). Note the negative y origin — Nordkapp's dot
+ends up above the original zero line after rotation.
+
+**Silhouette:** 97 paths (rotated coordinates, absolute commands). `class="st0"` →
+replaced with `fill="#475569"` (slate-600) at generation time. Rendered via
+`<g opacity="0.6" dangerouslySetInnerHTML={{ __html: SILHOUETTE }} />`.
+
+**Route path:** Extracted from `<path class="st1">` and transformed. Now uses absolute
+M/L/C/S/Q commands. Stored as `ROUTE` const. `pathLength="1"` normalises dasharray/
+dashoffset to 0–1 regardless of actual path geometry.
+Styled: `stroke="#fb923c"`, `strokeWidth="1.5"`, `strokeLinecap="round"`,
+`strokeLinejoin="round"`, `fill="none"`.
+
+**Route line styling:** `strokeOpacity={0.8}` (80% opacity — slightly muted).
+
+**Animation — route draw:** `pathLength="1"`, CSS class `norway-map-route`,
+keyframe `norway-draw-route`, **5s duration** (doubled from 2.5s), 0.3s initial delay.
+
+**Animation — waypoint dots and labels:**
+- **17 waypoints**. Each `<g>` contains a `<circle className="norway-map-circle">` and
+  a `<text className="norway-map-label">`. Both have `style={{ animationDelay: wp.delay }}`
+  directly on the element (not on the group) so each can animate independently.
+- **Appearance animation (white-flash):**
+  - `norway-dot-circle-appear` (1.5s): 0%→ opacity 0 white, 8% → opacity 1 white, 100% → opacity 1 #fb923c
+  - `norway-dot-label-appear` (1.5s): same pattern, final fill #94a3b8
+  - The 8% "white phase" = 0.12s (instant pop), 92% = 1.38s color settle to final colors.
+  - CSS `fill` in keyframes overrides SVG presentation `fill` attribute (higher cascade priority).
+- **Delay formula (y-coordinate timing):** `delay = 0.3 + (cum_len_at_y_crossing / 194.9) × 5.0`
+  - For each waypoint, find cumulative path length along the route where the stroke tip
+    first reaches that waypoint's y-coordinate (moving southward). Since all route segments
+    go southward in the rotated coordinate system, this equals the cumulative length at
+    the segment endpoint matching that waypoint.
+- Nordkapp and Lindesnes: `r=3.5`. All others: `r=2.5`.
+
+**Labels styling:**
+- Font-size: `4` SVG units (up from 3.5).
+- `fontWeight={700}` — bold.
+- `letterSpacing="0.1em"`.
+- `textTransform="uppercase"`.
+- Defined via constants `FONT_SIZE`, `LABEL_WEIGHT`, `LABEL_LETTER_SPACING` (single source).
+
+**Waypoint coordinates (rotated -20° from norway-map-route.svg, viewBox 9.784 -17.297 103.026 202.210):**
+Nordkapp cx=74.984 cy=-5.225 · Skaidi cx=74.124 cy=3.814 · Kautokeino cx=77.700 cy=20.071 ·
+Abisko cx=63.642 cy=37.000 · Fauske cx=55.360 cy=54.594 · Lønsdal cx=55.669 cy=61.292 ·
+Umbukta cx=54.928 cy=67.734 · Nordli cx=56.327 cy=89.998 · Hegra cx=49.266 cy=104.806 ·
+Gressli cx=52.275 cy=111.905 · Elgå cx=56.157 cy=119.645 · Ringebu cx=50.767 cy=126.182 ·
+Fagernes cx=44.781 cy=134.001 · Geilo cx=40.426 cy=141.333 · Haukeliseter cx=38.584 cy=152.645 ·
+Ljosland cx=39.484 cy=163.598 · Lindesnes cx=41.460 cy=173.414
+
+**Pre-rotation coords (original norway-map-route.svg, for reference):**
+Nordkapp cx=104.1 cy=3.5 · Skaidi cx=100.2 cy=11.7 · Kautokeino cx=98.0 cy=28.2 ·
+Abisko cx=79.0 cy=39.3 · Fauske cx=65.2 cy=53.0 · Lønsdal cx=63.2 cy=59.4 ·
+Umbukta cx=60.3 cy=65.2 · Nordli cx=54.0 cy=86.6 · Hegra cx=42.3 cy=98.1 ·
+Gressli cx=42.7 cy=105.8 · Elgå cx=43.7 cy=114.4 · Ringebu cx=36.4 cy=118.7 ·
+Fagernes cx=28.1 cy=124.0 · Geilo cx=21.5 cy=129.4 · Haukeliseter cx=15.9 cy=139.4 ·
+Ljosland cx=13.0 cy=150.0 · Lindesnes cx=11.5 cy=159.9 (viewBox 0 0 129.6 163.4)
+
+**Delay table (y-coordinate timing, 5s route duration, 0.3s initial delay):**
+Nordkapp 0.3s · Skaidi 0.533s · Kautokeino 0.96s · Abisko 1.524s · Fauske 2.023s ·
+Lønsdal 2.195s · Umbukta 2.362s · Nordli 2.934s · Hegra 3.356s · Gressli 3.553s ·
+Elgå 3.776s · Ringebu 3.994s · Fagernes 4.247s · Geilo 4.466s · Haukeliseter 4.759s ·
+Ljosland 5.041s · Lindesnes 5.298s
+
+**Labels implementation:**
+- Font-size: `4` SVG units, `fontWeight={700}`, `letterSpacing="0.1em"`, `textTransform="uppercase"`.
+  Constants: `FONT_SIZE = 4`, `LABEL_WEIGHT = 700`, `LABEL_LETTER_SPACING = '0.1em'`.
+- Color: `#94a3b8` (slate-400) — muted, does not compete with orange dots.
+  Color animates from white → #94a3b8 via `norway-dot-label-appear` keyframe.
+- `fontFamily="inherit"` → Work Sans (loaded on page).
+- `dominantBaseline="middle"` → vertically centered with dot.
+- Right-side labels (14 waypoints): `textAnchor="start"`, `x = cx + r + 6`.
+  Gap of 6 SVG units ≈ 1 CSS rem.
+- **Left-side labels:** Nordkapp, Skaidi, Kautokeino (cx > 71.6 threshold). `textAnchor="end"`, `x = cx − r − 6`.
+- Threshold: `wp.cx > VB_RIGHT_THRESH` where `VB_RIGHT_THRESH = 9.784 + 103.026 × 0.6 ≈ 71.6`.
+
+**CSS keyframes:** `norway-draw-route`, `norway-dot-circle-appear`, `norway-dot-label-appear`
+defined in `main.css` outside any `@layer`. Not in Tailwind utilities — named keyframes
+need global scope. Old `norway-dot-appear` keyframe removed in Batch 10f.
+
+**Reduced motion:** `@media (prefers-reduced-motion: reduce)` in main.css sets
+`.norway-map-route` (dashoffset 0, no animation), `.norway-map-circle` (opacity 1,
+fill #fb923c, no animation), `.norway-map-label` (opacity 1, fill #94a3b8, no animation)
+— instant show of everything in final colors, consistent with BottomSheet treatment.
+
+**Layout on Reiserute page:**
+- Map is displayed BELOW the `section-description` on ALL screen sizes (no desktop
+  side-by-side layout). The old `flex flex-col sm:flex-row` wrapper was replaced with:
+  `<p class="section-description mb-8">` + `<div class="flex justify-center mb-16"><div class="w-80"><NorwayMap /></div></div>`
+- Width: **320px** (`w-80` = 80 × 4px). On the 4/8pt grid. Chosen as the largest value
+  within the 280–320px target range, prominent but not overwhelming.
+- Centered horizontally via `flex justify-center`.
+- `mb-16` (64px) separates the map from the vertical timeline below.
+
+**Accessibility:** The wrapper `<div>` has `aria-hidden="true" role="presentation"` —
+the map is purely decorative, screen readers skip it entirely. The SVG has
+`focusable="false"` to prevent IE/Edge from making it keyboard-focusable.
+
 ## Reiserute — participant interaction and links
 
 **Clickable participants → BottomSheet** (added 2026-06-22):
@@ -1034,12 +1165,9 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
    (via getParticipants() cross-referencing people.js). Oppvarmingstur as top entry.
    h1 updated to "Reiserute" (nav rename = Batch 5).
    Saltfjellet pause text merged into E5's note — see Decision changelog 2026-06-22.
-3. ✅ **Illustrative SVG map** — DONE 2026-06-21. Static Norway silhouette created as
-   public/norway-map.svg (derived from favicon.svg: orange rect removed, class="st0"
-   replaced with fill="#475569" = slate-600, defs/style block stripped). Referenced as
-   <img> in Reiserute.jsx, positioned beside intro text on desktop (sticky sm:top-8),
-   below on mobile. 70.3 KB, 97 paths, 180×180 viewBox, opacity-60. Animated route-draw
-   deferred as a future enhancement (static version is sufficient for launch).
+3. ✅ **Illustrative SVG map** — DONE 2026-06-21 (static), animated 2026-06-22 (Batch 10).
+   Static silhouette: public/norway-map.svg (derived from favicon.svg). Animated inline
+   component: src/components/NorwayMap.jsx. See "NorwayMap component" section for full spec.
 4. ✅ **New Galleri page** — DONE 2026-06-21. 944 images from 02-restored-static/Galleri/
    converted to WebP (q80, max 900px) with cwebp 1.6.0 → 70MB (avg 74KB/image).
    Stored in public/images/galleri/{oppvarmingstur,etappe1-15}/. Filenames with spaces
@@ -2130,4 +2258,74 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 10f: NorwayMap animation and label refinement.
+  **Labels:** font-size 4 SVG units (was 3.5), font-weight 700, letter-spacing 0.1em,
+  text-transform uppercase. Defined via FONT_SIZE/LABEL_WEIGHT/LABEL_LETTER_SPACING consts.
+  **Route opacity:** strokeOpacity=0.8 added to route `<path>` element.
+  **Route duration:** 5s (doubled from 2.5s). Dot delays scale proportionally.
+  **Y-coordinate timing:** Dot delays now based on when the stroke tip first reaches each
+  waypoint's y-coordinate (not cumulative Euclidean distance). For the rotated route
+  (all segments southward), this equals cumulative length to each segment endpoint.
+  Delays: Nordkapp 0.3s → Lindesnes 5.298s (vs old 0.3s → 2.8s).
+  **White-flash animation:** dot/label appearance changed from simple opacity fade to:
+  0%→8% pop to white (0.12s), 8%→100% color settle to final (1.38s). CSS `fill` keyframes
+  override SVG presentation `fill` attributes (higher cascade priority). Separate keyframes
+  `norway-dot-circle-appear` and `norway-dot-label-appear` so circle and label can settle
+  to different final colors (#fb923c orange, #94a3b8 slate-400). `animationDelay` moved
+  from `<g>` to individual `<circle>` and `<text>` elements; `norway-map-dot` class removed.
+  **Reduced motion:** updated to use .norway-map-circle/.norway-map-label, show in final
+  colors with no animation.
+- 2026-06-22 Batch 10e: NorwayMap — rotate all SVG coordinates -20° (CCW).
+  **Approach:** Two-step Python coordinate transformation (not CSS transform). Step 1:
+  Parse every path `d` attribute in norway-map-route.svg (commands: M/Z/H/h/L/l/V/v/
+  C/c/S/s/Q/q), convert to absolute coords, rotate -20° around original viewBox centroid
+  (64.8, 81.7), write to `public/norway-map-rotated.svg` (no labels). Step 2: Re-apply
+  horizontal labels at rotated dot positions; threshold cx > viewBox_w × 60% for LEFT
+  vs RIGHT side. NorwayMap.jsx regenerated from norway-map-rotated.svg.
+  **Result:** New viewBox `9.784 -17.297 103.026 202.210`. Norway silhouette visually
+  taller/narrower. Nordkapp, Skaidi, Kautokeino get left-side labels (cx > 71.6 after
+  rotation). Animation timing and delays unchanged. Labels remain horizontal (no SVG
+  text rotation). prefers-reduced-motion still works correctly.
+  **Files:** norway-map-rotated.svg = current source; norway-map-route.svg = unrotated
+  reference (keep both). NorwayMap.jsx updated.
+- 2026-06-22 Batch 10d: NorwayMap — switch to norway-map-route.svg, add labels, 17 waypoints.
+  **Source change:** Component now extracts silhouette, route, and dots from
+  `public/norway-map-route.svg` (manually verified in Illustrator) rather than the
+  programmatically-derived `norway-map.svg`. viewBox changed from `0 0 180 180` to
+  `0 0 129.6 163.4`. Silhouette paths had CSS class `st0` stripped and replaced with
+  inline `fill="#475569"` at generation time.
+  **17th waypoint:** Umbukta (cx=60.3 cy=65.2) added between Lønsdal and Nordli — was
+  missing from all previous versions. Waypoint names updated: Narvik→Abisko,
+  Sulitjelma→Fauske, Sørli→Nordli, Meråker→Hegra, Tydal→Gressli.
+  **Labels:** Each waypoint now renders a `<text>` element inside the same `<g>` as its
+  dot — both animate in together. Color #94a3b8 (slate-400), fontSize 3.5 SVG units
+  (≈ 0.5 CSS rem at 320px render width). Gap of 6 SVG units from dot edge. Labels right
+  of dot for all except Nordkapp (left-side, text-anchor end) to avoid viewBox clip.
+  **Delays:** Recalculated from norway-map-route.svg path geometry (total ≈ 194.9 units).
+- 2026-06-22 Batch 10c: NorwayMap waypoint coordinate second correction.
+  Northern and middle waypoints shifted further west to align with the Norway silhouette.
+  Nordkapp and Lindesnes unchanged (already correct). All other cx/cy values and the
+  route `d` attribute updated. Animation timing, radii, and styling unchanged.
+- 2026-06-22 Batch 10b: NorwayMap waypoint coordinate correction.
+  All 16 waypoint cx/cy values and the route `d` attribute updated based on a visual
+  overlay comparison of the SVG dots against real Norway geography. The original
+  coordinates were calculated programmatically and were slightly off the silhouette.
+  Animation timing delays left unchanged — per-waypoint differences are sub-pixel
+  and imperceptible after the small coordinate adjustments. ROUTE and WAYPOINTS in
+  NorwayMap.jsx updated; CLAUDE.md coordinate table replaced with corrected values.
+- 2026-06-22 Batch 10: Animated NorwayMap component.
+  **Decision: inline SVG required for CSS animation.** External SVG via `<img>` isolates the SVG
+  document — CSS keyframes on the host page cannot reach elements inside it. The only way to animate
+  the route-draw is to inline the SVG paths directly in the React component tree.
+  **Implementation:** New `src/components/NorwayMap.jsx`. The 97 silhouette paths from
+  `public/norway-map.svg` are stored as a template literal (`SILHOUETTE`) and rendered via
+  `<g dangerouslySetInnerHTML>` at 60% opacity. Route line and waypoint dots are regular JSX
+  elements on top. `pathLength="1"` normalises the stroke-dasharray/dashoffset animation to
+  0–1 range. Total route length ≈ 201 SVG units (16 waypoints, straight-line segments).
+  **CSS:** Two keyframes + two classes in main.css (`norway-draw-route`, `norway-dot-appear`,
+  `.norway-map-route`, `.norway-map-dot`). `prefers-reduced-motion` block sets instant static
+  display. **Layout change:** Map moved from beside the intro text (desktop side-by-side) to
+  below the section-description on ALL screen sizes. Width: 320px (`w-80`), centered via
+  `flex justify-center`. The old `flex flex-col sm:flex-row` wrapper in Reiserute.jsx replaced
+  with separate paragraph + centered map div. Bundle impact: reiserute JS +72KB (inlined paths).
 
