@@ -2259,6 +2259,14 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 14: Reiserute map — max-width cap and label style simplification.
+  **Max-width:** Added `max-width: 22rem` (352px) to `.reiserute-map-sticky` in main.css.
+  The right column uses `justify-content: center`, so the map stays centered as it scales
+  down to fit within the cap. `width: 100%` remains so the map fills smaller containers.
+  **Labels:** Removed `textTransform="uppercase"` and `letterSpacing={LABEL_LETTER_SPACING}`
+  from the `<text>` element in NorwayMap.jsx. Deleted the `LABEL_LETTER_SPACING` constant
+  (was `'0.1em'`). Labels now render in mixed case with default letter-spacing. `FONT_SIZE`,
+  `LABEL_WEIGHT`, and all other label attributes unchanged.
 - 2026-06-22 Batch 13: Reiserute — extend right column to viewport edge.
   **Approach:** Negative right margin on `.reiserute-right` within the 960px media query.
   Formula: `margin-right: calc(-1 * ((100vw - 960px) / 2 + 1.5rem))`.

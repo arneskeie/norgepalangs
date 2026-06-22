@@ -129,7 +129,6 @@ const WAYPOINTS = [
 const LABEL_GAP = 6
 const FONT_SIZE = 4
 const LABEL_WEIGHT = 700
-const LABEL_LETTER_SPACING = '0.1em'
 const VB_RIGHT_THRESH = 9.784 + 103.026 * 0.6
 
 export default function NorwayMap() {
@@ -203,8 +202,6 @@ export default function NorwayMap() {
                 y={wp.cy}
                 fontSize={FONT_SIZE}
                 fontWeight={LABEL_WEIGHT}
-                letterSpacing={LABEL_LETTER_SPACING}
-                textTransform="uppercase"
                 fill="#94a3b8"
                 fontFamily="inherit"
                 dominantBaseline="middle"

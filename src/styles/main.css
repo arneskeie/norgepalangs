@@ -680,5 +680,6 @@
     top: calc(50vh - 314px);
     padding: 0 1rem;
     width: 100%;
+    max-width: 22rem;
   }
 }
