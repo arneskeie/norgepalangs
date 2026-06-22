@@ -850,16 +850,21 @@ Styled: `stroke="#fb923c"`, `strokeWidth="1.5"`, `strokeLinecap="round"`,
 **Route line styling:** `strokeOpacity={0.8}` (80% opacity — slightly muted).
 
 **Animation — route draw:** `pathLength="1"`, CSS class `norway-map-route`,
-keyframe `norway-draw-route`, **5s duration** (doubled from 2.5s), 0.3s initial delay.
+keyframe `norway-draw-route`, **5s duration**, 0.3s initial delay, **`linear` easing**.
+`linear` is required for correct dot sync: our delay formula assumes fraction-drawn =
+elapsed/duration, which is only true with linear easing. ease-in-out caused early dots
+to appear before the line (line slow-starts → less drawn than expected) and late dots
+to appear after the line passed (line accelerated past the midpoint → more drawn than
+expected). See Batch 10g changelog for root-cause detail.
 
 **Animation — waypoint dots and labels:**
 - **17 waypoints**. Each `<g>` contains a `<circle className="norway-map-circle">` and
   a `<text className="norway-map-label">`. Both have `style={{ animationDelay: wp.delay }}`
   directly on the element (not on the group) so each can animate independently.
 - **Appearance animation (white-flash):**
-  - `norway-dot-circle-appear` (1.5s): 0%→ opacity 0 white, 8% → opacity 1 white, 100% → opacity 1 #fb923c
-  - `norway-dot-label-appear` (1.5s): same pattern, final fill #94a3b8
-  - The 8% "white phase" = 0.12s (instant pop), 92% = 1.38s color settle to final colors.
+  - `norway-dot-circle-appear` (0.6s): 0% opacity 0 white → 20% opacity 1 white → 100% opacity 1 #fb923c
+  - `norway-dot-label-appear` (0.6s): same pattern, final fill #94a3b8
+  - The 20% "white phase" = 0.12s (pop to full-white), 80% = 0.48s color settle to final colors.
   - CSS `fill` in keyframes overrides SVG presentation `fill` attribute (higher cascade priority).
 - **Delay formula (y-coordinate timing):** `delay = 0.3 + (cum_len_at_y_crossing / 194.9) × 5.0`
   - For each waypoint, find cumulative path length along the route where the stroke tip
@@ -950,12 +955,8 @@ the map is purely decorative, screen readers skip it entirely. The SVG has
 - Thumbnail: `w-6 h-6` (24px) → `w-8 h-8` (32px). On the 4/8pt grid. Proportional to name size increase.
 - Name (first name only): `text-xs` (12px) → `text-base` (16px). Display via `p.name.split(' ')[0]`.
 - `mt-4` moved from `ParticipantList` outer div to the wrapper in `EtappeContent`.
-- Gap between participant chips: `gap-4` (16px, on grid). **Root cause of previous gap not showing:**
-  The participant `<button>` had `-mx-3 -my-1` negative margins (to extend the hover hit area). In
-  a `flex-wrap gap-4` container, gap is measured between margin boxes — so `-0.75rem` on each side
-  of each button meant effective visual gap = `1rem - 2×0.75rem = -0.5rem` (overlap, not gap). Fix:
-  removed `-mx-3 -my-1` from the button. The hover background now renders within the `px-3 py-1`
-  padding, which is still a sufficient tap target and correct pill appearance.
+- Gap between participant chips: `gap-3` (12px / 0.75rem). Button padding: `pl-1 pr-4 py-1`
+  (0.25rem left, 1rem right). Container: `flex flex-wrap gap-3`. (Batch 10g — previously gap-4/px-3.)
 
 **Etappe note text** (updated 2026-06-22):
 - `font-sans text-sm text-slate-400 leading-relaxed text-pretty` → `text-sm` changed to `text-base` (1rem).
@@ -2258,6 +2259,17 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-22 Batch 10g: NorwayMap timing fix, white-flash tweak, participant button spacing.
+  **Root cause (animation desync):** Route used `ease-in-out` timing. Dot delays assumed
+  linear progress (fraction-drawn = elapsed/duration). With ease-in-out, the path draws
+  slower at start and end, faster in the middle. Early dots appeared before the line
+  (line slow-start → less drawn than expected); late dots appeared after the line passed
+  (line accelerated past midpoint → more drawn than expected). Fix: changed route
+  `animation-timing-function` from `ease-in-out` to `linear`. The existing delay formula
+  `delay = 0.3 + (cum_frac × 5.0)` is now exactly correct. Delay values unchanged.
+  **White-flash:** duration 1.5s → 0.6s. Keyframes 0/8/100 → 0/20/100 (pop at 20%=0.12s,
+  settle over 80%=0.48s). Effect is snappier and more visible.
+  **Participant buttons:** container `gap-4` → `gap-3`, button `px-3` → `pl-1 pr-4`.
 - 2026-06-22 Batch 10f: NorwayMap animation and label refinement.
   **Labels:** font-size 4 SVG units (was 3.5), font-weight 700, letter-spacing 0.1em,
   text-transform uppercase. Defined via FONT_SIZE/LABEL_WEIGHT/LABEL_LETTER_SPACING consts.

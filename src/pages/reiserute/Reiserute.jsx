@@ -173,12 +173,12 @@ function PersonSheetSubtitle({ etapper }) {
 function ParticipantList({ people, base, onSelectPerson }) {
   if (!people.length) return null
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-3">
       {people.map((p) => (
         <button
           key={p.id}
           onClick={() => onSelectPerson(p)}
-          className="flex items-center gap-2 rounded-full px-3 py-1 hover:bg-white/[.06] transition-colors"
+          className="flex items-center gap-2 rounded-full pl-1 pr-4 py-1 hover:bg-white/[.06] transition-colors"
         >
           <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
             <img
