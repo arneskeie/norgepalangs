@@ -139,7 +139,7 @@ function getParticipants(etappe) {
 }
 
 function getOppParticipants() {
-  return PEOPLE.filter((p) => p.etapper.some((e) => e === 'Oppvarmingstur i Finland'))
+  return PEOPLE.filter((p) => p.etapper.some((e) => e === 'Oppvarmingstur i Finland' || e === 'Hele turen'))
 }
 
 function getGalleriId(etappe, isOpp = false) {
@@ -187,7 +187,7 @@ function ParticipantList({ people, base, onSelectPerson }) {
             />
           </div>
           <span className="font-sans text-base text-slate-500">
-            {p.name.split(' ').pop()}
+            {p.name.split(' ')[0]}
           </span>
         </button>
       ))}

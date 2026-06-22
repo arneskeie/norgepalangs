@@ -2074,4 +2074,18 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      and links are on the same horizontal row. Links div: `flex flex-row items-center gap-4 sm:ml-auto`
      — the two links are always side-by-side (1rem gap), never stacked on either breakpoint.
   4. **Reiserute participant gap.** Gap between participant chips: `gap-3` → `gap-4` (16px, on 4/8pt grid).
+- 2026-06-22 Batch 8: Oppvarmingstur participant fix + first-name display.
+  1. **Oppvarmingstur missing Marius.** Root cause: `getOppParticipants()` only matched
+     `'Oppvarmingstur i Finland'`, but Marius's entry in people.js has `etapper: ['Hele turen']`.
+     The regular `getParticipants()` function already handles `'Hele turen'` as a wildcard, but
+     `getOppParticipants()` was a simpler filter that didn't. Fix: added `|| e === 'Hele turen'`
+     to the filter condition. Oppvarmingstur now shows both Marius and Truls (Stende) as participants.
+     No data changes — people.js `'Hele turen'` is correct and canonical.
+  2. **Participant buttons — first name only.** Previously showed the last token of `p.name`
+     via `p.name.split(' ').pop()` (e.g. "Montarou", "Stende"). Changed to `p.name.split(' ')[0]`
+     to show the first token (e.g. "Marius", "Truls"). All 10 participant names have a clean first
+     name as the first token — no edge cases (verified: Marius, Emil, Vegard, Jarle, Andreas, Truls,
+     Sverre, Rasmus, Anders, Karin). Display-only change: underlying data (full names in people.js)
+     unchanged. The BottomSheet profile still shows the full name via `selectedPerson.name` — the
+     lookup is by object reference, not name string, so the profile is unaffected.
 
