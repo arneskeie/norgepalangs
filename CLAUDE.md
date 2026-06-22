@@ -758,21 +758,26 @@ change or reorder without verifying against the original source.
   (all 16 sections now have a `route` field; values match ETAPPER `fra – til` in Reiserute.jsx exactly)
 - Photo count + ↑/↓ toggle indicator in `text-xs text-slate-600` below
 
-**Accordion behavior** (added 2026-06-22):
+**Accordion behavior** (added 2026-06-22, collapsed-state redesigned 2026-06-22):
 - All sections collapsed by default (empty Set state)
 - **Multiple sections open simultaneously** — better for gallery browsing (no forced single-open)
-- Toggle: clicking the heading button (entire heading area — eyebrow + card-title + count)
+- Toggle: clicking the entire header row (chevron + eyebrow + card-title + preview thumbs)
 - Hash-based auto-expand: if `window.location.hash` matches a section `id` on page load, that
   section opens and scrolls into view (100ms delay allows React to render before scroll).
   Hash IDs: `oppvarmingstur`, `etappe1`–`etappe15`. Used by "Se bilder →" links on Reiserute.
   Section DOM: `<section id={section.id}>` (Galleri `id` field matches hash target directly).
 
-**Preview thumbnails** (collapsed state):
-- 3 random images per section, selected from `section.images` on mount via `useMemo` (stable).
-- Clicking a preview thumb opens the lightbox directly for that image (real index looked up via
-  `section.images.indexOf(img)`). Does NOT toggle the accordion.
-- Preview grid fades to `opacity-0 h-0 overflow-hidden` when section opens (300ms).
-- `tabIndex={-1}` applied to preview buttons when section is open (accessibility).
+**Collapsed-state header row** (redesigned 2026-06-22):
+Single `<button>` spanning the full row. Internal layout is responsive:
+- **Desktop (sm+):** `flex-row` — LEFT: `ChevronDown`/`ChevronUp` (lucide-react, 20px, orange-400) +
+  eyebrow label + `.card-title` route + photo count; RIGHT: 3 small `w-16 h-16` (64px) square thumbnails.
+- **Mobile:** `flex-col` — heading row on top (chevron + text), 3 thumbnails below with `mt-3`.
+- Thumbnails are `<div>` wrappers (not `<button>`) — clicking them triggers the parent button's
+  `onClick`, expanding the accordion. They do **not** open the lightbox.
+- Thumbnails: `w-16 h-16 rounded overflow-hidden`, `object-cover`, `group-hover:scale-105` (200ms).
+- `ChevronIcon` variable swaps between `ChevronUp` (open) and `ChevronDown` (closed) based on `isOpen`.
+- Photo count line uses `text-xs text-slate-600` with `group-hover:text-slate-500` transition.
+- 3 random images per section, selected from `section.images` on mount via `useMemo` (stable per page load).
 
 **Full grid fade-in** (expanded state):
 - Full grid mounts when `isOpen` becomes true.
@@ -799,13 +804,16 @@ change or reorder without verifying against the original source.
 - Thumbnail: `w-6 h-6` (24px) → `w-8 h-8` (32px). On the 4/8pt grid. Proportional to name size increase.
 - Name (last name only): `text-xs` (12px) → `text-base` (16px).
 - `mt-4` moved from `ParticipantList` outer div to the wrapper in `EtappeContent`.
+- Gap between participant chips: `gap-3` → `gap-4` (16px, on grid).
 
 **Etappe note text** (updated 2026-06-22):
 - `font-sans text-sm text-slate-400 leading-relaxed text-pretty` → `text-sm` changed to `text-base` (1rem).
 
-**"Les reisebrev →" and "Se bilder →" links** (added 2026-06-22):
-- Positioned to the right of the participants block via `ml-auto flex-shrink-0` on a `flex-col` div,
-  inside a `flex flex-wrap items-start gap-4` wrapper alongside `ParticipantList`.
+**"Les reisebrev →" and "Se bilder →" links** (added 2026-06-22, layout fixed 2026-06-22):
+- Outer wrapper: `flex flex-col sm:flex-row sm:items-start gap-4 mt-4` — on mobile: participants
+  row on top, links row below (two separate flex rows). On desktop: side-by-side on the same row.
+- Links div: `flex flex-row items-center gap-4 sm:ml-auto flex-shrink-0` — the two links are always
+  side-by-side (never stacked), with 1rem gap. `sm:ml-auto` pushes the group to the right on desktop.
 - "Les reisebrev →": shown only for etapper 1–6 (numeric nr 1–6). `href={${base}reisebrev${nr}.html}`.
 - "Se bilder →": shown for all etapper including Oppvarmingstur. `href={${base}galleri.html#${galleriId}}`.
   `galleriId`: etappe1–etappe15 (numeric nr), etappe11 for both 11a and 11b, oppvarmingstur for isOpp.
@@ -2003,16 +2011,12 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      match `.section-description` (the preceding INTRO_DESC paragraph).
   7. Utstyr accordion items: item text (product names) increased from `text-sm` (0.875rem)
      to `text-base` (1rem).
-  8. Reiserute Saltfjellet callout: the styled italic block between E5 and E6 ("Her stanset
-     høstetappene. Saltfjellet var allerede stengt av vinteren. Vi dro sørover til Hegra for
-     å fullføre den siste høstetappen.") was removed as a separate element and its verbatim
-     text appended to Etappe 5's note. Now renders as plain prose matching other etappe notes
-     (no italic, no border). The `isLastBeforePause` conditional logic also removed (dead code —
-     both branches rendered `<Waypoint name={e.til} />` anyway).
+  8. Reiserute Saltfjellet callout: the `isLastBeforePause` conditional logic removed (dead code —
+     both branches rendered `<Waypoint name={e.til} />` anyway). NOTE: the styled italic callout
+     block and the `NOTE` const were NOT fully removed in this batch — see 2026-06-22 Batch 7.
 - 2026-06-22 Batch 6: Reiserute interaction + Galleri accordion/lightbox improvements.
-  1. Saltfjellet callout confirmed gone (no regression — already removed in previous batch).
-     Etappe 5 note already contains the merged text; callout block and `isLastBeforePause`
-     conditional already deleted. No code change needed.
+  1. Saltfjellet callout: incorrectly confirmed gone — the `NOTE` const and styled italic callout
+     block (`border-l-2`) were still present and still rendering. Corrected in 2026-06-22 Batch 7.
   2. **galleri.js**: `route` field added to all 16 sections. Values match ETAPPER `fra – til`
      in Reiserute.jsx exactly. Etappe 11 (combined 11a+11b folder) → "Elgå – Fagernes".
   3. **Galleri heading structure**: Each section now shows a two-tier heading — `eyebrow`
@@ -2044,4 +2048,30 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
       `onNavigate(index)` replaces separate `onPrev`/`onNext` callbacks throughout.
   12. **main.css**: `.scrollbar-hide` utility class added (scrollbar-width: none + webkit display: none)
       for the lightbox thumbnail strip.
+- 2026-06-22 Batch 7: Four targeted fixes across Galleri and Reiserute.
+  1. **Saltfjellet — definitive fix.** Pre-fix grep found 3 occurrences: reisebrev.js (legitimate,
+     untouched), Reiserute.jsx line 14 (`NOTE` const with Saltfjellet text that was still rendering
+     as a styled italic callout block), and Reiserute.jsx line 45 (Etappe 5's note with short
+     placeholder text, not the full verbatim text). Changes: `NOTE` const deleted; the
+     `border-l-2 border-orange-400/30` italic callout block in the JSX intro section deleted entirely;
+     Etappe 5's `note` field replaced with the full verbatim text from the PHP source:
+     "Deilig etappe! Ikke like stort forflytningspress på denne etappen. Som tidligere antatt er
+     Saltfjellet slukt av vinteren tidlig i november. Vi har av erfaring (over Skjomenfjellene)
+     lært at det ikke har noen hensikt å jobbe mot naturen. For å kunne fortsette til fots dro vi
+     sørover til Hegra og gikk den siste høstetappen til Gressli. Når vi begynner på igjen med ski
+     under beina i februar, vil vi starte nøyaktig der vi slapp i Nord-Norge, nærmere bestemt Lønsdal."
+     Post-fix grep: Saltfjellet appears only in reisebrev.js (letter body, correct) and Reiserute.jsx
+     Etappe 5 data (correct). The NOTE const and callout block are completely gone from the JSX.
+  2. **Galleri accordion collapsed-state redesign.** Previous design: heading button + separate full-size
+     preview grid below it (clickable to lightbox). New design: single button spanning chevron + heading
+     + 3 small square thumbnails. Desktop: `flex-row` — heading left, thumbs (w-16 h-16, 64px) right.
+     Mobile: `flex-col` — heading top, thumbs below (mt-3). Clicking anywhere (including thumbs) expands
+     the accordion; thumbs no longer open the lightbox. `ChevronDown`/`ChevronUp` from lucide-react
+     (already a dependency) indicates open/closed state. Separate preview `<div>` grid removed entirely.
+  3. **Reiserute links layout.** Previous: links stacked vertically (`flex-col items-end`), positioned
+     beside participants via `ml-auto`. Now: outer wrapper `flex flex-col sm:flex-row` — on mobile,
+     participants row sits above the links row (two separate rows in a column); on desktop, participants
+     and links are on the same horizontal row. Links div: `flex flex-row items-center gap-4 sm:ml-auto`
+     — the two links are always side-by-side (1rem gap), never stacked on either breakpoint.
+  4. **Reiserute participant gap.** Gap between participant chips: `gap-3` → `gap-4` (16px, on 4/8pt grid).
 

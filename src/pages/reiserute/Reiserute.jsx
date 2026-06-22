@@ -11,7 +11,6 @@ import { PEOPLE } from '../../data/people.js'
 
 const INTRO = 'Turen starter fra Nordkapp 1. september og følger en variert rute sørover, fordelt på ca 15 etapper. Vi planlegger å nå Mo i Rana før vi unner oss en pust i bakken ved juletider. Turen fortsetter videre mot Lindesnes på vårparten.'
 
-const NOTE = 'Som tidligere antatt er Saltfjellet slukt av vinteren tidlig i november. Vi har av erfaring (over Skjomenfjellene) lært at det ikke har noen hensikt å jobbe mot naturen. For å kunne fortsette til fots dro vi sørover til Hegra og gikk den siste høstetappen til Gressli. Når vi begynner på igjen med ski under beina i februar, vil vi starte nøyaktig der vi slapp i Nord-Norge, nærmere bestemt Lønsdal.'
 
 const ETAPPER = [
   {
@@ -42,7 +41,7 @@ const ETAPPER = [
     nr: 5, slug: 'e05', sesong: 'høst',
     fra: 'Sulitjelma', til: 'Lønsdal',
     dager: 8, hvile: 1, km: 90,
-    note: 'Deilig etappe! Ikke like stort forflytningspress på denne etappen. Her stanset høstetappene. Saltfjellet var allerede stengt av vinteren. Vi dro sørover til Hegra for å fullføre den siste høstetappen.',
+    note: 'Deilig etappe! Ikke like stort forflytningspress på denne etappen. Som tidligere antatt er Saltfjellet slukt av vinteren tidlig i november. Vi har av erfaring (over Skjomenfjellene) lært at det ikke har noen hensikt å jobbe mot naturen. For å kunne fortsette til fots dro vi sørover til Hegra og gikk den siste høstetappen til Gressli. Når vi begynner på igjen med ski under beina i februar, vil vi starte nøyaktig der vi slapp i Nord-Norge, nærmere bestemt Lønsdal.',
   },
   {
     nr: 6, slug: 'e06', sesong: 'høst',
@@ -173,7 +172,7 @@ function PersonSheetSubtitle({ etapper }) {
 function ParticipantList({ people, base, onSelectPerson }) {
   if (!people.length) return null
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap gap-4">
       {people.map((p) => (
         <button
           key={p.id}
@@ -233,9 +232,9 @@ function EtappeContent({ etappe, participants, base, onSelectPerson, isOpp = fal
       <p className="font-sans text-base text-slate-400 leading-relaxed text-pretty">
         {etappe.note}
       </p>
-      <div className="flex flex-wrap items-start gap-4 mt-4">
+      <div className="flex flex-col sm:flex-row sm:items-start gap-4 mt-4">
         <ParticipantList people={participants} base={base} onSelectPerson={onSelectPerson} />
-        <div className="flex flex-col items-end gap-2 ml-auto flex-shrink-0">
+        <div className="flex flex-row items-center gap-4 sm:ml-auto flex-shrink-0">
           {reisebrevNr && (
             <a
               href={`${base}reisebrev${reisebrevNr}.html`}
@@ -319,9 +318,6 @@ export default function Reiserute() {
         <div className="flex flex-col sm:flex-row gap-8 sm:gap-12 items-start mb-16">
           <div className="flex-1 min-w-0">
             <p className="section-description mb-4 text-pretty">{INTRO}</p>
-            <div className="border-l-2 border-orange-400/30 pl-5 max-w-[560px]">
-              <p className="font-sans text-[1.125rem] text-slate-500 leading-normal italic text-pretty">{NOTE}</p>
-            </div>
           </div>
           {/* Illustrative Norway map — static ambient silhouette (Batch 3) */}
           <div className="flex-shrink-0 w-32 sm:w-36 md:w-44 self-start sm:sticky sm:top-8">

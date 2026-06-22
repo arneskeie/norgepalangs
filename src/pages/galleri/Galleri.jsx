@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
 import { GALLERI_SECTIONS } from '../../data/galleri.js'
@@ -190,49 +191,54 @@ function GalleriSection({ section, isOpen, onToggle, previews, onOpen }) {
     }
   }, [isOpen])
 
+  const ChevronIcon = isOpen ? ChevronUp : ChevronDown
+
   return (
     <section id={section.id} className="mb-8 border-b border-white/[.06] pb-8">
-      {/* Accordion header — entire header area is the toggle target */}
+      {/* Accordion header — entire row (chevron + heading + thumbs) is the toggle trigger */}
       <button
         className="w-full text-left mb-4 group"
         onClick={onToggle}
         aria-expanded={isOpen}
       >
-        <p className="eyebrow mb-1">{section.label}</p>
-        <p className="card-title text-slate-100">{section.route}</p>
-        <p className="font-sans text-xs text-slate-600 mt-2 group-hover:text-slate-500 transition-colors">
-          {section.images.length} bilder {isOpen ? '↑' : '↓'}
-        </p>
-      </button>
+        {/* Desktop: heading left, thumbs right. Mobile: heading top, thumbs below. */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
+          {/* Left: chevron + text */}
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <ChevronIcon
+              className="w-5 h-5 text-orange-400 flex-shrink-0 mt-[0.2rem] transition-transform duration-200"
+              aria-hidden="true"
+            />
+            <div className="min-w-0">
+              <p className="eyebrow mb-1">{section.label}</p>
+              <p className="card-title text-slate-100">{section.route}</p>
+              <p className="font-sans text-xs text-slate-600 mt-1 group-hover:text-slate-500 transition-colors">
+                {section.images.length} bilder
+              </p>
+            </div>
+          </div>
 
-      {/* Preview thumbs — visible when collapsed, fade out when open */}
-      <div
-        aria-hidden={isOpen}
-        className={`grid grid-cols-3 gap-1.5 transition-opacity duration-300 ${
-          isOpen ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'
-        }`}
-      >
-        {previews.map((img) => {
-          const realIdx = section.images.indexOf(img)
-          return (
-            <button
-              key={img}
-              onClick={() => onOpen(section, realIdx)}
-              tabIndex={isOpen ? -1 : 0}
-              aria-label={`Åpne bilde fra ${section.label}`}
-              className="relative aspect-square overflow-hidden rounded group focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400"
-            >
-              <img
-                src={`${base}images/galleri/${section.folder}/${img}`}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            </button>
-          )
-        })}
-      </div>
+          {/* Preview thumbs: right on desktop, below heading on mobile */}
+          {previews.length > 0 && (
+            <div className="flex gap-2 mt-3 sm:mt-0 sm:flex-shrink-0">
+              {previews.map((img) => (
+                <div
+                  key={img}
+                  className="w-16 h-16 rounded overflow-hidden flex-shrink-0"
+                >
+                  <img
+                    src={`${base}images/galleri/${section.folder}/${img}`}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </button>
 
       {/* Full photo grid — rendered only when open, fades in */}
       {isOpen && (
