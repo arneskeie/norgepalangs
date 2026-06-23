@@ -226,7 +226,7 @@ function GalleriSection({ section, isOpen, onToggle, previews, onOpen }) {
                   >
                     <img
                       src={`${base}images/galleri-preview/${section.folder}/${img}`}
-                      alt=""
+                      alt={`Bilde fra ${section.label}${section.route ? ': ' + section.route : ''}`}
                       loading="lazy"
                       decoding="async"
                       className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
@@ -259,7 +259,7 @@ function GalleriSection({ section, isOpen, onToggle, previews, onOpen }) {
           >
             <img
               src={`${base}images/galleri-thumb/${section.folder}/${img}`}
-              alt=""
+              alt={`Bilde fra ${section.label}${section.route ? ': ' + section.route : ''}`}
               loading="lazy"
               decoding="async"
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import SiteHeader from '../../components/SiteHeader.jsx'
 import SiteFooter from '../../components/SiteFooter.jsx'
 import BottomSheet from '../../components/BottomSheet.jsx'
@@ -219,6 +219,7 @@ function EtappeContent({ etappe, participants, base, onSelectPerson, isOpp = fal
 
   return (
     <div
+      id={isOpp ? 'oppvarmingstur' : `etappe${etappe.nr}`}
       className="pl-7 pb-10"
       {...(!isOpp && { 'data-etappe': String(etappe.nr) })}
     >
@@ -303,6 +304,14 @@ function SeasonDivider({ label }) {
 export default function Reiserute() {
   const base = import.meta.env.BASE_URL
   const [selectedPerson, setSelectedPerson] = useState(null)
+
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash) {
+      const el = document.querySelector(hash)
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [])
 
   const hostEtapper = ETAPPER.filter((e) => e.sesong === 'høst')
   const varEtapper  = ETAPPER.filter((e) => e.sesong === 'vår')

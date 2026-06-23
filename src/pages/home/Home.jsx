@@ -43,7 +43,7 @@ const SPONSORS = [
 ]
 
 function RouteLine() {
-  const DOTS = 15
+  const DOTS = 16
   const W = 640
   const pad = 16
   const inner = W - pad * 2
@@ -113,7 +113,7 @@ export default function Home() {
           <div className="mt-8 flex justify-end">
             <img
               src={`${base}images/diverse/Signatur.webp`}
-              alt="Marius Montarou"
+              alt="Signatur — Marius Montarou"
               width={285}
               height={69}
             />
@@ -129,7 +129,7 @@ export default function Home() {
             15 etapper, <span className="text-orange-400">Nordkapp til Lindesnes.</span>
           </h2>
           <p className="section-description mb-10 text-pretty">
-            Et halvt år til fots langs Norges ryggrad — fra Arctic Ocean-kapp til Skandinavias sydspiss.
+            Et halvt år til fots langs Norges ryggrad, fra Nordkapp til Lindesnes.
             Gjennom vidder, skoger og fjell, i alle årstidene.
           </p>
 
@@ -178,7 +178,7 @@ export default function Home() {
                 <div className="overflow-hidden rounded mb-4 aspect-[4/3]">
                   <img
                     src={`${base}images/reisebrev/${letter.img}`}
-                    alt=""
+                    alt={letter.title}
                     className="reisebrev-cover-img w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>

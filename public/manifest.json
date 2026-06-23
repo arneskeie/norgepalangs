@@ -1,0 +1,13 @@
+{
+  "name": "NORGEpåLANGS",
+  "short_name": "NPL",
+  "description": "Fra Nordkapp til Lindesnes — Marius Montarous vandring gjennom Norge 2008–2009",
+  "start_url": "/norgepalangs/",
+  "display": "browser",
+  "background_color": "#020617",
+  "theme_color": "#fb923c",
+  "icons": [
+    { "src": "/norgepalangs/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/norgepalangs/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

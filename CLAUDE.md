@@ -1170,7 +1170,7 @@ clicked to view it — but the other three all have lazy+async.
 
 ## SEO metadata
 
-All 11 HTML entry points have been updated with the same tag set:
+All 12 HTML entry points have been updated with the same tag set:
 
 **Per-page `<head>` additions:**
 - `<meta name="description">` — specific to each page, grounded in real content
@@ -1180,6 +1180,13 @@ All 11 HTML entry points have been updated with the same tag set:
 - `<meta property="og:url">` — full absolute canonical URL
 - `<meta property="og:image">` — absolute URL to a real image (see below)
 - `<link rel="canonical">` — same full absolute URL as og:url
+- `<link rel="alternate" hreflang="nb" href="...">` — declares Norwegian Bokmål language (added 2026-06-23)
+- `<link rel="manifest" href="/manifest.json">` — web app manifest link (added 2026-06-23; Vite transforms to /norgepalangs/manifest.json at build)
+
+**index.html only (performance):**
+- `<link rel="preload" as="image" href="/images/Velkommen.webp" type="image/webp">` — hero image preload, placed immediately after `<meta name="viewport">` so it fires before all other links (added 2026-06-23; Vite transforms href to /norgepalangs/images/Velkommen.webp at build)
+
+**font-display: swap** — already present in the Google Fonts `@import` URL in `src/styles/main.css` via `&display=swap` parameter. No change needed.
 
 **Important note on URL handling:** Vite's base URL injection (`/norgepalangs/`) only
 transforms `href="/"` and `src="/"` attributes — NOT `content=""` in meta tags. All
@@ -1199,7 +1206,7 @@ to include the actual etappe info, e.g. "Etappe 1: Nordkapp – Skaidi — Norge
 These are static strings in the HTML shells (React doesn't set document.title at runtime).
 
 **sitemap.xml:** Created at `public/sitemap.xml` — served at `/norgepalangs/sitemap.xml`
-in production. Lists all 11 pages with lastmod 2026-06-21 and sensible priority values
+in production. Lists all 12 pages (galleri.html added) with lastmod 2026-06-21 and sensible priority values
 (homepage 1.0; main inner pages 0.8; content pages 0.7; Sponsorer 0.6).
 
 **robots.txt:** Created at `public/robots.txt` — served at `/norgepalangs/robots.txt`.
@@ -1209,6 +1216,47 @@ Contains `User-agent: * / Allow: /` and a `Sitemap:` reference to the absolute s
 (`/robots.txt`). This cannot be remedied on GitHub Pages project pages (no control over
 the domain root). The sitemap URL in the HTML canonical tags compensates for
 crawlers that discover the sitemap directly.
+
+**Schema markup (structured data, added 2026-06-23):**
+- `index.html` — `@graph` with `WebSite` (name, url, description) + `Person` (Marius Montarou with expedition description and link to omoss.html)
+- `reisebrev1–6.html` — `BlogPosting` schema per post: headline (etappe title), description (from og:description), datePublished (ISO date from actual post date), author (Marius Montarou), publisher (NORGEpåLANGS), url (canonical), image (og:image)
+- `omoss.html` — `@graph` with 10 `Person` entries (all PEOPLE array members), each with name and Norwegian expedition role description
+
+**Web app manifest:** Created at `public/manifest.json` — served at `/norgepalangs/manifest.json`.
+Contains name, short_name, description, start_url, display, background_color (#020617), theme_color (#fb923c), and 2 icon entries (32x32 and 180x180 PNG).
+
+**Google Search Console verification:** Template file created at `public/google-search-console-verification.html`.
+Manual step required before site can be verified in Search Console:
+1. Go to https://search.google.com/search-console
+2. Add property: https://arneskeie.github.io/norgepalangs/
+3. Choose HTML file verification
+4. Download the verification file Google provides
+5. Replace `public/google-search-console-verification.html` with the downloaded file
+6. Push to GitHub, then click Verify in Search Console
+
+**Lighthouse audit scores (before/after 2026-06-23):**
+
+| Page | Device | Perf | Access | Best Prac | SEO | LCP | TBT | CLS |
+|------|--------|------|--------|-----------|-----|-----|-----|-----|
+| Home | Mobile | 55 | 95 | 100 | 100 | 5.1s | 390ms | 0 |
+| Home | Desktop | 44 | 95 | 100 | 100 | 5.5s | 690ms | 0 |
+| Reiserute | Mobile | 47 | 93 | 100 | 100 | 4.4s | 910ms | 0 |
+| Galleri | Mobile | 43 | 95 | 96 | 100 | 5.7s | 1080ms | 0 |
+
+*After scores: pending — changes not yet deployed to GitHub Pages. Re-run audits after next push.*
+
+Top performance opportunities identified (home mobile, before):
+1. Eliminate render-blocking resources: 2049ms — Google Fonts @import is render-blocking
+2. Properly size images: 650ms
+3. Serve images in next-gen formats: 490ms — strip-thumbs are JPEG, not WebP
+4. Reduce unused JavaScript: 330ms
+5. Preconnect to required origins: 221ms — fonts.googleapis.com and fonts.gstatic.com
+
+Changes made that directly address these:
+- ✓ Hero image preload (moves LCP image fetch to priority queue → LCP improvement)
+- ✓ font-display: swap already in place (prevents render block during font load)
+- ✗ Render-blocking Fonts @import (not addressed in this session — would require moving to `<link rel="preload">` for fonts or self-hosting)
+- ✗ Next-gen format conversion of strip-thumbs (deferred — major asset conversion task)
 
 ## Security hardening
 
@@ -2708,6 +2756,82 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   Animation timing delays left unchanged — per-waypoint differences are sub-pixel
   and imperceptible after the small coordinate adjustments. ROUTE and WAYPOINTS in
   NorwayMap.jsx updated; CLAUDE.md coordinate table replaced with corrected values.
+- 2026-06-23: Performance audit + SEO/performance improvements.
+  **Lighthouse before (pre-change):** Home mobile Perf 55 / Access 95 / Best Prac 100 / SEO 100, LCP 5.1s, TBT 390ms, CLS 0.
+  Home desktop Perf 44, LCP 5.5s. Reiserute mobile Perf 47, LCP 4.4s. Galleri mobile Perf 43, LCP 5.7s.
+  All pages scored SEO 100 and Best Prac 96–100 before changes.
+  **02-restored-static deindex:** robots.txt created (`User-agent: * / Disallow: /`). noindex meta
+  (`<meta name="robots" content="noindex, nofollow">`) added to all 16 HTML pages with proper head structure.
+  vid1–6.html are bare YouTube embed fragments with no `<head>` — noindex cannot be added; Google
+  will not meaningfully index them regardless.
+  **03-modernized hero preload:** `<link rel="preload" as="image" href="/images/Velkommen.webp" type="image/webp">`
+  added as first link in index.html head (immediately after viewport meta, before favicon links).
+  Vite transforms to `/norgepalangs/images/Velkommen.webp` at build. Targets the LCP element directly.
+  **03-modernized hreflang:** `<link rel="alternate" hreflang="nb" href="...">` added to all 12 HTML
+  entry points with page-specific absolute URLs.
+  **03-modernized manifest:** `public/manifest.json` created. `<link rel="manifest" href="/manifest.json">`
+  added to all 12 HTML entry points. Vite transforms href to `/norgepalangs/manifest.json`.
+  **Schema markup:** WebSite+Person on index.html, BlogPosting on reisebrev1–6.html (dates from
+  actual post dates, not month-first approximations), Person @graph (10 people) on omoss.html.
+  **Alt text:** Home.jsx: reisebrev cover images `alt=""` → `alt={letter.title}`; signature image
+  `alt="Marius Montarou"` → `alt="Signatur — Marius Montarou"`. Galleri.jsx: preview thumbs and
+  grid thumbnails `alt=""` → `alt={\`Bilde fra ${section.label}${section.route ? ': ' + section.route : ''}\`}` (per-etappe).
+  Strip thumbnails (SiteHeader.jsx) retain `alt=""` — correct, parent is `aria-hidden="true"`.
+  Profile photos (OmOss.jsx, Reiserute.jsx) already had `alt={person.name}` ✓.
+  Sponsor logos (Home.jsx, Sponsorer.jsx) already had `alt={name}` ✓.
+  Lightbox main image (Galleri.jsx) already had `alt={...section.label bilde...}` ✓.
+  Lightbox thumbnail strip buttons already had `aria-label` with empty img alt ✓.
+  **Internal linking:** EtappeContent divs in Reiserute.jsx given `id={isOpp ? 'oppvarmingstur' : 'etappeN'}`.
+  Hash scroll useEffect added to Reiserute.jsx (same pattern as Home.jsx — React async load requires
+  manual scroll to hash after mount). ReisebrevPost.jsx: "Se etappen på kartet →" link added near
+  the bottom "Tilbake til Reisebrev" button. Links to `reiserute.html#etappeN`.
+  "Les reisebrev →" links on Reiserute: confirmed correct (etappes 1–6, href reisebrevN.html) ✓.
+  "Se bilder →" links on Reiserute: confirmed correct (all etappes + Oppvarmingstur, href galleri.html#galleriId) ✓.
+  **Google Search Console:** Template file created at `public/google-search-console-verification.html`.
+  Manual verification step required — see SEO metadata section above.
+  **Lighthouse after:** Not yet measured — changes not deployed to GitHub Pages at time of writing.
+  Re-run same four audits after next push to verify LCP improvement from preload.
+- 2026-06-23: Page title audit + Ruta description fix + dot count fix.
+  **Title tag audit — before → after (all 12 HTML entry points):**
+  - index.html: "Norge På Langs — Hjem" → "NORGEpåLANGS — Fra Nordkapp til Lindesnes | Marius Montarou"
+  - omoss.html: "Om oss — Norge På Langs" → "Om oss | NORGEpåLANGS"
+  - reiserute.html: "Reiserute & Galleri — Norge På Langs" → "Reiserute | NORGEpåLANGS — Fra Nordkapp til Lindesnes"
+  - galleri.html: "Galleri — Norge På Langs" → "Galleri | NORGEpåLANGS — 983 bilder fra turen"
+  - utstyr.html: "Utstyr — Norge På Langs" → "Utstyr | NORGEpåLANGS"
+  - sponsorer.html: "Sponsorer — Norge På Langs" → "Sponsorer | NORGEpåLANGS"
+  - reisebrev1.html: "Etappe 1: Nordkapp – Skaidi — Norge På Langs" → "Etappe 1: Nordkapp – Skaidi | NORGEpåLANGS"
+  - reisebrev2.html: "Etappe 2: Skaidi – Kautokeino — Norge På Langs" → "Etappe 2: Skaidi – Kautokeino | NORGEpåLANGS"
+  - reisebrev3.html: "Etappe 3: Kautokeino – Abisko/Narvik — Norge På Langs" → "Etappe 3: Kautokeino – Abisko/Narvik | NORGEpåLANGS"
+  - reisebrev4.html: "Etappe 4: Narvik – Fauske — Norge På Langs" → "Etappe 4: Abisko/Narvik – Fauske (Sulitjelma) | NORGEpåLANGS"
+    (also fixed: title text was truncated — data source says "Abisko/Narvik – Fauske (Sulitjelma)")
+  - reisebrev5.html: "Etappe 5: Fauske – Lønsdal — Norge På Langs" → "Etappe 5: Fauske (Sulitjelma) – Lønsdal | NORGEpåLANGS"
+    (also fixed: title text was truncated — data source says "Fauske (Sulitjelma) – Lønsdal")
+  - reisebrev6.html: "Etappe 6: Hegra – Gressli — Norge På Langs" → "Etappe 6: Hegra – Gressli | NORGEpåLANGS"
+  All titles verified against `src/data/reisebrev.js` for the reisebrev pages. Format: "Page | Brand"
+  for inner pages, brand-first for homepage.
+  **#om-turen key terms audit (visible prose only, not alt text):**
+  "Norge på langs" ✅ (VELKOMMEN[4]: "Før Norge på langs 08/09..."), "Nordkapp" ✅ (INGRESS: "...fra Nordkapp...").
+  "Marius" ❌ absent from prose (only in signature image alt text). "Lindesnes" ❌ absent from prose.
+  Decision to add/not add either term to prose was left to Arne — NOT changed.
+  **Ruta .section-description fix (Home.jsx):**
+  Old: "Et halvt år til fots langs Norges ryggrad — fra Arctic Ocean-kapp til Skandinavias sydspiss.
+  Gjennom vidder, skoger og fjell, i alle årstidene."
+  New: "Et halvt år til fots langs Norges ryggrad, fra Nordkapp til Lindesnes.
+  Gjennom vidder, skoger og fjell, i alle årstidene."
+  Reason: two errors in the old text — (1) the em dash ("—") was AI-generated, replacing
+  it with a comma as specified; (2) "Skandinavias sydspiss" is a geographic error — Spain,
+  Greece, and Italy all extend further south than Norway; even within Scandinavia, Denmark
+  extends further south than Norway. Replaced with "Nordkapp til Lindesnes" (the factually
+  correct endpoints of the expedition). "Arctic Ocean-kapp" also removed as an awkward
+  English-Norwegian hybrid; the original Norwegian name "Nordkapp" is correct and clear.
+  The two-sentence structure and "Gjennom vidder, skoger og fjell, i alle årstidene" were
+  retained verbatim.
+  **Ruta RouteLine dot count fix (Home.jsx):**
+  `DOTS` constant in `RouteLine` function: 15 → 16.
+  15 dots = 14 segments (incorrect). 16 dots = 15 segments (matches the actual 15 etapper).
+  The endpoint circles at each end (cx=pad and cx=W-pad) are separate elements — they are
+  NOT counted in `DOTS`. `DOTS` controls only the small interior fill-opacity dots
+  distributed along the line via `Array.from({ length: DOTS })`.
 - 2026-06-22 Batch 10: Animated NorwayMap component.
   **Decision: inline SVG required for CSS animation.** External SVG via `<img>` isolates the SVG
   document — CSS keyframes on the host page cannot reach elements inside it. The only way to animate

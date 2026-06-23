@@ -118,7 +118,15 @@ export default function ReisebrevPost({ n }) {
           ) : <div />}
         </div>
 
-        <a href={`${base}index.html#reisebrev`} className="btn-outline">← Tilbake til Reisebrev</a>
+        <div className="flex flex-wrap gap-4 items-center">
+          <a href={`${base}index.html#reisebrev`} className="btn-outline">← Tilbake til Reisebrev</a>
+          <a
+            href={`${base}reiserute.html#etappe${n}`}
+            className="font-sans text-base text-slate-500 hover:text-slate-200 transition-colors"
+          >
+            Se etappen på kartet →
+          </a>
+        </div>
 
       </main>
       <SiteFooter />
