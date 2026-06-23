@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { NAV_LINKS } from './SiteNav.jsx'
+import { Wordmark } from './SiteHeader.jsx'
 
 export default function MobileNav({ currentPage = '' }) {
   const [open, setOpen] = useState(false)
@@ -107,6 +108,18 @@ export default function MobileNav({ currentPage = '' }) {
           onKeyDown={handleOverlayKeyDown}
           className="mobile-nav-overlay"
         >
+          {/* Wordmark — links to homepage, closes overlay on tap. mb-8 (32px) gap before nav links. */}
+          <div className="mb-8 text-center">
+            <a
+              href={`${base}index.html`}
+              onClick={close}
+              style={{ textDecoration: 'none', display: 'block' }}
+            >
+              <Wordmark className="text-[1.125rem]" />
+            </a>
+            <p className="font-sans font-medium text-[8px] leading-4 uppercase tracking-[0.2em] text-slate-400">med Montarou &amp; co</p>
+          </div>
+
           <nav aria-label="Sidenavigasjon">
             <ul role="list" className="mobile-nav-list">
               {NAV_LINKS.map(({ label, href }) => (

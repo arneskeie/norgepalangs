@@ -149,6 +149,16 @@ current session.
     Centered flex column. All 4 links at `font-size: 2rem` Work Sans, `font-weight: 500`,
     `color: rgba(148,163,184,0.80)` default, `#f8fafc` on hover, `#fb923c` when active. Tap
     target per link: ~56px (2rem line-height × 1.2 + 2 × 0.75rem padding).
+  - **Wordmark at overlay top (Batch 24):** Above the `<nav>`, a centered `<div className="mb-8">` (32px
+    gap — on the 4/8pt grid) contains: `<a href="${base}index.html" onClick={close}>` wrapping
+    `<Wordmark className="text-[1.125rem]" />`, then a `<p>` "med Montarou & co" in the same
+    styling as the footer subtitle (`text-[8px] leading-4 uppercase tracking-[0.2em] text-slate-400`).
+    The `<Wordmark />` named export is reused from `SiteHeader.jsx` (imported in MobileNav.jsx).
+    `onClick={close}` on the `<a>` ensures the overlay closes when the wordmark is tapped.
+    The focus trap (`querySelectorAll('a[href], button')`) includes the wordmark link — keyboard
+    Tab cycles: wordmark → nav links → wordmark. When opened via keyboard, focus lands on the
+    wordmark link first (it is the first `<a>` found by `querySelector('a')`). This is
+    intentional and correct — keyboard users Tab once to reach the first nav link.
   - **Accessibility:** `role="dialog" aria-modal="true" aria-label="Navigasjonsmeny"` on overlay.
     Focus moves to first nav link on open; focus returns to trigger on close (via `useEffect`
     cleanup). Escape key closes overlay (`document.addEventListener('keydown', …)`). Focus trap:
@@ -382,10 +392,24 @@ current session.
    `text-center sm:text-right` pattern. **8px is an explicit one-off exception**
    — below both the 0.75rem site-wide floor and the 0.625rem TitleCard-mobile exception.
    Scoped to this single element only; the floor rule is unchanged everywhere else.
+   **Wordmark links to homepage:** The `<Wordmark>` is wrapped in `<a href="${BASE}index.html">`
+   with `textDecoration:'none', display:'block'`. Clicking the wordmark navigates to the homepage.
+   The `<a>` wraps only the `<Wordmark>` — the "med Montarou & co" subtitle is a sibling `<p>`,
+   not part of the link.
    RIGHT: credit as a `<div>` with 3 separate `<p>` lines (no "|" separators),
    `text-slate-500 text-[0.875rem] leading-snug`, right-aligned on desktop, centered mobile.
-   Lines: "Turgåer & Ansvarlig redaktør: Marius Montarou" (Marius linked to
-   norgepalangs-2009/omoss.html), "Webmaster: Arne S. Skeie", "NORGEpåLANGS © 2008/2009".
+   Lines: "Turgåer & Ansvarlig redaktør: Marius Montarou" (button — opens Marius's BottomSheet
+   profile, see below), "Webmaster: Arne S. Skeie", "NORGEpåLANGS © 2008/2009".
+   **Marius BottomSheet (Batch 24):** "Marius Montarou" in the footer is a `<button>` (not an
+   `<a>`) styled to match the surrounding inline text (inherits font/color/size via
+   `style={{background:'none', border:'none', padding:0, font:'inherit', color:'inherit'}}`).
+   Clicking it opens a `<BottomSheet>` + `<SheetContent layout="profile">` with Marius's data
+   from `PEOPLE` (id:'Montarou'). The same EtappeLabel / parseEtappe helpers from OmOss.jsx are
+   replicated locally in SiteFooter.jsx (they are not exported from OmOss). MARIUS constant is
+   resolved at module level via `PEOPLE.find(p => p.id === 'Montarou')`. The sheet image uses
+   `${BASE}images/profiles/Montarou.jpg` — same path as OmOss. BottomSheet is rendered inside
+   the SiteFooter fragment, after the version switcher. **Do NOT revert to an external link
+   to norgepalangs-2009/omoss.html** — that page is on the restored site, not the modernized one.
    Mobile: `flex-col items-center gap-4` (stacked centered). Desktop (sm+):
    `flex-row items-start justify-between` (top-aligned — both columns align to top of
    the flex row, not vertically centered against each other).
@@ -2412,6 +2436,21 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-23 Batch 24: Footer + mobile nav — three small UX fixes.
+  1. **Footer wordmark → homepage link.** `<Wordmark className="text-[1.125rem]" />` is now
+     wrapped in `<a href="${BASE}index.html">` (display:block, no underline). Clicking the wordmark
+     navigates to the homepage. The "med Montarou & co" subtitle is a sibling `<p>` outside the link.
+  2. **Footer Marius → BottomSheet profile.** The "Marius Montarou" credit was a link to the
+     restored site's omoss page. Replaced with a `<button>` (inherits surrounding text style via
+     `style={{background:'none',border:'none',padding:0,font:'inherit',color:'inherit'}}`) that
+     opens a `<BottomSheet>` + `<SheetContent layout="profile">` with Marius's full profile
+     (image, name, etappe subtitle, alder/oppvokst/studerer meta, bio). Data sourced from
+     `PEOPLE.find(p => p.id === 'Montarou')` in `src/data/people.js`. Image: `images/profiles/Montarou.jpg`.
+     EtappeLabel / parseEtappe helpers replicated locally in SiteFooter.jsx (not exported from OmOss).
+  3. **Mobile nav overlay — wordmark at top.** Above the `<nav>` in the overlay, a centered
+     `<div className="mb-8">` (32px gap) holds: wordmark link + "med Montarou & co" subtitle,
+     identical styling to the footer. `<Wordmark />` imported from SiteHeader.jsx.
+     `onClick={close}` on the link closes the overlay when the wordmark is tapped.
 - 2026-06-23 Batch 23: NorwayMap — smooth 0.8s orange→grey dot transition after intro animation.
   **Problem:** When `animationDone` becomes true, `dotStyle` previously applied `animation:'none'`
   and `fill:'#94a3b8'` (DIMMED grey) in the same React render. Even though `.norway-map-circle` has
