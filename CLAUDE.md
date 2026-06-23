@@ -1012,8 +1012,7 @@ scale is relative to each dot's own center, not the SVG origin.
 **Animation cancel:** When `animationDone` becomes true, `dotStyle`/`labelStyle` include
 `animation: 'none'` via inline style, which overrides `.norway-map-started .norway-map-circle`'s
 `animation` declaration (inline style specificity > class). This cancels `forwards`-fill from
-the keyframe, allowing inline `fill` to take effect. CSS `transition: fill 0.25s ease` on
-`.norway-map-circle` and `.norway-map-label` then animates state changes smoothly.
+the keyframe, allowing inline `fill` to take effect.
 
 **CRITICAL — opacity must be set alongside animation:'none' (Batch 17 bug fix):**
 The CSS base rule `.norway-map-circle { opacity: 0 }` is the starting state for the intro
@@ -1025,14 +1024,32 @@ Fix: `dotStyle`/`labelStyle` MUST include `opacity: 1` in the same style object 
 there is no intermediate frame where the animation is cancelled but opacity is still 0.
 Do NOT split these into separate renders or useEffect calls — that reintroduces the race.
 
+**Three-phase dot settling after animationDone (Batch 23):**
+Dots must transition smoothly from orange (#fb923c, intro animation final color) to grey
+(#94a3b8, DIMMED state) over 0.8s rather than jumping instantly. `dotPhase` state drives this:
+- Phase 1 (immediate with animationDone): `dotStyle` returns orange fill + `animation:'none'` +
+  `opacity:1` + `transition:'fill 0.8s ease, transform 0.25s ease'` inline. No color change yet;
+  0.8s transition is now armed and the animation is cancelled in one atomic DOM commit.
+- Phase 2 (double-rAF after phase 1): `dotStyle` returns grey fill + same 0.8s inline transition.
+  Browser sees fill #fb923c→#94a3b8 with 0.8s active → smooth orange-to-grey transition fires.
+  Double-rAF (not single) ensures the browser has painted phase 1 before phase 2 changes the fill.
+- Phase 3 (setTimeout 850ms after phase 2): inline `transition` override removed. CSS class's
+  `fill 0.25s ease` takes over for hover highlight/dim interactions.
+The 0.8s override MUST be present in both phase 1 AND phase 2 inline styles — the browser reads
+`transition` at the moment fill changes (step 1→2). Omitting it from phase 2 falls back to 0.25s.
+**Do NOT collapse back to a single-render approach** — that eliminates the 0.8s settling entirely.
+Labels are unaffected: the label keyframe's final color is already #94a3b8 (grey), so there is no
+orange→grey jump for labels and no settling phase is needed.
+
 **Route switch:** The full-route `<path className="norway-map-route">` drives the intro
 animation. When `animationDone`, its inline `strokeOpacity` changes 0.5→0 (0.4s transition).
 Simultaneously, 16 individual `<path className="norway-map-segment">` paths fade in to 0.3
 (dimmed) or 1.0 (highlighted). Both path sets are always in the DOM — no conditional mount flash.
 
-**`animationDone` gate:** `setTimeout(() => setAnimationDone(true), 3300)` fires when
-`started` becomes true (and `interactive=true`). 3300ms = last waypoint delay (2.649s) +
-flash duration (0.6s) + 50ms buffer. Only one timeout, cleaned up on unmount.
+**`animationDone` gate:** `setTimeout(3300)` (inside a `useEffect` on `started` + `interactive`)
+sets both `setDotPhase(1)` and `setAnimationDone(true)` simultaneously. 3300ms = last waypoint
+delay (2.649s) + flash duration (0.6s) + 50ms buffer. A separate `useEffect` on `dotPhase`
+drives phases 1→2 (double-rAF) and 2→3 (setTimeout 850). Only runs when `interactive` is true.
 
 **SEGMENT_RECTS (hit area geometry):**
 First rect extends to viewBox top (VB_Y = -17.297); last rect extends to viewBox bottom
@@ -2395,6 +2412,32 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
      v3 built-in) disables all transitions for users who prefer reduced motion — instant show/hide.
      `showFull` state and useEffect removed — pure CSS handles everything. Inner thumb div uses
      `pt-3 sm:pt-0` (padding not margin) so max-height collapse correctly clips the gap too.
+- 2026-06-23 Batch 23: NorwayMap — smooth 0.8s orange→grey dot transition after intro animation.
+  **Problem:** When `animationDone` becomes true, `dotStyle` previously applied `animation:'none'`
+  and `fill:'#94a3b8'` (DIMMED grey) in the same React render. Even though `.norway-map-circle` has
+  `transition: fill 0.25s ease`, the transition could not fire: there was no prior stable orange fill
+  state with transitions active — the CSS animation's `forwards`-fill was directly cancelled while
+  simultaneously overwriting the fill value, so the browser had no interpolation start point.
+  **Fix — three-phase dot settling (`dotPhase` state: 0→1→2→3):**
+  - Phase 0 → 1 (immediate with animationDone): `dotStyle` returns `animation:'none'`, `opacity:1`,
+    `fill:'#fb923c'` (orange — same as intro animation's final color), and
+    `transition:'fill 0.8s ease, transform 0.25s ease'` inline. No visible color change; transition
+    is now armed at 0.8s duration.
+  - Phase 1 → 2 (double-rAF, ensures browser painted step 1 before step 2): `dotStyle` returns
+    the same 0.8s transition inline but now `fill: isDotHighlighted ? '#fb923c' : '#94a3b8'`.
+    Browser sees fill changing from #fb923c → #94a3b8 with an active 0.8s transition → smooth
+    orange-to-grey transition fires. Double-rAF (not single-rAF) guarantees the browser has
+    actually computed and painted step 1 before step 2 arrives.
+  - Phase 2 → 3 (setTimeout 850ms): inline `transition` override removed. CSS class's
+    `fill 0.25s ease` takes over — hover interactions (highlight/dim) use 0.25s as before.
+  **Why 0.8s must be present in BOTH step 1 and step 2 renders:** the browser reads the
+  `transition` property at the moment the fill value changes (step 1→2). If step 2 omits the
+  inline override, the CSS class's 0.25s applies instead, and the settling transition is 0.25s.
+  **Labels unaffected:** `labelStyle` is unchanged — labels transition orange (#fb923c in the
+  dot keyframe's final frame) → grey (#94a3b8) using the existing CSS `fill 0.25s ease` on
+  `.norway-map-label`. The label keyframe's final color is already #94a3b8 (DIMMED grey), so
+  labels have no visible color jump at animationDone and require no settling phase.
+  **Do NOT revert to the single-render approach** — that eliminates the settling transition entirely.
 - 2026-06-22 Batch 22: Fix responsive regression — reactive matchMedia for inner-page compact strip.
   **Bug:** `useMemo([])` ran once at mount, baking in the matchMedia result. Resize desktop→mobile→desktop
   left the strip stuck in SMALL_SIZE_BUCKETS after crossing back above 640px.

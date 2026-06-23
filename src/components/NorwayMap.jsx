@@ -206,6 +206,9 @@ export default function NorwayMap({ interactive = false }) {
   // Becomes true when the intro animation finishes:
   // last waypoint delay (2.649s) + flash duration (0.6s) + 50ms buffer = 3300ms
   const [animationDone, setAnimationDone] = useState(false)
+  // 0=pre-done  1=step1 (orange held, 0.8s transition armed)
+  // 2=step2 (grey fill, 0.8s transition running)  3=settled (CSS 0.25s)
+  const [dotPhase, setDotPhase] = useState(0)
 
   // Hover state: which segment (0-15) the mouse is over, and whether the SVG itself is hovered
   const [hoveredSegment, setHoveredSegment] = useState(null)
@@ -232,9 +235,29 @@ export default function NorwayMap({ interactive = false }) {
   // ─── Animation-done gate ─────────────────────────────────────────────────────
   useEffect(() => {
     if (!started || !interactive) return
-    const t = setTimeout(() => setAnimationDone(true), 3300)
+    const t = setTimeout(() => {
+      setDotPhase(1)       // step 1: hold orange, arm 0.8s transition
+      setAnimationDone(true)
+    }, 3300)
     return () => clearTimeout(t)
   }, [started, interactive])
+
+  // ─── Dot settling: drive phases 1→2→3 after animationDone ───────────────────
+  // Phase 1→2 via double-rAF so the browser paints step 1 (orange + 0.8s transition
+  //   armed) before step 2 changes fill — guarantees the 0.8s transition fires.
+  // Phase 2→3 via setTimeout(850): removes inline transition override after the
+  //   0.8s settle completes; CSS class's 0.25s then handles hover interactions.
+  useEffect(() => {
+    if (dotPhase !== 1) return
+    let r1, r2, t3
+    r1 = requestAnimationFrame(() => {
+      r2 = requestAnimationFrame(() => {
+        setDotPhase(2)
+        t3 = setTimeout(() => setDotPhase(3), 850)
+      })
+    })
+    return () => { cancelAnimationFrame(r1); cancelAnimationFrame(r2); clearTimeout(t3) }
+  }, [dotPhase])
 
   // ─── Viewport observer: watches etappe entries in the left column ─────────────
   useEffect(() => {
@@ -282,14 +305,29 @@ export default function NorwayMap({ interactive = false }) {
   // The CSS base rule has opacity:0, so opacity:1 MUST be set simultaneously
   // with animation:'none' — React applies the full style object in one DOM commit,
   // preventing any frame where the animation is cancelled but opacity is still 0.
+  //
+  // Two-step animationDone settling (Batch 23):
+  //   Phase 1 — hold orange + arm 0.8s transition inline (no color change yet).
+  //   Phase 2 — change fill to grey; browser sees fill #fb923c→#94a3b8 with
+  //             transition: 0.8s active → smooth 0.8s orange-to-grey transition.
+  //   Phase 3 — remove inline transition override; CSS class's 0.25s handles hover.
+  // The 0.8s transition override MUST be present in both phase 1 and phase 2 renders:
+  // the browser uses the transition property at the moment fill changes (phase 1→2),
+  // so it must be set at that moment, not just in the prior render.
   const dotStyle = (wpIdx) => {
     if (!animationDone) return {}
-    return {
-      animation: 'none',
-      opacity: 1,
-      fill: isDotHighlighted(wpIdx) ? '#fb923c' : '#94a3b8',
-      transform: svgHovered ? 'scale(0.8)' : 'scale(1)',
+    const transform = svgHovered ? 'scale(0.8)' : 'scale(1)'
+    if (dotPhase === 1) {
+      return { animation: 'none', opacity: 1, fill: '#fb923c',
+               transition: 'fill 0.8s ease, transform 0.25s ease', transform }
     }
+    if (dotPhase === 2) {
+      return { animation: 'none', opacity: 1,
+               fill: isDotHighlighted(wpIdx) ? '#fb923c' : '#94a3b8',
+               transition: 'fill 0.8s ease, transform 0.25s ease', transform }
+    }
+    return { animation: 'none', opacity: 1,
+             fill: isDotHighlighted(wpIdx) ? '#fb923c' : '#94a3b8', transform }
   }
   const labelStyle = (wpIdx) => {
     if (!animationDone) return {}
