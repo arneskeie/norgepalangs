@@ -2839,9 +2839,8 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   documented above. No further action needed on our side — GSC is the authoritative tool
   for monitoring crawl status.
   **Bing sitemap ping:** The `/ping` endpoint returns HTTP 410 Gone — permanently removed.
-  Bing replaced this with IndexNow protocol (requires a site-hosted API key file for
-  validation). IndexNow setup deferred — requires adding a key file to public/ and
-  registering at bing.com/indexnow. Low priority given that Bing traffic is secondary.
+  Bing replaced this with IndexNow protocol. Setup completed same day — see IndexNow
+  entry below.
   **Wayback Machine:** All 12 pages of the modernized site successfully archived on
   2026-06-23 via the Internet Archive Save Page Now API (unauthenticated GET to
   https://web.archive.org/save/[URL]). All returned HTTP 302 with a Location header
@@ -2858,6 +2857,31 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   - reisebrev4.html → https://web.archive.org/web/20260623063631/https://arneskeie.github.io/norgepalangs/reisebrev4.html
   - reisebrev5.html → https://web.archive.org/web/20260623063649/https://arneskeie.github.io/norgepalangs/reisebrev5.html
   - reisebrev6.html → https://web.archive.org/web/20260623063711/https://arneskeie.github.io/norgepalangs/reisebrev6.html
+- 2026-06-23: IndexNow setup for Bing/DuckDuckGo/Yandex URL submission.
+  **What IndexNow does:** Instant URL submission protocol supported by Bing, DuckDuckGo,
+  Yandex, and other engines (not Google). Allows engines to be notified of new/updated
+  content without waiting for their crawl schedule.
+  **Key:** `be7689146ed7c6f9fabf8ca567b06f6d` (32-char hex, generated via `secrets.token_hex(16)`)
+  **Key file:** `public/be7689146ed7c6f9fabf8ca567b06f6d.txt` — served at
+  `https://arneskeie.github.io/norgepalangs/be7689146ed7c6f9fabf8ca567b06f6d.txt`
+  (confirmed live, HTTP 200, before batch submission was made).
+  **Alternative verification:** `public/indexnow.json` → `{ "key": "be7689146ed7c6f9fabf8ca567b06f6d" }`
+  **Batch submission:** All 12 URLs submitted to `https://api.indexnow.org/indexnow` in a
+  single POST request on 2026-06-23. Response: **HTTP 202 Accepted** (empty body — normal).
+  Search engines covered: Bing, DuckDuckGo, Yandex (all IndexNow participants as of 2026).
+  **NOT covered:** Google (does not participate in IndexNow; use Google Search Console).
+
+  ⚠️  MANUAL STEP REQUIRED — IndexNow Bing Registration (one-time):
+  The batch API submission is accepted by the IndexNow relay, but Bing's direct integration
+  requires a one-time browser-based verification to associate the key with the site:
+  1. Go to https://www.bing.com/indexnow
+  2. Sign in with a Microsoft account
+  3. Enter site URL: https://arneskeie.github.io/norgepalangs/
+  4. Enter key: be7689146ed7c6f9fabf8ca567b06f6d
+  5. Enter key file URL: https://arneskeie.github.io/norgepalangs/be7689146ed7c6f9fabf8ca567b06f6d.txt
+  6. Click Verify
+  This is a one-time step. After verification, Bing/DuckDuckGo/Yandex will process the
+  URL submissions already sent and any future re-submissions.
 - 2026-06-22 Batch 10: Animated NorwayMap component.
   **Decision: inline SVG required for CSS animation.** External SVG via `<img>` isolates the SVG
   document — CSS keyframes on the host page cannot reach elements inside it. The only way to animate
