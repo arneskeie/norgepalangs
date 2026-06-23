@@ -2832,6 +2832,32 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   The endpoint circles at each end (cx=pad and cx=W-pad) are separate elements — they are
   NOT counted in `DOTS`. `DOTS` controls only the small interior fill-opacity dots
   distributed along the line via `Array.from({ length: DOTS })`.
+- 2026-06-23: Sitemap submission + Wayback Machine archiving.
+  **Google sitemap ping:** The `/ping` endpoint was officially deprecated by Google in June
+  2023 (returns HTTP 404 with "Sitemaps ping is deprecated"). The endpoint no longer works.
+  Google's guidance: submit via Google Search Console. The manual GSC step is already
+  documented above. No further action needed on our side — GSC is the authoritative tool
+  for monitoring crawl status.
+  **Bing sitemap ping:** The `/ping` endpoint returns HTTP 410 Gone — permanently removed.
+  Bing replaced this with IndexNow protocol (requires a site-hosted API key file for
+  validation). IndexNow setup deferred — requires adding a key file to public/ and
+  registering at bing.com/indexnow. Low priority given that Bing traffic is secondary.
+  **Wayback Machine:** All 12 pages of the modernized site successfully archived on
+  2026-06-23 via the Internet Archive Save Page Now API (unauthenticated GET to
+  https://web.archive.org/save/[URL]). All returned HTTP 302 with a Location header
+  pointing to the archived snapshot. Snapshot URLs:
+  - / → https://web.archive.org/web/20260623063303/https://arneskeie.github.io/norgepalangs/
+  - omoss.html → https://web.archive.org/web/20260623063342/https://arneskeie.github.io/norgepalangs/omoss.html
+  - reiserute.html → https://web.archive.org/web/20260623063403/https://arneskeie.github.io/norgepalangs/reiserute.html
+  - galleri.html → https://web.archive.org/web/20260623063424/https://arneskeie.github.io/norgepalangs/galleri.html
+  - utstyr.html → https://web.archive.org/web/20260623063445/https://arneskeie.github.io/norgepalangs/utstyr.html
+  - sponsorer.html → https://web.archive.org/web/20260623063505/https://arneskeie.github.io/norgepalangs/sponsorer.html
+  - reisebrev1.html → https://web.archive.org/web/20260623063526/https://arneskeie.github.io/norgepalangs/reisebrev1.html
+  - reisebrev2.html → https://web.archive.org/web/20260623063549/https://arneskeie.github.io/norgepalangs/reisebrev2.html
+  - reisebrev3.html → https://web.archive.org/web/20260623063608/https://arneskeie.github.io/norgepalangs/reisebrev3.html
+  - reisebrev4.html → https://web.archive.org/web/20260623063631/https://arneskeie.github.io/norgepalangs/reisebrev4.html
+  - reisebrev5.html → https://web.archive.org/web/20260623063649/https://arneskeie.github.io/norgepalangs/reisebrev5.html
+  - reisebrev6.html → https://web.archive.org/web/20260623063711/https://arneskeie.github.io/norgepalangs/reisebrev6.html
 - 2026-06-22 Batch 10: Animated NorwayMap component.
   **Decision: inline SVG required for CSS animation.** External SVG via `<img>` isolates the SVG
   document — CSS keyframes on the host page cannot reach elements inside it. The only way to animate
