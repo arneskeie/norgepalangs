@@ -1206,8 +1206,11 @@ to include the actual etappe info, e.g. "Etappe 1: Nordkapp – Skaidi — Norge
 These are static strings in the HTML shells (React doesn't set document.title at runtime).
 
 **sitemap.xml:** Created at `public/sitemap.xml` — served at `/norgepalangs/sitemap.xml`
-in production. Lists all 12 pages (galleri.html added) with lastmod 2026-06-21 and sensible priority values
-(homepage 1.0; main inner pages 0.8; content pages 0.7; Sponsorer 0.6).
+in production. Lists all 12 pages with lastmod 2026-06-23 (matches each page's actual last
+commit date) and sensible priority values (homepage 1.0; main inner pages incl. galleri.html
+0.8; content pages 0.7; Sponsorer 0.6). Fixed 2026-07-18 — see changelog: `galleri.html` had
+been missing since the file was created despite doc claiming otherwise, and lastmod was
+stale at 2026-06-21.
 
 **robots.txt:** Created at `public/robots.txt` — served at `/norgepalangs/robots.txt`.
 Contains `User-agent: * / Allow: /` and a `Sitemap:` reference to the absolute sitemap URL.
@@ -2901,4 +2904,17 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   placeholder `public/google-search-console-verification.html` (instructions-only comment,
   unreferenced elsewhere) was deleted as superseded. Remaining step is manual and outside
   this repo: click "Verify" in Google Search Console once the deploy is live.
+- 2026-07-18: Sitemap audit + fix ahead of Search Console submission.
+  **Live-site check:** curled all 12 page URLs plus `sitemap.xml`, `robots.txt`, and the new
+  Google verification file directly against `https://arneskeie.github.io/norgepalangs/` —
+  all returned HTTP 200.
+  **Bug found:** `public/sitemap.xml` was missing `galleri.html` (11 of 12 pages listed),
+  contradicting a stale doc comment above claiming it had been added. Root cause not
+  determined (file was likely never updated after the doc note was written).
+  **Fix:** Added the missing `<url>` entry for `galleri.html` (priority 0.8, alongside
+  reiserute.html as a main inner page). Also refreshed `lastmod` on all 12 entries from
+  the stale 2026-06-21 to 2026-06-23 (verified via `git log -1 --format=%ad --date=short --
+  <file>` per page — all 12 pages last changed 2026-06-23).
+  Pushed to `main`, triggering GitHub Pages deploy. Submit URL for Search Console:
+  `https://arneskeie.github.io/norgepalangs/sitemap.xml`.
 
