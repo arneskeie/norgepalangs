@@ -1225,14 +1225,11 @@ crawlers that discover the sitemap directly.
 **Web app manifest:** Created at `public/manifest.json` — served at `/norgepalangs/manifest.json`.
 Contains name, short_name, description, start_url, display, background_color (#020617), theme_color (#fb923c), and 2 icon entries (32x32 and 180x180 PNG).
 
-**Google Search Console verification:** Template file created at `public/google-search-console-verification.html`.
-Manual step required before site can be verified in Search Console:
-1. Go to https://search.google.com/search-console
-2. Add property: https://arneskeie.github.io/norgepalangs/
-3. Choose HTML file verification
-4. Download the verification file Google provides
-5. Replace `public/google-search-console-verification.html` with the downloaded file
-6. Push to GitHub, then click Verify in Search Console
+**Google Search Console verification:** Complete (2026-07-18). Google-issued file
+`public/google5850e84ca03aeda9.html` pushed to GitHub Pages — served at
+`https://arneskeie.github.io/norgepalangs/google5850e84ca03aeda9.html`. The earlier
+placeholder `public/google-search-console-verification.html` was removed (superseded,
+unreferenced). Remaining step is manual: click "Verify" in Search Console.
 
 **Lighthouse audit scores (before/after 2026-06-23):**
 
@@ -2787,8 +2784,8 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   the bottom "Tilbake til Reisebrev" button. Links to `reiserute.html#etappeN`.
   "Les reisebrev →" links on Reiserute: confirmed correct (etappes 1–6, href reisebrevN.html) ✓.
   "Se bilder →" links on Reiserute: confirmed correct (all etappes + Oppvarmingstur, href galleri.html#galleriId) ✓.
-  **Google Search Console:** Template file created at `public/google-search-console-verification.html`.
-  Manual verification step required — see SEO metadata section above.
+  **Google Search Console:** Verification file added 2026-07-18 — see changelog entry
+  below and SEO metadata section above.
   **Lighthouse after:** Not yet measured — changes not deployed to GitHub Pages at time of writing.
   Re-run same four audits after next push to verify LCP improvement from preload.
 - 2026-06-23: Page title audit + Ruta description fix + dot count fix.
@@ -2897,4 +2894,11 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   below the section-description on ALL screen sizes. Width: 320px (`w-80`), centered via
   `flex justify-center`. The old `flex flex-col sm:flex-row` wrapper in Reiserute.jsx replaced
   with separate paragraph + centered map div. Bundle impact: reiserute JS +72KB (inlined paths).
+- 2026-07-18: Google Search Console HTML-file verification completed.
+  Google's actual verification file (`google5850e84ca03aeda9.html`, single line:
+  `google-site-verification: google5850e84ca03aeda9.html`) added at `public/` and pushed
+  to `main` (commit 6abd531), triggering the GitHub Pages deploy workflow. The old
+  placeholder `public/google-search-console-verification.html` (instructions-only comment,
+  unreferenced elsewhere) was deleted as superseded. Remaining step is manual and outside
+  this repo: click "Verify" in Google Search Console once the deploy is live.
 
