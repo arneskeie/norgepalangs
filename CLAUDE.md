@@ -1175,6 +1175,7 @@ All 12 HTML entry points have been updated with the same tag set:
 **Per-page `<head>` additions:**
 - `<meta name="description">` — specific to each page, grounded in real content
 - `<meta property="og:title">` — same as or slight variation on the `<title>` tag
+- `<meta property="og:site_name" content="NORGEpåLANGS">` — added 2026-07-25, see changelog
 - `<meta property="og:description">` — same as `name="description"`
 - `<meta property="og:type" content="website">` — all pages are `website` type
 - `<meta property="og:url">` — full absolute canonical URL
@@ -1485,6 +1486,23 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
 
 ## Decision changelog
 
+- 2026-07-25: Added `og:site_name` meta tag to all 12 HTML entry points. Root cause
+  investigation: Google search results showed "GitHub Pages documentation" as the
+  site name (the label next to the favicon, above the URL) instead of anything
+  NORGEpåLANGS-related. Confirmed via curl that `https://arneskeie.github.io/`
+  (the bare hostname root, no path) 404s — there is no actual user-page repo
+  published there — and GitHub's own 404 page for that hostname reads "Site not
+  found · GitHub Pages" with body text "read the full documentation... to learn
+  how to set up GitHub Pages...". Since our site lives at a path
+  (`/norgepalangs/...`, not the domain root) and none of our pages had an
+  `og:site_name` tag, Google had no explicit site-identity signal for the
+  hostname and fell back to scraping that GitHub boilerplate. Fix: added
+  `<meta property="og:site_name" content="NORGEpåLANGS" />` immediately after
+  `og:title` on all 12 pages (index, omoss, reiserute, galleri, utstyr,
+  sponsorer, reisebrev1–6). This is the correct/expected fix per Google's own
+  documentation of the sitename feature, but re-indexing is not instant — Google
+  needs to recrawl and the change may take days to weeks to show up in search
+  results. Not yet verified in live search results as of this writing.
 - Chose static multi-page Vite build (not SPA/React Router) specifically
   for GitHub Pages compatibility — no server-side routing available.
 - Chose `norgepalangs-ny` as the repo name (ASCII-only constraint — `å`
