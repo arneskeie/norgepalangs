@@ -271,8 +271,8 @@ function Waypoint({ name, isStart = false, isEnd = false, isResumption = false, 
           isStart || isEnd
             ? 'w-5 h-5 bg-orange-400'
             : isResumption
-            ? 'w-4 h-4 bg-orange-400/60'
-            : 'w-3 h-3 bg-orange-400/40'
+            ? 'w-4 h-4 bg-[#975a2d]'
+            : 'w-3 h-3 bg-[#663e26]'
         }`}
       />
       <div>
@@ -344,7 +344,7 @@ export default function Reiserute() {
             {/* ─── Vertical timeline ─── */}
             <div className="relative">
               {/* Continuous vertical line */}
-              <div className="absolute left-3 top-0 bottom-0 w-[1.5px] bg-orange-400/15" aria-hidden="true" />
+              <div className="absolute left-3 -translate-x-1/2 top-0 bottom-0 w-[1.5px] bg-orange-400/15" aria-hidden="true" />
 
               {/* Oppvarmingstur — above the main høst/vår timeline */}
               <SeasonDivider label="Oppvarmingstur" />

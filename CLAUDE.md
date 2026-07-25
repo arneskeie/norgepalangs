@@ -2935,4 +2935,19 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   <file>` per page — all 12 pages last changed 2026-06-23).
   Pushed to `main`, triggering GitHub Pages deploy. Submit URL for Search Console:
   `https://arneskeie.github.io/norgepalangs/sitemap.xml`.
+- 2026-07-25: Reiserute timeline — dot/line alignment + solid interior dot colors.
+  **Alignment bug:** The vertical line (`left-3 w-[1.5px]`) had its left edge at 12px, so its
+  visual center sat at 12.75px, while every dot (`left-3 -translate-x-1/2`) was centered exactly
+  at 12px — a 0.75px mismatch, visible as the dots looking off-center against the line. Fix:
+  added `-translate-x-1/2` to the line's className too, so both line and dots resolve their
+  center from the same `left-3` anchor regardless of element width. `src/pages/reiserute/Reiserute.jsx`,
+  the `<div className="absolute left-3 ... w-[1.5px] bg-orange-400/15">` line element.
+  **Transparent interior dots:** The two smaller waypoint dot sizes used `bg-orange-400/60` and
+  `bg-orange-400/40` (rgba alpha) — since the line passes directly under the center of every dot,
+  the line was visible through the semi-transparent fill. Fix: replaced with solid (opaque) rgb
+  hex colors pre-blended against the page background (slate-950 / #020617), so they read the same
+  muted-orange weight as before but fully occlude the line: `bg-orange-400/60` → `bg-[#975a2d]`,
+  `bg-orange-400/40` → `bg-[#663e26]`. Both in the `Waypoint` component's dot `className` ternary.
+  Only the line itself keeps its `/15` translucency (unaffected by this fix — that's the intended
+  faint connecting line, not a dot).
 
