@@ -2950,4 +2950,20 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   `bg-orange-400/40` → `bg-[#663e26]`. Both in the `Waypoint` component's dot `className` ternary.
   Only the line itself keeps its `/15` translucency (unaffected by this fix — that's the intended
   faint connecting line, not a dot).
+- 2026-07-25: `text-slate-600` audited out site-wide — too dark for text on the dark
+  (`#020617`) background. All 10 instances of `text-slate-600` bumped to `text-slate-500`:
+  Reiserute.jsx (stat parts line, waypoint coords span, `SeasonDivider` eyebrow), Home.jsx
+  (Nordkapp/Lindesnes route-line labels ×2), ReisebrevPost.jsx (prev/next nav labels ×2),
+  Sponsorer.jsx (Rui Fjellstoge text-only entry), Utstyr.jsx (category item-count label),
+  Galleri.jsx (accordion photo-count label). Where a `group-hover` state existed alongside
+  the base color, the hover shade was bumped one step lighter too so the hover transition
+  still reads as a visible lighten (Galleri.jsx: base 600→500, hover 500→400). `bg-slate-600`
+  (BottomSheet drag handle) and the `#475569`/slate-600 comment in NorwayMap.jsx (silhouette
+  fill, not text) were left untouched — this audit is text-color only.
+- 2026-07-25: Reiserute participant hover — name now transitions to white. The participant
+  `<button>` in `ParticipantList` (Reiserute.jsx) already had a `hover:bg-white/[.06]` pill
+  background on hover, but the name `<span>` (text-slate-500) had no hover treatment of its
+  own. Added `group` to the button and `group-hover:text-slate-50 transition-colors` to the
+  name span, so hovering a participant chip now brightens the name to white alongside the
+  existing background tint.
 

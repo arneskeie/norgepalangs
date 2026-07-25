@@ -178,7 +178,7 @@ function ParticipantList({ people, base, onSelectPerson }) {
         <button
           key={p.id}
           onClick={() => onSelectPerson(p)}
-          className="flex items-center gap-2 rounded-full pl-1 pr-4 py-1 hover:bg-white/[.06] transition-colors"
+          className="group flex items-center gap-2 rounded-full pl-1 pr-4 py-1 hover:bg-white/[.06] transition-colors"
         >
           <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
             <img
@@ -187,7 +187,7 @@ function ParticipantList({ people, base, onSelectPerson }) {
               className="w-full h-full object-cover scale-[1.15]"
             />
           </div>
-          <span className="font-sans text-base text-slate-500">
+          <span className="font-sans text-base text-slate-500 group-hover:text-slate-50 transition-colors">
             {p.name.split(' ')[0]}
           </span>
         </button>
@@ -230,7 +230,7 @@ function EtappeContent({ etappe, participants, base, onSelectPerson, isOpp = fal
         {label}
       </h3>
       {statParts.length > 0 && (
-        <p className="font-sans text-xs text-slate-600 mb-3">
+        <p className="font-sans text-xs text-slate-500 mb-3">
           {statParts.join(' · ')}
         </p>
       )}
@@ -280,7 +280,7 @@ function Waypoint({ name, isStart = false, isEnd = false, isResumption = false, 
           isStart || isEnd ? 'text-slate-300' : 'text-slate-500'
         }`}>
           {name}
-          {coords && <span className="text-slate-600 ml-2">{coords}</span>}
+          {coords && <span className="text-slate-500 ml-2">{coords}</span>}
         </span>
         {isResumption && (
           <span className="ml-3 font-sans text-xs text-orange-400/60 italic">
@@ -296,7 +296,7 @@ function Waypoint({ name, isStart = false, isEnd = false, isResumption = false, 
 function SeasonDivider({ label }) {
   return (
     <div className="mb-8 pl-7">
-      <p className="eyebrow text-slate-600">{label}</p>
+      <p className="eyebrow text-slate-500">{label}</p>
     </div>
   )
 }

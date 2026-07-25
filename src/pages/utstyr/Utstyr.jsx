@@ -20,7 +20,7 @@ function CategorySection({ cat, isOpen, onToggle, onItemClick }) {
         aria-expanded={isOpen}
       >
         <span className="card-title text-slate-100">{cat.label}</span>
-        <span className="font-sans text-xs text-slate-600">
+        <span className="font-sans text-xs text-slate-500">
           {cat.items.length} gjenstander {isOpen ? '↑' : '↓'}
         </span>
       </button>

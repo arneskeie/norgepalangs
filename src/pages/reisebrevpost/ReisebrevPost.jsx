@@ -94,7 +94,7 @@ export default function ReisebrevPost({ n }) {
               href={`${base}reisebrev${prevLetter.n}.html`}
               className="group flex flex-col gap-1"
             >
-              <span className="font-sans text-xs text-slate-600 uppercase tracking-widest group-hover:text-slate-400 transition-colors">
+              <span className="font-sans text-xs text-slate-500 uppercase tracking-widest group-hover:text-slate-400 transition-colors">
                 ← Forrige
               </span>
               <span className="font-sans text-sm text-slate-400 group-hover:text-slate-200 transition-colors">
@@ -108,7 +108,7 @@ export default function ReisebrevPost({ n }) {
               href={`${base}reisebrev${nextLetter.n}.html`}
               className="group flex flex-col gap-1 text-right"
             >
-              <span className="font-sans text-xs text-slate-600 uppercase tracking-widest group-hover:text-slate-400 transition-colors">
+              <span className="font-sans text-xs text-slate-500 uppercase tracking-widest group-hover:text-slate-400 transition-colors">
                 Neste →
               </span>
               <span className="font-sans text-sm text-slate-400 group-hover:text-slate-200 transition-colors">

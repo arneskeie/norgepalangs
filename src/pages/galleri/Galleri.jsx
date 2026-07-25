@@ -201,7 +201,7 @@ function GalleriSection({ section, isOpen, onToggle, previews, onOpen }) {
             <div className="min-w-0">
               <p className="eyebrow mb-1">{section.label}</p>
               <p className="card-title text-slate-100">{section.route}</p>
-              <p className="font-sans text-xs text-slate-600 mt-1 group-hover:text-slate-500 transition-colors">
+              <p className="font-sans text-xs text-slate-500 mt-1 group-hover:text-slate-400 transition-colors">
                 {section.images.length} bilder
               </p>
             </div>

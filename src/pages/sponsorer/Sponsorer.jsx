@@ -227,7 +227,7 @@ export default function Sponsorer() {
             {/* Rui Fjellstoge — no logo in sponsor set, text-only entry */}
             <div className="flex flex-col sm:flex-row gap-6 items-start py-8 border-t border-white/[.06]">
               <div className="flex-none w-full sm:w-20 h-14 flex items-center justify-start sm:justify-center">
-                <span className="font-serif text-xs text-slate-600 leading-tight">Rui Fjellstoge</span>
+                <span className="font-serif text-xs text-slate-500 leading-tight">Rui Fjellstoge</span>
               </div>
               <div className="min-w-0">
                 <h3 className="card-title text-slate-100 mb-2">Rui Fjellstoge, Haukeli</h3>
