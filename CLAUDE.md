@@ -2971,4 +2971,26 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   (`ReisebrevPost.jsx`, bottom nav row), left-aligned directly after it. Added `ml-auto` to
   the link's className, pushing it to the right edge of the row while the back button stays
   left. Same `ml-auto` pattern already used for the Reiserute page's "Se bilder →" links.
+- 2026-07-25: Reviewed 4 externally-suggested legibility tweaks (darker-than-ideal background,
+  body font-weight, font-smoothing, eyebrow contrast/tracking) against the actual codebase.
+  No code changes made — all 4 were either already satisfied or deferred by the user:
+  1. `bg-slate-950` → `bg-slate-900` page background: not applied. Would require a coordinated
+     change across ~8 linked locations (`html` background, hero overlay gradient stops, hero
+     bottom-seal gradient, `.title-card`/`.mobile-nav-trigger` box-shadow colors, and re-tuning
+     `.title-card`'s own `rgba(15,23,42,0.90)` fill so it doesn't merge into a lighter page bg) —
+     user chose to skip for now rather than take on that scope.
+  2. `font-weight: 450` on body text: not applied. Work Sans is loaded via the Google Fonts
+     `@import` (main.css:1) at discrete static weights only (`wght@300;400;500;600`), not a
+     variable range — an arbitrary 450 would not reliably render as specified. User chose to
+     skip rather than switch to `font-medium`(500) or reload the font as a true variable range.
+  3. Firefox/macOS font-smoothing rule: **already present**, no gap existed. `-webkit-font-smoothing:
+     antialiased` and `-moz-osx-font-smoothing: grayscale` are already set on `html` in `@layer base`
+     (main.css:11-12) and inherit down to `body` and all descendants — adding them again on `body`
+     would be a no-op duplicate. Confirmed via direct read of main.css before making any edit.
+  4. `.eyebrow-label` color (`#a8b3c5`) + tighter tracking (`0.15em`): not applied — that class
+     doesn't exist in this codebase. The real `.eyebrow` class is `text-orange-400` (already
+     high-contrast against the dark background), not the slate-400 the suggestion assumed. The
+     actual muted small text in the site (`text-slate-400`/`text-slate-500` at `text-xs`/`text-sm`,
+     ~40 occurrences across pages/components) is a different set of elements than `.eyebrow` — user
+     chose to skip touching those too.
 
