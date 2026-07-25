@@ -122,7 +122,7 @@ export default function ReisebrevPost({ n }) {
           <a href={`${base}index.html#reisebrev`} className="btn-outline">← Tilbake til Reisebrev</a>
           <a
             href={`${base}reiserute.html#etappe${n}`}
-            className="font-sans text-base text-slate-500 hover:text-slate-200 transition-colors"
+            className="font-sans text-base text-slate-500 hover:text-slate-200 transition-colors ml-auto"
           >
             Se etappen på kartet →
           </a>

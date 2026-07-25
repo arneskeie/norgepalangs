@@ -2966,4 +2966,9 @@ photo galleries per etappe + migrated video gallery. Unaffected by this update.
   own. Added `group` to the button and `group-hover:text-slate-50 transition-colors` to the
   name span, so hovering a participant chip now brightens the name to white alongside the
   existing background tint.
+- 2026-07-25: Reisebrev post pages — "Se etappen på kartet →" link right-aligned. It sat in
+  the same `flex flex-wrap gap-4 items-center` row as the "← Tilbake til Reisebrev" button
+  (`ReisebrevPost.jsx`, bottom nav row), left-aligned directly after it. Added `ml-auto` to
+  the link's className, pushing it to the right edge of the row while the back button stays
+  left. Same `ml-auto` pattern already used for the Reiserute page's "Se bilder →" links.
 
